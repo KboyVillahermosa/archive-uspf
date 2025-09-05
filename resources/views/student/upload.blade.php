@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    {{ __('Submit Student Research') }}
+                    {{ __('Submit Students Research') }}
                 </h2>
                 <p class="text-sm text-gray-600 mt-1">Share your undergraduate research project with the academic community
                 </p>

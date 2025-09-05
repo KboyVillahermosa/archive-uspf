@@ -74,4 +74,5 @@ class StudentResearchController extends Controller
         
         return response()->download($filePath, 'Student_Research_' . $research->id . '.pdf');
     }
+    
 }
