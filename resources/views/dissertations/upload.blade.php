@@ -83,16 +83,17 @@
                                 </svg>
                                 Department *
                             </label>
-                            <select name="department" id="department" required 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                                <option value="">Select Department</option>
-                                <option value="Computer Science" {{ old('department') == 'Computer Science' ? 'selected' : '' }}>Computer Science</option>
-                                <option value="Information Technology" {{ old('department') == 'Information Technology' ? 'selected' : '' }}>Information Technology</option>
-                                <option value="Engineering" {{ old('department') == 'Engineering' ? 'selected' : '' }}>Engineering</option>
-                                <option value="Business" {{ old('department') == 'Business' ? 'selected' : '' }}>Business</option>
-                                <option value="Education" {{ old('department') == 'Education' ? 'selected' : '' }}>Education</option>
-                                <option value="Medicine" {{ old('department') == 'Medicine' ? 'selected' : '' }}>Medicine</option>
-                            </select>
+                           <select name="department" id="department" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Select Department</option>
+                                    <option value="College of Engineering and Architecture" {{ old('department') == 'College of Engineering and Architecture' ? 'selected' : '' }}>College of Engineering and Architecture</option>
+                                    <option value="College of Computer Studies" {{ old('department') == 'College of Computer Studies' ? 'selected' : '' }}>College of Computer Studies</option>
+                                    <option value="College of Health Sciences" {{ old('department') == 'College of Health Sciences' ? 'selected' : '' }}>College of Health Sciences</option>
+                                    <option value="College of Social Work" {{ old('department') == 'College of Social Work' ? 'selected' : '' }}>College of Social Work</option>
+                                    <option value="College of Teacher Education, Arts and Sciences" {{ old('department') == 'College of Teacher Education, Arts and Sciences' ? 'selected' : '' }}>College of Teacher Education, Arts and Sciences</option>
+                                    <option value="School of Business and Accountancy" {{ old('department') == 'School of Business and Accountancy' ? 'selected' : '' }}>School of Business and Accountancy</option>
+                                    <option value="Graduate School" {{ old('department') == 'Graduate School' ? 'selected' : '' }}>Graduate School</option>
+                                </select>
                             @error('department') 
                                 <p class="text-red-600 text-sm">{{ $message }}</p>
                             @enderror
@@ -164,96 +165,6 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                                 </svg>
                                 Submit Research Project
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-                                    <p class="text-xs text-gray-500 mt-1">🔬 Example: machine learning, artificial intelligence, education, doctoral research</p>
-                                    @error('keywords') 
-                                        <div class="flex items-center mt-2 text-red-600">
-                                            <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                            </svg>
-                                            <span class="text-sm">{{ $message }}</span>
-                                        </div>
-                                    @enderror
-                                </div>
-
-                                <div class="space-y-2">
-                                    <label for="abstract" class="block text-sm font-semibold text-gray-700">Abstract *</label>
-                                    <textarea name="abstract" id="abstract" rows="8" required
-                                        class="w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:border-red-500 focus:ring-2 focus:ring-red-200 transition duration-200 bg-gray-50 focus:bg-white resize-none"
-                                        placeholder="Provide a comprehensive summary of your doctoral dissertation research...">{{ old('abstract') }}</textarea>
-                                    <div class="flex justify-between items-center">
-                                        <p class="text-xs text-gray-500">📝 Provide a detailed summary of your dissertation research (300-500 words recommended for doctoral level)</p>
-                                        <span class="text-xs text-gray-400" id="abstract-count">0 words</span>
-                                    </div>
-                                    @error('abstract') 
-                                        <div class="flex items-center mt-2 text-red-600">
-                                            <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                            </svg>
-                                            <span class="text-sm">{{ $message }}</span>
-                                        </div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Step 3: Document Upload -->
-                        <div class="space-y-8">
-                            <div class="border-l-4 border-red-500 pl-6">
-                                <h3 class="text-xl font-bold text-gray-900 mb-2">Step 3: Document Upload</h3>
-                                <p class="text-gray-600 text-sm">Upload your dissertation document for review</p>
-                            </div>
-                            
-                            <div class="space-y-4">
-                                <label for="document_file" class="block text-sm font-semibold text-gray-700">Dissertation Document *</label>
-                                <div class="relative">
-                                    <input type="file" name="document_file" id="document_file" accept=".pdf" required class="sr-only">
-                                    <label for="document_file" class="flex flex-col items-center justify-center w-full h-48 border-2 border-red-300 border-dashed rounded-xl cursor-pointer bg-red-50 hover:bg-red-100 transition duration-200">
-                                        <div class="flex flex-col items-center justify-center pt-8 pb-8">
-                                            <div class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mb-4">
-                                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                                                </svg>
-                                            </div>
-                                            <p class="text-lg font-semibold text-gray-700 mb-2">Drop your dissertation file here</p>
-                                            <p class="text-sm text-gray-500 mb-4">or click to browse</p>
-                                            <div class="bg-white rounded-lg px-4 py-2 shadow-sm">
-                                                <p class="text-sm text-red-700 font-medium">📄 PDF files only • Max 50MB</p>
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-                                @error('document_file') 
-                                    <div class="flex items-center mt-2 text-red-600">
-                                        <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                        </svg>
-                                        <span class="text-sm">{{ $message }}</span>
-                                    </div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="flex items-center justify-between pt-8 border-t border-gray-200">
-                            <a href="{{ route('dashboard') }}" class="inline-flex items-center px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200 font-semibold">
-                                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                                </svg>
-                                Cancel
-                            </a>
-                            <button type="submit" class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:from-red-700 hover:to-red-800 transition duration-200 shadow-lg font-semibold">
-                                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                                </svg>
-                                Submit Dissertation
                             </button>
                         </div>
                     </form>

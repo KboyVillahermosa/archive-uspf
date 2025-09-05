@@ -77,17 +77,52 @@
                                     </svg>
                                     Department *
                                 </label>
-                                <select name="department" id="department" required
+                               <select name="program" id="program" required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">Select Department</option>
-                                    <option value="Computer Science" {{ old('department') == 'Computer Science' ? 'selected' : '' }}>
-                                        Computer Science</option>
-                                    <option value="Information Technology" {{ old('department') == 'Information Technology' ? 'selected' : '' }}>
-                                        Information Technology</option>
-                                    <option value="Engineering" {{ old('department') == 'Engineering' ? 'selected' : '' }}>
-                                        Engineering</option>
-                                    <option value="Business" {{ old('department') == 'Business' ? 'selected' : '' }}>
-                                        Business</option>
+                                    <option value="">Select Program</option>
+                                    <!-- CCS Programs -->
+                                    <option value="BSIT" {{ old('program') == 'BSIT' ? 'selected' : '' }}>Bachelor of Science in Information Technology</option>
+                                    <option value="BSCS" {{ old('program') == 'BSCS' ? 'selected' : '' }}>Bachelor of Science in Computer Science</option>
+                                    
+                                    <!-- CEA Programs -->
+                                    <option value="BSA-Arch" {{ old('program') == 'BSA-Arch' ? 'selected' : '' }}>Bachelor of Science in Architecture</option>
+                                    <option value="BSCE" {{ old('program') == 'BSCE' ? 'selected' : '' }}>Bachelor of Science in Civil Engineering</option>
+                                    <option value="BSGE" {{ old('program') == 'BSGE' ? 'selected' : '' }}>Bachelor of Science in Geodetic Engineering</option>
+                                    
+                                    <!-- CHS Programs -->
+                                    <option value="BSN" {{ old('program') == 'BSN' ? 'selected' : '' }}>Bachelor of Science in Nursing</option>
+                                    <option value="BSP" {{ old('program') == 'BSP' ? 'selected' : '' }}>Bachelor of Science in Pharmacy</option>
+                                    
+                                    <!-- CSW Programs -->
+                                    <option value="CSW" {{ old('program') == 'CSW' ? 'selected' : '' }}>College of Social Work</option>
+                                    
+                                    <!-- CTEAS Programs -->
+                                    <option value="BEED" {{ old('program') == 'BEED' ? 'selected' : '' }}>Bachelor of Elementary Education</option>
+                                    <option value="BSED-Secondary" {{ old('program') == 'BSED-Secondary' ? 'selected' : '' }}>Bachelor of Secondary Education</option>
+                                    <option value="BA-ELS" {{ old('program') == 'BA-ELS' ? 'selected' : '' }}>Bachelor of Arts in English Language Studies</option>
+                                    <option value="BA-LCS" {{ old('program') == 'BA-LCS' ? 'selected' : '' }}>Bachelor of Arts in Literature and Cultural Studies</option>
+                                    <option value="BA-Music" {{ old('program') == 'BA-Music' ? 'selected' : '' }}>Bachelor of Arts in Music</option>
+                                    <option value="BA-PoliSci" {{ old('program') == 'BA-PoliSci' ? 'selected' : '' }}>Bachelor of Arts in Political Science</option>
+                                    
+                                    <!-- SBA Programs -->
+                                    <option value="BSTM" {{ old('program') == 'BSTM' ? 'selected' : '' }}>Bachelor of Science in Tourism Management</option>
+                                    <option value="BSHM" {{ old('program') == 'BSHM' ? 'selected' : '' }}>Bachelor of Science in Hospitality Management</option>
+                                    <option value="BSA-Acct" {{ old('program') == 'BSA-Acct' ? 'selected' : '' }}>Bachelor of Science in Accountancy</option>
+                                    <option value="BSBA" {{ old('program') == 'BSBA' ? 'selected' : '' }}>Bachelor of Science in Business Administration</option>
+                                    
+                                    <!-- Graduate School Programs -->
+                                    <option value="EdD" {{ old('program') == 'EdD' ? 'selected' : '' }}>Doctor of Education major in Educational Management</option>
+                                    <option value="MSW" {{ old('program') == 'MSW' ? 'selected' : '' }}>Master of Science in Social Work</option>
+                                    <option value="MBA" {{ old('program') == 'MBA' ? 'selected' : '' }}>Master of Business Administration</option>
+                                    <option value="MAEd-EM" {{ old('program') == 'MAEd-EM' ? 'selected' : '' }}>Master of Arts in Education major in Educational Management</option>
+                                    <option value="MAEd-CI" {{ old('program') == 'MAEd-CI' ? 'selected' : '' }}>Master of Arts in Education major in Curriculum and Instruction</option>
+                                    <option value="MAEd-EE" {{ old('program') == 'MAEd-EE' ? 'selected' : '' }}>Master of Arts in Education major in Elementary Education</option>
+                                    <option value="MAEd-ECE" {{ old('program') == 'MAEd-ECE' ? 'selected' : '' }}>Master of Arts in Education major in Early Childhood Education</option>
+                                    <option value="MAEd-ME" {{ old('program') == 'MAEd-ME' ? 'selected' : '' }}>Master of Arts in Education major in Math Education</option>
+                                    <option value="MAEd-SE" {{ old('program') == 'MAEd-SE' ? 'selected' : '' }}>Master of Arts in Education major in Science Education</option>
+                                    <option value="MAEd-ELT" {{ old('program') == 'MAEd-ELT' ? 'selected' : '' }}>Master of Arts in Education major in English Language Teaching</option>
+                                    <option value="MAEd-PE" {{ old('program') == 'MAEd-PE' ? 'selected' : '' }}>Master of Arts in Education major in Physical Education</option>
+                                    <option value="MAEd-SpEd" {{ old('program') == 'MAEd-SpEd' ? 'selected' : '' }}>Master of Arts in Education major in Special Education</option>
                                 </select>
                                 @error('department') 
                                     <p class="text-red-600 text-sm">{{ $message }}</p>
@@ -105,17 +140,16 @@
                                     </svg>
                                     Program *
                                 </label>
-                                <select name="program" id="program" required
+                                <select name="department" id="department" required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">Select Program</option>
-                                    <option value="BSIT" {{ old('program') == 'BSIT' ? 'selected' : '' }}>BSIT
-                                    </option>
-                                    <option value="BSCS" {{ old('program') == 'BSCS' ? 'selected' : '' }}>BSCS
-                                    </option>
-                                    <option value="BSE" {{ old('program') == 'BSE' ? 'selected' : '' }}>BSE
-                                    </option>
-                                    <option value="BSA" {{ old('program') == 'BSA' ? 'selected' : '' }}>BSA
-                                    </option>
+                                    <option value="">Select Department</option>
+                                    <option value="College of Engineering and Architecture" {{ old('department') == 'College of Engineering and Architecture' ? 'selected' : '' }}>College of Engineering and Architecture</option>
+                                    <option value="College of Computer Studies" {{ old('department') == 'College of Computer Studies' ? 'selected' : '' }}>College of Computer Studies</option>
+                                    <option value="College of Health Sciences" {{ old('department') == 'College of Health Sciences' ? 'selected' : '' }}>College of Health Sciences</option>
+                                    <option value="College of Social Work" {{ old('department') == 'College of Social Work' ? 'selected' : '' }}>College of Social Work</option>
+                                    <option value="College of Teacher Education, Arts and Sciences" {{ old('department') == 'College of Teacher Education, Arts and Sciences' ? 'selected' : '' }}>College of Teacher Education, Arts and Sciences</option>
+                                    <option value="School of Business and Accountancy" {{ old('department') == 'School of Business and Accountancy' ? 'selected' : '' }}>School of Business and Accountancy</option>
+                                    <option value="Graduate School" {{ old('department') == 'Graduate School' ? 'selected' : '' }}>Graduate School</option>
                                 </select>
                                 @error('program') 
                                     <p class="text-red-600 text-sm">{{ $message }}</p>
@@ -226,126 +260,7 @@
         </div>
     </div>
 
-                                    </p>
-                                    @error('tags') 
-                                        <div class="flex items-center mt-2 text-red-600">
-                                            <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd"
-                                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                                    clip-rule="evenodd"></path>
-                                            </svg>
-                                            <span class="text-sm">{{ $message }}</span>
-                                        </div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Step 3: File Upload -->
-                        <div class="space-y-8">
-                            <div class="border-l-4 border-blue-500 pl-6">
-                                <h3 class="text-xl font-bold text-gray-900 mb-2">Step 3: File Upload</h3>
-                                <p class="text-gray-600 text-sm">Upload your research document and optional banner image</p>
-                            </div>
-                            
-                            <div class="grid grid-cols-1 gap-8">
-                                <div class="space-y-4">
-                                    <label for="banner_image" class="block text-sm font-semibold text-gray-700">Banner Image
-                                        <span class="text-gray-400 font-normal">(Optional)</span>
-                                    </label>
-                                    <div class="relative">
-                                        <input type="file" name="banner_image" id="banner_image" accept="image/*"
-                                            class="sr-only">
-                                        <label for="banner_image"
-                                            class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition duration-200">
-                                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                                <svg class="w-8 h-8 mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                                    </path>
-                                                </svg>
-                                                <p class="text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                                                <p class="text-xs text-gray-400">PNG, JPG up to 10MB</p>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <p class="text-xs text-gray-500">🖼️ Recommended: 1200 x 400px (3:1 ratio) for optimal display
-                                    </p>
-                                    @error('banner_image') 
-                                        <div class="flex items-center mt-2 text-red-600">
-                                            <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd"
-                                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                                    clip-rule="evenodd"></path>
-                                            </svg>
-                                            <span class="text-sm">{{ $message }}</span>
-                                        </div>
-                                    @enderror
-                                </div>
-
-                                <div class="space-y-4">
-                                    <label for="research_file" class="block text-sm font-semibold text-gray-700">Research Document
-                                        *</label>
-                                    <div class="relative">
-                                        <input type="file" name="research_file" id="research_file" accept=".pdf" required class="sr-only">
-                                        <label for="research_file"
-                                            class="flex flex-col items-center justify-center w-full h-48 border-2 border-blue-300 border-dashed rounded-xl cursor-pointer bg-blue-50 hover:bg-blue-100 transition duration-200">
-                                            <div class="flex flex-col items-center justify-center pt-8 pb-8">
-                                                <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mb-4">
-                                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
-                                                        </path>
-                                                    </svg>
-                                                </div>
-                                                <p class="text-lg font-semibold text-gray-700 mb-2">Drop your research file here
-                                                </p>
-                                                <p class="text-sm text-gray-500 mb-4">or click to browse</p>
-                                                <div class="bg-white rounded-lg px-4 py-2 shadow-sm">
-                                                    <p class="text-sm text-blue-700 font-medium">📄 PDF files only • Max 20MB</p>
-                                                </div>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    @error('research_file') 
-                                        <div class="flex items-center mt-2 text-red-600">
-                                            <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd"
-                                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                                    clip-rule="evenodd"></path>
-                                            </svg>
-                                            <span class="text-sm">{{ $message }}</span>
-                                        </div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="flex items-center justify-between pt-8 border-t border-gray-200">
-                            <a href="{{ route('dashboard') }}"
-                                class="inline-flex items-center px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200 font-semibold">
-                                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                                </svg>
-                                Cancel
-                            </a>
-                            <button type="submit"
-                                class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition duration-200 shadow-lg font-semibold">
-                                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                                </svg>
-                                Submit Research Project
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
+                         
     <script>
         // Word count for abstract
         document.getElementById('abstract').addEventListener('input', function(e) {

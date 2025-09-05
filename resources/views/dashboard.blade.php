@@ -86,6 +86,92 @@
                 </div>
             </div>
 
+            <!-- Research by Department Card -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Research by Department</h3>
+                            <p class="text-sm text-gray-600">Explore research organized by academic departments and colleges</p>
+                        </div>
+                        <div class="text-right">
+                            @php
+                                $totalResearch = $approvedStudentResearch->count() + $approvedFacultyResearch->count() + $approvedThesis->count() + $approvedDissertations->count();
+                                $activeDepartments = collect([
+                                    'College of Engineering and Architecture',
+                                    'College of Computer Studies', 
+                                    'College of Health Sciences',
+                                    'College of Social Work',
+                                    'College of Teacher Education, Arts and Sciences',
+                                    'School of Business and Accountancy',
+                                    'Graduate School'
+                                ])->filter(function($dept) use ($approvedStudentResearch, $approvedFacultyResearch, $approvedThesis, $approvedDissertations) {
+                                    return $approvedStudentResearch->where('department', $dept)->count() > 0 ||
+                                           $approvedFacultyResearch->where('department', $dept)->count() > 0 ||
+                                           $approvedThesis->where('department', $dept)->count() > 0 ||
+                                           $approvedDissertations->where('department', $dept)->count() > 0;
+                                })->count();
+                            @endphp
+                            <div class="text-2xl font-bold text-gray-800">{{ $totalResearch }}</div>
+                            <div class="text-sm text-gray-500">Total Research</div>
+                            <div class="text-xs text-gray-400 mt-1">{{ $activeDepartments }} Active Departments</div>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ route('research.by-department') }}" class="block w-full">
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 hover:from-blue-100 hover:to-indigo-100 transition-all duration-200 hover:shadow-md group">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="p-3 bg-blue-100 rounded-full group-hover:bg-blue-200 transition-colors">
+                                        <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="ml-4">
+                                        <h4 class="text-lg font-semibold text-gray-800 group-hover:text-blue-800 transition-colors">Browse by Department</h4>
+                                        <p class="text-sm text-gray-600 mt-1">View all research organized by academic departments and colleges</p>
+                                        
+                                        <!-- Quick Stats -->
+                                        <div class="flex items-center space-x-4 mt-3">
+                                            @if($approvedStudentResearch->count() > 0)
+                                                <div class="flex items-center text-xs text-blue-600">
+                                                    <span class="w-2 h-2 bg-blue-400 rounded-full mr-1"></span>
+                                                    {{ $approvedStudentResearch->count() }} Student
+                                                </div>
+                                            @endif
+                                            @if($approvedFacultyResearch->count() > 0)
+                                                <div class="flex items-center text-xs text-purple-600">
+                                                    <span class="w-2 h-2 bg-purple-400 rounded-full mr-1"></span>
+                                                    {{ $approvedFacultyResearch->count() }} Faculty
+                                                </div>
+                                            @endif
+                                            @if($approvedThesis->count() > 0)
+                                                <div class="flex items-center text-xs text-green-600">
+                                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
+                                                    {{ $approvedThesis->count() }} Thesis
+                                                </div>
+                                            @endif
+                                            @if($approvedDissertations->count() > 0)
+                                                <div class="flex items-center text-xs text-red-600">
+                                                    <span class="w-2 h-2 bg-red-400 rounded-full mr-1"></span>
+                                                    {{ $approvedDissertations->count() }} Dissertations
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center text-blue-600 group-hover:text-blue-800 transition-colors">
+                                    <span class="text-sm font-medium mr-2">View All</span>
+                                    <svg class="h-5 w-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
             <!-- Recent Approved Research Section -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
@@ -207,4 +293,20 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function toggleDepartment(slug) {
+            const content = document.getElementById('content-' + slug);
+            const icon = document.getElementById('icon-' + slug);
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+    </script>
 </x-app-layout>
+                                     

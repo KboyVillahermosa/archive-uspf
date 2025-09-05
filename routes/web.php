@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StudentResearchController;
 use App\Http\Controllers\FacultyResearchController;
 use App\Http\Controllers\ThesisController;
@@ -12,30 +13,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    // Redirect admin users to admin dashboard
-    if (auth()->check() && auth()->user()->role === 'admin') {
-        return redirect()->route('admin.dashboard');
-    }
-    
-    // Fetch approved research for display
-    $approvedStudentResearch = \App\Models\StudentResearch::where('status', 'approved')->with('user')->latest('approved_at')->take(6)->get();
-    $approvedFacultyResearch = \App\Models\FacultyResearch::where('status', 'approved')->with('user')->latest('approved_at')->take(6)->get();
-    $approvedThesis = \App\Models\Thesis::where('status', 'approved')->with('user')->latest('approved_at')->take(6)->get();
-    $approvedDissertations = \App\Models\Dissertation::where('status', 'approved')->with('user')->latest('approved_at')->take(6)->get();
-    
-    return view('dashboard', compact(
-        'approvedStudentResearch',
-        'approvedFacultyResearch', 
-        'approvedThesis',
-        'approvedDissertations'
-    ));
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Research by department route
+    Route::get('/research/by-department', [DashboardController::class, 'researchByDepartment'])->name('research.by-department');
     
     // Research upload routes
     Route::get('/student/upload', [StudentResearchController::class, 'create'])->name('student.upload');
@@ -86,3 +72,4 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 require __DIR__.'/auth.php';
+
