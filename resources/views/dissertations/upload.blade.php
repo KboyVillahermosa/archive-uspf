@@ -171,7 +171,7 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+
                                     <p class="text-xs text-gray-500 mt-1">🔬 Example: machine learning, artificial intelligence, education, doctoral research</p>
                                     @error('keywords') 
                                         <div class="flex items-center mt-2 text-red-600">

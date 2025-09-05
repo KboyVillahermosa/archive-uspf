@@ -225,7 +225,7 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+
                                     </p>
                                     @error('tags') 
                                         <div class="flex items-center mt-2 text-red-600">
