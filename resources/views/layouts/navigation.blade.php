@@ -17,6 +17,11 @@
                     </x-nav-link>
                     
                     @if(Auth::user()->role !== 'admin')
+                    <!-- Research History Link -->
+                    <x-nav-link :href="route('research.history')" :active="request()->routeIs('research.history')">
+                        {{ __('My Research') }}
+                    </x-nav-link>
+                    
                     <!-- Upload Research Dropdown -->
                     <div class="relative" x-data="{ uploadOpen: false }">
                         <button @click="uploadOpen = !uploadOpen" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out h-16">
@@ -134,6 +139,11 @@
             </x-responsive-nav-link>
             
             @if(Auth::user()->role !== 'admin')
+            <!-- Mobile Research History Link -->
+            <x-responsive-nav-link :href="route('research.history')" :active="request()->routeIs('research.history')">
+                📊 My Research
+            </x-responsive-nav-link>
+            
             <!-- Mobile Upload Research Links -->
             <div class="ml-4 pl-4 border-l-2 border-gray-200 space-y-1">
                 <div class="px-3 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider">Upload Research</div>

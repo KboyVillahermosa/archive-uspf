@@ -11,9 +11,76 @@ toastr.options = {
     closeButton: true,
     progressBar: true,
     positionClass: "toast-top-right",
-    timeOut: 3000,
+    timeOut: 5000,
+    extendedTimeOut: 2000,
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut'
 };
 window.toastr = toastr;
+
+// Success notification function
+window.showSuccessNotification = function(message, redirectUrl = null, delay = 2000) {
+    // Create a success notification element
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg shadow-lg z-50 max-w-md';
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div class="flex-1">
+                <p class="font-medium">${message}</p>
+                ${redirectUrl ? '<p class="text-sm text-green-600 mt-1">Redirecting to your research history...</p>' : ''}
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-green-400 hover:text-green-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after delay and redirect if needed
+    setTimeout(() => {
+        if (document.body.contains(notification)) {
+            document.body.removeChild(notification);
+        }
+        if (redirectUrl) {
+            window.location.href = redirectUrl;
+        }
+    }, delay);
+};
+
+// Warning notification function
+window.showWarningNotification = function(message, duration = 3000) {
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 bg-yellow-100 border border-yellow-400 text-yellow-700 px-6 py-4 rounded-lg shadow-lg z-50 max-w-md';
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-3 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+            <div class="flex-1">
+                <p class="font-medium">${message}</p>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-yellow-400 hover:text-yellow-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (document.body.contains(notification)) {
+            document.body.removeChild(notification);
+        }
+    }, duration);
+};
 
 // DOM Content Loaded Event Handler
 document.addEventListener("DOMContentLoaded", function () {
@@ -191,44 +258,16 @@ function formHandler(el) {
             submit.disabled = true;
 
             try {
-                // Check if form has file inputs - if so, use FormData, otherwise use JSON
-                const hasFileInput = form.querySelector('input[type="file"]');
-                let requestBody;
-                let contentType;
-
-                if (hasFileInput) {
-                    // Use FormData for file uploads
-                    requestBody = new FormData(form);
-                    contentType = {}; // Let browser set multipart/form-data
-                } else {
-                    // Use JSON for regular forms
-                    const formData = new FormData(form);
-                    const formObject = {};
-
-                    formData.forEach((value, key) => {
-                        if (key.endsWith('[]')) {
-                            const fieldName = key.replace('[]', '');
-                            if (!formObject[fieldName]) {
-                                formObject[fieldName] = [];
-                            }
-                            formObject[fieldName].push(value);
-                        } else {
-                            formObject[key] = value;
-                        }
-                    });
-
-                    requestBody = JSON.stringify(formObject);
-                    contentType = { 'Content-Type': 'application/json' };
-                }
+                // Always use FormData for form submissions to handle both regular and file inputs
+                const formData = new FormData(form);
 
                 const response = await fetch(form.getAttribute('action'), {
                     method: form.getAttribute('method').toUpperCase(),
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                         'Accept': 'application/json',
-                        ...contentType
                     },
-                    body: requestBody
+                    body: formData
                 });
 
                 const data = await response.json();
@@ -240,17 +279,24 @@ function formHandler(el) {
                     }
                     toastr.success(data.message || 'Action completed');
 
+                    // Handle file download
+                    if (data.download_url) {
+                        setTimeout(() => {
+                            window.open(data.download_url, '_blank');
+                        }, 500);
+                    }
+
                     if (data.redirect) {
                         setTimeout(() => {
                             window.location.href = data.redirect;
                         }, 1000);
-                    } else {
+                    } else if (!data.download_url) {
                         window.location.reload();
                     }
                 } else {
                     const errorMessage = data.error || data.message || 'Something went wrong';
                     if (message) {
-                        message.innerHTML = errorMessage;
+                        message.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">${errorMessage}</div>`;
                     }
                     toastr.error(errorMessage);
                 }
@@ -263,4 +309,3 @@ function formHandler(el) {
         });
     }
 }
-

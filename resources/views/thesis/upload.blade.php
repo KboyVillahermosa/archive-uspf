@@ -158,6 +158,21 @@
                             @enderror
                         </div>
 
+                        <!-- Research Citations Section -->
+                        <div class="space-y-4 border-t pt-6">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-medium text-gray-900">Research Citations (Optional)</h3>
+                                <button type="button" id="add-citation-btn" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors text-sm">
+                                    Add Citation
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray-500">Tag research works that you've referenced in your thesis</p>
+                            
+                            <div id="citations-container" class="space-y-3">
+                                <!-- Citations will be added here dynamically -->
+                            </div>
+                        </div>
+
                         <!-- Submit Button -->
                         <div class="pt-6">
                             <button type="submit" class="w-full bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-700 transition-colors font-medium flex items-center justify-center">
@@ -204,18 +219,59 @@
             }
         });
 
+        // Add citation functionality
+        let citationIndex = 0;
+
+        document.getElementById('add-citation-btn').addEventListener('click', function() {
+            citationIndex++;
+            const container = document.getElementById('citations-container');
+            const citationDiv = document.createElement('div');
+            citationDiv.className = 'flex items-center space-x-4';
+            citationDiv.innerHTML = `
+                <input type="text" name="citations[${citationIndex}][title]" required
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    placeholder="Enter citation title">
+                <input type="text" name="citations[${citationIndex}][link]" required
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    placeholder="Enter citation link (URL)">
+                <button type="button" class="remove-citation-btn bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 transition-colors text-sm">
+                    Remove
+                </button>
+            `;
+            container.appendChild(citationDiv);
+
+            // Remove citation event
+            citationDiv.querySelector('.remove-citation-btn').addEventListener('click', function() {
+                container.removeChild(citationDiv);
+            });
+        });
+
+        // Add same citation functionality but change research type to 'thesis'
+        // saveCitations(data.research_id, 'thesis');
+        
+        // Form submission with fallback notification
         const form = document.querySelector('form');
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
             const submit = form.querySelector('button[type="submit"]');
+            const originalText = submit.innerHTML;
+            
             submit.disabled = true;
+            submit.innerHTML = `
+                <svg class="animate-spin w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Submitting...
+            `;
 
             try {
                 const formData = new FormData(form);
                 const response = await fetch(form.getAttribute('action'), {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
                     },
                     body: formData
                 });
@@ -223,17 +279,34 @@
                 const data = await response.json();
 
                 if (data.status === 'success') {
-                    toastr.success(data.message || 'Thesis uploaded successfully');
-                    setTimeout(() => {
-                        window.location.href = data.redirect || '/thesis';
-                    }, 2000);
+                    if (typeof window.showSuccessNotification === 'function') {
+                        window.showSuccessNotification(
+                            'Thesis submitted successfully! It is now pending approval.',
+                            '{{ route("research.history") }}'
+                        );
+                    } else {
+                        alert('Thesis submitted successfully! Redirecting to research history...');
+                        setTimeout(() => {
+                            window.location.href = '{{ route("research.history") }}';
+                        }, 1000);
+                    }
                 } else {
-                    toastr.error(data.message || 'Something went wrong');
+                    if (typeof window.toastr !== 'undefined') {
+                        window.toastr.error(data.message || 'Something went wrong');
+                    } else {
+                        alert('Error: ' + (data.message || 'Something went wrong'));
+                    }
+                    submit.disabled = false;
+                    submit.innerHTML = originalText;
                 }
             } catch (error) {
-                toastr.error('Failed to upload thesis');
-            } finally {
+                if (typeof window.toastr !== 'undefined') {
+                    window.toastr.error('Failed to upload thesis');
+                } else {
+                    alert('Failed to upload thesis');
+                }
                 submit.disabled = false;
+                submit.innerHTML = originalText;
             }
         });
     </script>

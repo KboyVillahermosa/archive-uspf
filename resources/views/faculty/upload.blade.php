@@ -165,6 +165,21 @@
                             @enderror
                         </div>
 
+                        <!-- Research Citations Section -->
+                        <div class="space-y-4 border-t pt-6">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-medium text-gray-900">Research Citations (Optional)</h3>
+                                <button type="button" id="add-citation-btn" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors text-sm">
+                                    Add Citation
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray-500">Tag research works that you've referenced in your project</p>
+                            
+                            <div id="citations-container" class="space-y-3">
+                                <!-- Citations will be added here dynamically -->
+                            </div>
+                        </div>
+
                         <!-- Submit Button -->
                         <div class="pt-6">
                             <button type="submit" class="w-full bg-purple-600 text-white py-3 px-4 rounded-md hover:bg-purple-700 transition-colors font-medium flex items-center justify-center">
@@ -239,5 +254,96 @@
             document.getElementById(inputId).value = '';
             location.reload();
         }
+
+        // Form submission with fallback notification
+        const form = document.querySelector('form');
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg class="animate-spin w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Submitting...
+            `;
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    if (typeof window.showSuccessNotification === 'function') {
+                        window.showSuccessNotification(
+                            'Faculty research submitted successfully! It is now pending approval.',
+                            '{{ route("research.history") }}'
+                        );
+                    } else {
+                        alert('Faculty research submitted successfully! Redirecting to research history...');
+                        setTimeout(() => {
+                            window.location.href = '{{ route("research.history") }}';
+                        }, 1000);
+                    }
+                } else {
+                    if (typeof window.toastr !== 'undefined') {
+                        window.toastr.error(data.message || 'Something went wrong');
+                    } else {
+                        alert('Error: ' + (data.message || 'Something went wrong'));
+                    }
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            })
+            .catch(error => {
+                if (typeof window.toastr !== 'undefined') {
+                    window.toastr.error('Failed to submit research');
+                } else {
+                    alert('Failed to submit research');
+                }
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            });
+        });
+
+        // Citation functionality
+        document.getElementById('add-citation-btn').addEventListener('click', function() {
+            const container = document.getElementById('citations-container');
+            const index = container.children.length;
+            
+            const citationHtml = `
+                <div class="flex items-center space-x-4" id="citation-${index}">
+                    <input type="text" name="citations[]" required
+                        class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        placeholder="Enter citation (e.g., Doe, J. (2020). Title of the research. Journal Name, Volume(Issue), Page range.)">
+                    <button type="button" onclick="removeCitation(${index})" class="text-red-600 hover:text-red-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', citationHtml);
+        });
+
+        window.removeCitation = function(index) {
+            const citationElement = document.getElementById(`citation-${index}`);
+            if (citationElement) {
+                citationElement.remove();
+            }
+        }
+
+        // [Same citation JavaScript code as student upload but with faculty type]
     </script>
 </x-app-layout>
