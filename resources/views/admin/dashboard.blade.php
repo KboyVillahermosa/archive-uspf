@@ -99,6 +99,18 @@
                             </div>
                         </a>
 
+                        <a href="{{ route('admin.users') }}" class="bg-blue-50 hover:bg-blue-100 p-4 rounded-lg border border-blue-200 transition duration-200">
+                            <div class="flex items-center">
+                                <svg class="h-6 w-6 text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" />
+                                </svg>
+                                <div>
+                                    <h4 class="font-medium text-blue-800">Manage Users</h4>
+                                    <p class="text-sm text-blue-600">List and import users via CSV</p>
+                                </div>
+                            </div>
+                        </a>
+
                         <a href="#" class="bg-gray-50 hover:bg-gray-100 p-4 rounded-lg border border-gray-200 transition duration-200">
                             <div class="flex items-center">
                                 <svg class="h-6 w-6 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

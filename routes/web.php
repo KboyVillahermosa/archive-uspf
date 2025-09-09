@@ -75,6 +75,10 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/pending-research', [AdminController::class, 'pendingResearch'])->name('pending-research');
+    // Users management
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::post('/users/import', [AdminController::class, 'importUsers'])->name('users.import');
+    Route::get('/users/template', [AdminController::class, 'downloadUserTemplate'])->name('users.template');
     
     // Student research approval
     Route::post('/approve/student/{id}', [AdminController::class, 'approveStudentResearch'])->name('approve.student');

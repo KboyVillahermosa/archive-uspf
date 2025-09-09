@@ -76,6 +76,9 @@
                     <x-nav-link :href="route('admin.pending-research')" :active="request()->routeIs('admin.pending-research')">
                         {{ __('Pending Research') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users')">
+                        {{ __('Manage Users') }}
+                    </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -168,6 +171,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('admin.pending-research')" :active="request()->routeIs('admin.pending-research')">
                 {{ __('Pending Research') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users')">
+                {{ __('Manage Users') }}
             </x-responsive-nav-link>
             @endif
         </div>
