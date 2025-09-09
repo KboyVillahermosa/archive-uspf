@@ -172,6 +172,123 @@
                 </div>
             </div>
 
+            <!-- Most Recent -->
+            @if(isset($mostRecent) && $mostRecent->count())
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800">Most Recent</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($mostRecent as $item)
+                            @php
+                                $type = $item->type ?? 'student';
+                                $badgeClasses = [
+                                    'student' => 'text-blue-600 bg-blue-100',
+                                    'faculty' => 'text-purple-600 bg-purple-100',
+                                    'thesis' => 'text-green-600 bg-green-100',
+                                    'dissertation' => 'text-red-600 bg-red-100',
+                                ][$type] ?? 'text-gray-600 bg-gray-100';
+
+                                $routeName = match($type) {
+                                    'student' => 'student.show',
+                                    'faculty' => 'faculty.show',
+                                    'thesis' => 'thesis.show',
+                                    'dissertation' => 'dissertation.show',
+                                    default => 'student.show',
+                                };
+                            @endphp
+
+                            <a href="{{ route($routeName, $item->id) }}" class="block p-4 rounded-lg border hover:shadow transition duration-200 bg-white">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-medium px-2 py-1 rounded {{ $badgeClasses }}">{{ ucfirst($type) }}</span>
+                                    <span class="text-xs text-gray-500">{{ optional($item->approved_at)->diffForHumans() }}</span>
+                                </div>
+                                <h4 class="font-medium text-gray-900 mb-2">{{ Str::limit($item->title, 60) }}</h4>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            <!-- Most Viewed -->
+            @if(isset($mostViewed) && $mostViewed->count())
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800">Most Viewed</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($mostViewed as $item)
+                            @php
+                                $type = $item->type ?? 'student';
+                                $badgeClasses = [
+                                    'student' => 'text-blue-600 bg-blue-100',
+                                    'faculty' => 'text-purple-600 bg-purple-100',
+                                    'thesis' => 'text-green-600 bg-green-100',
+                                    'dissertation' => 'text-red-600 bg-red-100',
+                                ][$type] ?? 'text-gray-600 bg-gray-100';
+
+                                $routeName = match($type) {
+                                    'student' => 'student.show',
+                                    'faculty' => 'faculty.show',
+                                    'thesis' => 'thesis.show',
+                                    'dissertation' => 'dissertation.show',
+                                    default => 'student.show',
+                                };
+                            @endphp
+
+                            <a href="{{ route($routeName, $item->id) }}" class="block p-4 rounded-lg border hover:shadow transition duration-200 bg-white">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-medium px-2 py-1 rounded {{ $badgeClasses }}">{{ ucfirst($type) }}</span>
+                                    <span class="text-xs text-gray-500">{{ (int)($item->views ?? 0) }} views</span>
+                                </div>
+                                <h4 class="font-medium text-gray-900 mb-2">{{ Str::limit($item->title, 60) }}</h4>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            <!-- Most Popular -->
+            @if(isset($mostPopular) && $mostPopular->count())
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800">Most Popular</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($mostPopular as $item)
+                            @php
+                                $type = $item->type ?? 'student';
+                                $badgeClasses = [
+                                    'student' => 'text-blue-600 bg-blue-100',
+                                    'faculty' => 'text-purple-600 bg-purple-100',
+                                    'thesis' => 'text-green-600 bg-green-100',
+                                    'dissertation' => 'text-red-600 bg-red-100',
+                                ][$type] ?? 'text-gray-600 bg-gray-100';
+
+                                $routeName = match($type) {
+                                    'student' => 'student.show',
+                                    'faculty' => 'faculty.show',
+                                    'thesis' => 'thesis.show',
+                                    'dissertation' => 'dissertation.show',
+                                    default => 'student.show',
+                                };
+
+                                $views = (int) ($item->views ?? 0);
+                                $downloads = (int) ($item->downloads ?? 0);
+                            @endphp
+
+                            <a href="{{ route($routeName, $item->id) }}" class="block p-4 rounded-lg border hover:shadow transition duration-200 bg-white">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-medium px-2 py-1 rounded {{ $badgeClasses }}">{{ ucfirst($type) }}</span>
+                                    <span class="text-xs text-gray-500">{{ $downloads }} downloads · {{ $views }} views</span>
+                                </div>
+                                <h4 class="font-medium text-gray-900 mb-2">{{ Str::limit($item->title, 60) }}</h4>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <!-- Recent Approved Research Section -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">

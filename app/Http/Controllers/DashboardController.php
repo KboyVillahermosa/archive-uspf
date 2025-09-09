@@ -7,6 +7,7 @@ use App\Models\StudentResearch;
 use App\Models\FacultyResearch;
 use App\Models\Thesis;
 use App\Models\Dissertation;
+use App\Models\ResearchAnalytic;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
@@ -47,12 +48,55 @@ class DashboardController extends Controller
             ->latest('approved_at')
             ->take(6)
             ->get();
+
+        // Most recent across all types (by approved_at)
+        $mostRecent = collect()
+            ->merge($approvedStudentResearch->map(function ($r) { $r->type = 'student'; return $r; }))
+            ->merge($approvedFacultyResearch->map(function ($r) { $r->type = 'faculty'; return $r; }))
+            ->merge($approvedThesis->map(function ($r) { $r->type = 'thesis'; return $r; }))
+            ->merge($approvedDissertations->map(function ($r) { $r->type = 'dissertation'; return $r; }))
+            ->sortByDesc('approved_at')
+            ->take(6)
+            ->values();
+
+        // Aggregate analytics for most viewed and most popular
+        $analytics = DB::table('research_analytics')
+            ->select(
+                'research_type',
+                'research_id',
+                DB::raw("SUM(CASE WHEN action='view' THEN 1 ELSE 0 END) as views"),
+                DB::raw("SUM(CASE WHEN action='download' THEN 1 ELSE 0 END) as downloads")
+            )
+            ->groupBy('research_type', 'research_id');
+
+        $mostViewedRaw = (clone $analytics)
+            ->orderByDesc('views')
+            ->limit(6)
+            ->get();
+
+        $mostPopularRaw = (clone $analytics)
+            ->select(
+                'research_type',
+                'research_id',
+                DB::raw("SUM(CASE WHEN action='view' THEN 1 ELSE 0 END) as views"),
+                DB::raw("SUM(CASE WHEN action='download' THEN 1 ELSE 0 END) as downloads"),
+                DB::raw("(SUM(CASE WHEN action='view' THEN 1 ELSE 0 END) * 0.7 + SUM(CASE WHEN action='download' THEN 1 ELSE 0 END) * 1.0) as popularity_score")
+            )
+            ->orderByDesc('popularity_score')
+            ->limit(6)
+            ->get();
+
+        $mostViewed = $this->hydrateAnalyticsRows($mostViewedRaw);
+        $mostPopular = $this->hydrateAnalyticsRows($mostPopularRaw);
         
         return view('dashboard', compact(
             'approvedStudentResearch',
             'approvedFacultyResearch', 
             'approvedThesis',
-            'approvedDissertations'
+            'approvedDissertations',
+            'mostRecent',
+            'mostViewed',
+            'mostPopular'
         ));
     }
 
@@ -220,5 +264,35 @@ class DashboardController extends Controller
             'rejectedCount' => $rejectedCount,
             'totalCount' => $totalCount,
         ]);
+    }
+    /**
+     * Hydrate analytics rows into model items with unified fields for display.
+     */
+    private function hydrateAnalyticsRows($rows)
+    {
+        $items = collect();
+        foreach ($rows as $row) {
+            $model = null;
+            switch ($row->research_type) {
+                case 'student':
+                    $model = StudentResearch::where('status', 'approved')->find($row->research_id);
+                    break;
+                case 'faculty':
+                    $model = FacultyResearch::where('status', 'approved')->find($row->research_id);
+                    break;
+                case 'thesis':
+                    $model = Thesis::where('status', 'approved')->find($row->research_id);
+                    break;
+                case 'dissertation':
+                    $model = Dissertation::where('status', 'approved')->find($row->research_id);
+                    break;
+            }
+            if (!$model) continue;
+            $model->type = $row->research_type;
+            $model->views = (int) ($row->views ?? 0);
+            $model->downloads = (int) ($row->downloads ?? 0);
+            $items->push($model);
+        }
+        return $items;
     }
 }
