@@ -7,6 +7,7 @@ use App\Http\Controllers\FacultyResearchController;
 use App\Http\Controllers\ThesisController;
 use App\Http\Controllers\DissertationController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ResearchCitationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -42,11 +43,32 @@ Route::middleware('auth')->group(function () {
     Route::get('/research/thesis/{id}', [ThesisController::class, 'show'])->name('thesis.show');
     Route::get('/research/dissertation/{id}', [DissertationController::class, 'show'])->name('dissertation.show');
     
-    // Download routes
-    Route::get('/download/student/{id}', [StudentResearchController::class, 'download'])->name('student.download');
-    Route::get('/download/faculty/{id}', [FacultyResearchController::class, 'download'])->name('faculty.download');
-    Route::get('/download/thesis/{id}', [ThesisController::class, 'download'])->name('thesis.download');
-    Route::get('/download/dissertation/{id}', [DissertationController::class, 'download'])->name('dissertation.download');
+    // Download survey modal routes
+    Route::get('/download-survey/student/{id}', [StudentResearchController::class, 'downloadSurvey'])->name('student.download-survey');
+    Route::get('/download-survey/faculty/{id}', [FacultyResearchController::class, 'downloadSurvey'])->name('faculty.download-survey');
+    Route::get('/download-survey/thesis/{id}', [ThesisController::class, 'downloadSurvey'])->name('thesis.download-survey');
+    Route::get('/download-survey/dissertation/{id}', [DissertationController::class, 'downloadSurvey'])->name('dissertation.download-survey');
+    
+    // Download routes with survey data
+    Route::post('/download/student/{id}', [StudentResearchController::class, 'download'])->name('student.download');
+    Route::post('/download/faculty/{id}', [FacultyResearchController::class, 'download'])->name('faculty.download');
+    Route::post('/download/thesis/{id}', [ThesisController::class, 'download'])->name('thesis.download');
+    Route::post('/download/dissertation/{id}', [DissertationController::class, 'download'])->name('dissertation.download');
+    
+    // Direct file download routes (after survey)
+    Route::get('/download-file/student/{id}', [StudentResearchController::class, 'downloadFile'])->name('student.download.file');
+    Route::get('/download-file/faculty/{id}', [FacultyResearchController::class, 'downloadFile'])->name('faculty.download.file');
+    Route::get('/download-file/thesis/{id}', [ThesisController::class, 'downloadFile'])->name('thesis.download.file');
+    Route::get('/download-file/dissertation/{id}', [DissertationController::class, 'downloadFile'])->name('dissertation.download.file');
+    
+    // Research history/tracking routes
+    Route::get('/research/history', [DashboardController::class, 'researchHistory'])->name('research.history');
+    
+    // Research citation routes
+    Route::get('/citations/search', [ResearchCitationController::class, 'searchApprovedResearch'])->name('citations.search');
+    Route::post('/citations', [ResearchCitationController::class, 'store'])->name('citations.store');
+    Route::get('/my-citations', [ResearchCitationController::class, 'getUserCitations'])->name('citations.my');
+    Route::get('/research-citations/{type}/{id}', [ResearchCitationController::class, 'getResearchCitations'])->name('citations.research');
 });
 
 // Admin routes

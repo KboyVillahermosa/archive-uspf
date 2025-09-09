@@ -38,7 +38,15 @@ class FacultyResearchController extends Controller
 
         FacultyResearch::create($data);
 
-        return redirect()->route('dashboard')->with('success', 'Research submitted successfully! It will be reviewed by an administrator.');
+        // Check if it's an AJAX request
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Faculty research submitted successfully! It is now pending approval.'
+            ]);
+        }
+
+        return redirect()->route('research.history')->with('success', 'Faculty research submitted successfully! It is now pending approval.');
     }
 
     public function show($id)
