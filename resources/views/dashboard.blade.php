@@ -43,44 +43,44 @@
                 <div class="p-6">
                     <h3 class="text-lg font-semibold mb-4 text-gray-800">Upload Research</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <a href="{{ route('student.upload') }}" class="group bg-blue-50 hover:bg-blue-100 p-4 rounded-lg border border-blue-200 transition duration-200">
+                        <a href="{{ route('student.upload') }}" class="group bg-[#26225C] hover:bg-[#1a1840] p-4 rounded-lg border border-[#26225C] transition duration-200">
                             <div class="flex items-center mb-2">
-                                <svg class="h-6 w-6 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="h-6 w-6 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                 </svg>
-                                <h4 class="font-medium text-blue-800">Student Research</h4>
+                                <h4 class="font-medium text-white">Student Research</h4>
                             </div>
-                            <p class="text-sm text-blue-600">Submit undergraduate research projects</p>
+                            <p class="text-sm text-white">Submit undergraduate research projects</p>
                         </a>
 
-                        <a href="{{ route('faculty.upload') }}" class="group bg-purple-50 hover:bg-purple-100 p-4 rounded-lg border border-purple-200 transition duration-200">
+                        <a href="{{ route('faculty.upload') }}" class="group bg-[#26225C] hover:bg-[#1a1840] p-4 rounded-lg border border-[#26225C] transition duration-200">
                             <div class="flex items-center mb-2">
-                                <svg class="h-6 w-6 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="h-6 w-6 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
                                 </svg>
-                                <h4 class="font-medium text-purple-800">Faculty Research</h4>
+                                <h4 class="font-medium text-white">Faculty Research</h4>
                             </div>
-                            <p class="text-sm text-purple-600">Submit faculty research publications</p>
+                            <p class="text-sm text-white">Submit faculty research publications</p>
                         </a>
 
-                        <a href="{{ route('thesis.upload') }}" class="group bg-green-50 hover:bg-green-100 p-4 rounded-lg border border-green-200 transition duration-200">
+                        <a href="{{ route('thesis.upload') }}" class="group bg-[#26225C] hover:bg-[#1a1840] p-4 rounded-lg border border-[#26225C] transition duration-200">
                             <div class="flex items-center mb-2">
-                                <svg class="h-6 w-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="h-6 w-6 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
-                                <h4 class="font-medium text-green-800">Thesis</h4>
+                                <h4 class="font-medium text-white">Thesis</h4>
                             </div>
-                            <p class="text-sm text-green-600">Submit master's level thesis</p>
+                            <p class="text-sm text-white">Submit master's level thesis</p>
                         </a>
 
-                        <a href="{{ route('dissertations.upload') }}" class="group bg-red-50 hover:bg-red-100 p-4 rounded-lg border border-red-200 transition duration-200">
+                        <a href="{{ route('dissertations.upload') }}" class="group bg-[#26225C] hover:bg-[#1a1840] p-4 rounded-lg border border-[#26225C] transition duration-200">
                             <div class="flex items-center mb-2">
-                                <svg class="h-6 w-6 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="h-6 w-6 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
-                                <h4 class="font-medium text-red-800">Dissertation</h4>
+                                <h4 class="font-medium text-white">Dissertation</h4>
                             </div>
-                            <p class="text-sm text-red-600">Submit doctoral level dissertation</p>
+                            <p class="text-sm text-white">Submit doctoral level dissertation</p>
                         </a>
                     </div>
                 </div>
@@ -273,7 +273,7 @@
                         
                         <!-- View All Link -->
                         <div class="mt-6 text-center">
-                            <a href="#" class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition duration-200">
+                            <a href="#" class="inline-flex items-center px-4 py-2 bg-[#FFC72C] hover:bg-[#FFD700] text-[#26225C] rounded-lg transition duration-200">
                                 <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
@@ -309,4 +309,3 @@
         }
     </script>
 </x-app-layout>
-                                     

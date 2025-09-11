@@ -34,15 +34,11 @@ class ThesisController extends Controller
 
         Thesis::create($data);
 
-        // Check if it's an AJAX request
-        if ($request->expectsJson()) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Thesis submitted successfully! It is now pending approval.'
-            ]);
-        }
-
-        return redirect()->route('research.history')->with('success', 'Thesis submitted successfully! It is now pending approval.');
+        // Always return JSON response for success
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Thesis submitted successfully! It is now pending approval.'
+        ]);
     }
 
     public function show($id)
@@ -53,9 +49,26 @@ class ThesisController extends Controller
             abort(404);
         }
         
-        $thesis->incrementViews();
+        // Track view
+        \App\Models\ResearchAnalytic::trackView('thesis', $id, request());
+        // Get analytics
+        $viewCount = \App\Models\ResearchAnalytic::getViewCount('thesis', $id);
+        $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('thesis', $id);
         
-        return view('research.thesis-detail', compact('thesis'));
+        return view('research.thesis-detail', compact('thesis', 'viewCount', 'downloadCount'));
+    }
+
+    public function showPublic($id)
+    {
+        $thesis = Thesis::with(['user', 'approvedBy'])->where('status', 'approved')->findOrFail($id);
+        
+        // Track view
+        \App\Models\ResearchAnalytic::trackView('thesis', $id, request());
+        // Get analytics
+        $viewCount = \App\Models\ResearchAnalytic::getViewCount('thesis', $id);
+        $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('thesis', $id);
+        
+        return view('research.thesis-detail', compact('thesis', 'viewCount', 'downloadCount'));
     }
 
     public function downloadSurvey($id)
@@ -66,6 +79,9 @@ class ThesisController extends Controller
 
     public function download(Request $request, $id)
     {
+        if (auth()->guest()) {
+            return response()->json(['error' => 'You must be logged in to download. Please log in first.'], 401);
+        }
         $thesis = Thesis::findOrFail($id);
         
         if ($thesis->status !== 'approved') {
@@ -100,5 +116,17 @@ class ThesisController extends Controller
         $thesis = Thesis::findOrFail($id);
         $filePath = storage_path('app/public/' . $thesis->document_file);
         return response()->download($filePath, ($thesis->title ?: 'Thesis_' . $thesis->id) . '.pdf');
+    }
+
+    public function edit($id)
+    {
+        $thesis = \App\Models\Thesis::findOrFail($id);
+        if (auth()->id() !== $thesis->user_id) {
+            abort(403, 'Unauthorized');
+        }
+        return view('thesis.upload', [
+            'thesis' => $thesis,
+            'editMode' => true
+        ]);
     }
 }

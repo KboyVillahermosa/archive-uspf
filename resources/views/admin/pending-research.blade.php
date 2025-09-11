@@ -203,4 +203,52 @@
             @endif
         </div>
     </div>
+
+    <script>
+        document.querySelectorAll('form[action*="approve"], form[action*="reject"]').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `Loading..`;
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success || data.status === 'success') {
+                        if (typeof window.toastr !== 'undefined') {
+                            window.toastr.success(data.message || 'Action completed successfully!');
+                        } else {
+                            alert(data.message || 'Action completed successfully!');
+                        }
+                        setTimeout(() => { window.location.reload(); }, 1200);
+                    } else {
+                        if (typeof window.toastr !== 'undefined') {
+                            window.toastr.error(data.message || 'Something went wrong');
+                        } else {
+                            alert('Error: ' + (data.message || 'Something went wrong'));
+                        }
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    }
+                })
+                .catch(error => {
+                    if (typeof window.toastr !== 'undefined') {
+                        window.toastr.error('Failed to process request');
+                    } else {
+                        alert('Failed to process request');
+                    }
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                });
+            });
+        });
+    </script>
 </x-app-layout>

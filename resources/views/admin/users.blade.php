@@ -28,7 +28,7 @@
                     </div>
 
                     <div class="mb-6">
-                        <form method="POST" action="{{ route('admin.users.import') }}" enctype="multipart/form-data" class="flex items-center space-x-3">
+                        <form id="user-import-form" method="POST" action="{{ route('admin.users.import') }}" enctype="multipart/form-data" class="flex items-center space-x-3">
                             @csrf
                             <input type="file" name="csv_file" accept=".csv" class="border border-gray-300 rounded p-2" required>
                             <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Import CSV</button>
@@ -77,6 +77,53 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById('user-import-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<svg class='animate-spin w-4 h-4 mr-1' fill='none' viewBox='0 0 24 24'><circle class='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' stroke-width='4'></circle><path class='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'></path></svg>Importing...`;
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success || data.status === 'success') {
+                    if (typeof window.toastr !== 'undefined') {
+                        window.toastr.success(data.message || 'Import complete!');
+                    } else {
+                        alert(data.message || 'Import complete!');
+                    }
+                    setTimeout(() => { window.location.reload(); }, 1200);
+                } else {
+                    if (typeof window.toastr !== 'undefined') {
+                        window.toastr.error(data.message || 'Import failed');
+                    } else {
+                        alert('Error: ' + (data.message || 'Import failed'));
+                    }
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            })
+            .catch(error => {
+                if (typeof window.toastr !== 'undefined') {
+                    window.toastr.error('Failed to import users');
+                } else {
+                    alert('Failed to import users');
+                }
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            });
+        });
+    </script>
 </x-app-layout>
 
 

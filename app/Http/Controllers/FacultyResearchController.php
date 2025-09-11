@@ -38,15 +38,11 @@ class FacultyResearchController extends Controller
 
         FacultyResearch::create($data);
 
-        // Check if it's an AJAX request
-        if ($request->expectsJson()) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Faculty research submitted successfully! It is now pending approval.'
-            ]);
-        }
-
-        return redirect()->route('research.history')->with('success', 'Faculty research submitted successfully! It is now pending approval.');
+        // Always return JSON response for success
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Faculty research submitted successfully! It is now pending approval.'
+        ]);
     }
 
     public function show($id)
@@ -59,11 +55,31 @@ class FacultyResearchController extends Controller
         
         $research->incrementViews();
         
-        return view('research.faculty-detail', compact('research'));
+        // Get analytics
+        $viewCount = \App\Models\ResearchAnalytic::getViewCount('faculty', $id);
+        $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('faculty', $id);
+        
+        return view('research.faculty-detail', compact('research', 'viewCount', 'downloadCount'));
     }
 
-    public function download($id)
+    public function showPublic($id)
     {
+        $research = FacultyResearch::with(['user', 'approvedBy'])->where('status', 'approved')->findOrFail($id);
+        
+        $research->incrementViews();
+        
+        // Get analytics
+        $viewCount = \App\Models\ResearchAnalytic::getViewCount('faculty', $id);
+        $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('faculty', $id);
+        
+        return view('research.faculty-detail', compact('research', 'viewCount', 'downloadCount'));
+    }
+
+    public function download(Request $request, $id)
+    {
+        if (auth()->guest()) {
+            return response()->json(['error' => 'You must be logged in to download. Please log in first.'], 401);
+        }
         $research = FacultyResearch::findOrFail($id);
         
         if ($research->status !== 'approved') {
@@ -77,5 +93,17 @@ class FacultyResearchController extends Controller
         }
         
         return response()->download($filePath, 'Faculty_Research_' . $research->id . '.pdf');
+    }
+
+    public function edit($id)
+    {
+        $research = \App\Models\FacultyResearch::findOrFail($id);
+        if (auth()->id() !== $research->user_id) {
+            abort(403, 'Unauthorized');
+        }
+        return view('faculty.upload', [
+            'research' => $research,
+            'editMode' => true
+        ]);
     }
 }
