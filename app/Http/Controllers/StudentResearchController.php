@@ -40,15 +40,11 @@ class StudentResearchController extends Controller
 
         StudentResearch::create($data);
 
-        // Check if it's an AJAX request
-        if ($request->expectsJson()) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Student research submitted successfully! It is now pending approval.'
-            ]);
-        }
-
-        return redirect()->route('research.history')->with('success', 'Student research submitted successfully! It is now pending approval.');
+        // Always return JSON response for success
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Student research submitted successfully! It is now pending approval.'
+        ]);
     }
 
     public function show($id)
@@ -65,6 +61,20 @@ class StudentResearchController extends Controller
         return view('research.student-detail', compact('research', 'viewCount', 'downloadCount'));
     }
 
+    public function showPublic($id)
+    {
+        $research = StudentResearch::with('user')->where('status', 'approved')->findOrFail($id);
+        
+        // Track view (even for non-authenticated users)
+        ResearchAnalytic::trackView('student', $id, request());
+        
+        // Get analytics
+        $viewCount = ResearchAnalytic::getViewCount('student', $id);
+        $downloadCount = ResearchAnalytic::getDownloadCount('student', $id);
+        
+        return view('research.student-detail-public', compact('research', 'viewCount', 'downloadCount'));
+    }
+
     public function downloadSurvey($id)
     {
         $research = StudentResearch::findOrFail($id);
@@ -73,6 +83,9 @@ class StudentResearchController extends Controller
 
     public function download(Request $request, $id)
     {
+        if (auth()->guest()) {
+            return response()->json(['error' => 'You must be logged in to download. Please log in first.'], 401);
+        }
         $research = StudentResearch::findOrFail($id);
         
         if (!$research->research_file) {

@@ -21,7 +21,7 @@
 
                 <!-- Form Content -->
                 <div class="p-8">
-                    <form method="POST" action="{{ route('dissertations.store') }}" enctype="multipart/form-data" class="space-y-6">
+                    <form id="dissertation-upload-form" method="POST" action="{{ route('dissertations.store') }}" enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         
                         <!-- Research Title -->
@@ -235,8 +235,7 @@
                     <label for="citation_${index}" class="text-sm font-medium text-gray-700">Citation ${index + 1}</label>
                     <input type="text" name="citations[]" id="citation_${index}" required
                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                        placeholder="Enter citation details"
-                        value="{{ old('citations.' + index) }}">
+                        placeholder="Enter citation details">
                 </div>
                 <button type="button" onclick="removeCitation(this)" class="mt-3 sm:mt-0 sm:ml-3 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors text-sm">
                     Remove
@@ -249,27 +248,19 @@
             button.closest('div').remove();
         }
 
-        // Add same citation functionality but change research type to 'dissertation'
-        // saveCitations(data.research_id, 'dissertation');
-        
-        // Form submission with fallback notification
-        const form = document.querySelector('form');
-        
-        form.addEventListener('submit', function(e) {
+        // Force AJAX form submission for dissertation upload
+        document.getElementById('dissertation-upload-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            
+            const form = this;
             const submitBtn = form.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
-            
             submitBtn.disabled = true;
             submitBtn.innerHTML = `
                 <svg class="animate-spin w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Submitting...
-            `;
-            
+                Submitting...`;
             fetch(form.action, {
                 method: 'POST',
                 body: new FormData(form),
@@ -281,13 +272,13 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    if (typeof window.showSuccessNotification === 'function') {
-                        window.showSuccessNotification(
-                            'Dissertation submitted successfully! It is now pending approval.',
-                            '{{ route("research.history") }}'
-                        );
+                    if (typeof window.toastr !== 'undefined') {
+                        window.toastr.success(data.message);
+                        setTimeout(() => {
+                            window.location.href = '{{ route("research.history") }}';
+                        }, 1500);
                     } else {
-                        alert('Dissertation submitted successfully! Redirecting to research history...');
+                        alert(data.message + ' Redirecting to research history...');
                         setTimeout(() => {
                             window.location.href = '{{ route("research.history") }}';
                         }, 1000);

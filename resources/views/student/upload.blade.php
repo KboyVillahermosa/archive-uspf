@@ -23,8 +23,7 @@
 
                 <!-- Form Content -->
                 <div class="p-8">
-                    <form method="POST" action="{{ route('student.store') }}" enctype="multipart/form-data"
-                        class="space-y-6">
+                    <form id="student-upload-form" method="POST" action="{{ route('student.store') }}" enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         
                         <!-- Research Title -->
@@ -333,26 +332,19 @@
             location.reload();
         }
 
-        // Form submission with fallback notification
-        const form = document.querySelector('form');
-        
-        form.addEventListener('submit', function(e) {
+        // Force AJAX form submission for student upload
+        document.getElementById('student-upload-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            
+            const form = this;
             const submitBtn = form.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
-            
-            // Disable submit button and show loading state
             submitBtn.disabled = true;
             submitBtn.innerHTML = `
                 <svg class="animate-spin w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Submitting...
-            `;
-            
-            // Submit the form
+                Submitting...`;
             fetch(form.action, {
                 method: 'POST',
                 body: new FormData(form),
@@ -364,15 +356,13 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    // Use fallback notification if function not available
-                    if (typeof window.showSuccessNotification === 'function') {
-                        window.showSuccessNotification(
-                            'Student research submitted successfully! It is now pending approval.',
-                            '{{ route("research.history") }}'
-                        );
+                    if (typeof window.toastr !== 'undefined') {
+                        window.toastr.success(data.message);
+                        setTimeout(() => {
+                            window.location.href = '{{ route("research.history") }}';
+                        }, 1500);
                     } else {
-                        // Fallback notification
-                        alert('Student research submitted successfully! Redirecting to research history...');
+                        alert(data.message + ' Redirecting to research history...');
                         setTimeout(() => {
                             window.location.href = '{{ route("research.history") }}';
                         }, 1000);

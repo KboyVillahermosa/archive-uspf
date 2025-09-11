@@ -185,6 +185,9 @@ class AdminController extends Controller
             'admin_notes' => $request->input('notes', 'Approved by admin')
         ]);
 
+        if ($request->expectsJson()) {
+            return response()->json(['status' => 'success', 'message' => 'Student research approved successfully!']);
+        }
         return redirect()->back()->with('success', 'Student research approved successfully!');
     }
 
@@ -196,6 +199,9 @@ class AdminController extends Controller
             'admin_notes' => $request->notes
         ]);
 
+        if ($request->expectsJson()) {
+            return response()->json(['status' => 'success', 'message' => 'Student research rejected.']);
+        }
         return redirect()->back()->with('success', 'Student research rejected.');
     }
 
@@ -209,6 +215,9 @@ class AdminController extends Controller
             'admin_notes' => $request->input('notes', 'Approved by admin')
         ]);
 
+        if ($request->expectsJson()) {
+            return response()->json(['status' => 'success', 'message' => 'Faculty research approved successfully!']);
+        }
         return redirect()->back()->with('success', 'Faculty research approved successfully!');
     }
 
@@ -220,6 +229,9 @@ class AdminController extends Controller
             'admin_notes' => $request->notes
         ]);
 
+        if ($request->expectsJson()) {
+            return response()->json(['status' => 'success', 'message' => 'Faculty research rejected.']);
+        }
         return redirect()->back()->with('success', 'Faculty research rejected.');
     }
 
@@ -233,6 +245,9 @@ class AdminController extends Controller
             'admin_notes' => $request->input('notes', 'Approved by admin')
         ]);
 
+        if ($request->expectsJson()) {
+            return response()->json(['status' => 'success', 'message' => 'Thesis approved successfully!']);
+        }
         return redirect()->back()->with('success', 'Thesis approved successfully!');
     }
 
@@ -244,6 +259,9 @@ class AdminController extends Controller
             'admin_notes' => $request->notes
         ]);
 
+        if ($request->expectsJson()) {
+            return response()->json(['status' => 'success', 'message' => 'Thesis rejected.']);
+        }
         return redirect()->back()->with('success', 'Thesis rejected.');
     }
 
@@ -257,6 +275,9 @@ class AdminController extends Controller
             'admin_notes' => $request->input('notes', 'Approved by admin')
         ]);
 
+        if ($request->expectsJson()) {
+            return response()->json(['status' => 'success', 'message' => 'Dissertation approved successfully!']);
+        }
         return redirect()->back()->with('success', 'Dissertation approved successfully!');
     }
 
@@ -268,6 +289,9 @@ class AdminController extends Controller
             'admin_notes' => $request->notes
         ]);
 
+        if ($request->expectsJson()) {
+            return response()->json(['status' => 'success', 'message' => 'Dissertation rejected.']);
+        }
         return redirect()->back()->with('success', 'Dissertation rejected.');
     }
 
@@ -313,6 +337,9 @@ class AdminController extends Controller
         $file = $request->file('csv_file');
         $handle = fopen($file->getRealPath(), 'r');
         if ($handle === false) {
+            if ($request->expectsJson()) {
+                return response()->json(['status' => 'error', 'message' => 'Unable to read uploaded file.'], 400);
+            }
             return back()->with('error', 'Unable to read uploaded file.');
         }
 
@@ -324,6 +351,9 @@ class AdminController extends Controller
         foreach ($required as $col) {
             if (!in_array($col, $normalizedHeader, true)) {
                 fclose($handle);
+                if ($request->expectsJson()) {
+                    return response()->json(['status' => 'error', 'message' => 'Invalid CSV headers. Required: name,email,password,role'], 400);
+                }
                 return back()->with('error', 'Invalid CSV headers. Required: name,email,password,role');
             }
         }
@@ -390,6 +420,10 @@ class AdminController extends Controller
         }
         fclose($handle);
 
-        return back()->with('success', "Import complete. Created: $created, Updated: $updated, Skipped: $skipped");
+        $msg = "Import complete. Created: $created, Updated: $updated, Skipped: $skipped";
+        if ($request->expectsJson()) {
+            return response()->json(['status' => 'success', 'message' => $msg]);
+        }
+        return back()->with('success', $msg);
     }
 }

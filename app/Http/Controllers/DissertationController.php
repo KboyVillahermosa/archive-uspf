@@ -34,15 +34,11 @@ class DissertationController extends Controller
 
         Dissertation::create($data);
 
-        // Check if it's an AJAX request
-        if ($request->expectsJson()) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Dissertation submitted successfully! It is now pending approval.'
-            ]);
-        }
-
-        return redirect()->route('research.history')->with('success', 'Dissertation submitted successfully! It is now pending approval.');
+        // Always return JSON response for success
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Dissertation submitted successfully! It is now pending approval.'
+        ]);
     }
 
     public function show($id)
@@ -53,9 +49,26 @@ class DissertationController extends Controller
             abort(404);
         }
         
-        $dissertation->incrementViews();
+        // Track view
+        \App\Models\ResearchAnalytic::trackView('dissertation', $id, request());
+        // Get analytics
+        $viewCount = \App\Models\ResearchAnalytic::getViewCount('dissertation', $id);
+        $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('dissertation', $id);
         
-        return view('research.dissertation-detail', compact('dissertation'));
+        return view('research.dissertation-detail', compact('dissertation', 'viewCount', 'downloadCount'));
+    }
+
+    public function showPublic($id)
+    {
+        $dissertation = Dissertation::with(['user', 'approvedBy'])->where('status', 'approved')->findOrFail($id);
+        
+        // Track view
+        \App\Models\ResearchAnalytic::trackView('dissertation', $id, request());
+        // Get analytics
+        $viewCount = \App\Models\ResearchAnalytic::getViewCount('dissertation', $id);
+        $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('dissertation', $id);
+        
+        return view('research.dissertation-detail', compact('dissertation', 'viewCount', 'downloadCount'));
     }
 
     public function downloadSurvey($id)
@@ -66,6 +79,9 @@ class DissertationController extends Controller
 
     public function download(Request $request, $id)
     {
+        if (auth()->guest()) {
+            return response()->json(['error' => 'You must be logged in to download. Please log in first.'], 401);
+        }
         $dissertation = Dissertation::findOrFail($id);
         
         if ($dissertation->status !== 'approved') {
