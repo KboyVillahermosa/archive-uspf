@@ -14,18 +14,149 @@ use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
-    public function dashboard()
+    public function dashboard(Request $request)
     {
         $pendingStudentResearch = StudentResearch::where('status', 'pending')->count();
         $pendingFacultyResearch = FacultyResearch::where('status', 'pending')->count();
         $pendingThesis = Thesis::where('status', 'pending')->count();
         $pendingDissertations = Dissertation::where('status', 'pending')->count();
 
+        // Line chart month selection via offset
+        $offset = (int) $request->query('offset', 0);
+        if ($offset < 0) { $offset = 0; }
+        $targetMonth = now()->copy()->subMonthsNoOverflow($offset);
+        $startOfMonth = $targetMonth->copy()->startOfMonth();
+        $endOfMonth = $targetMonth->copy()->endOfMonth();
+        $monthName = $targetMonth->format('F Y');
+
+        // Charts data placeholders (filled later if DB facade available)
+        $chartDepartments = [];
+        $chartDepartmentCounts = [];
+        $chartPrograms = [];
+        $chartProgramCounts = [];
+        $chartTopViewed = [];
+        $chartTopDownloaded = [];
+        $chartTopPopular = [];
+        $chartData = [];
+
+        if (class_exists(\Illuminate\Support\Facades\DB::class)) {
+            $deptCounts = collect();
+            $deptCounts = $deptCounts
+                ->merge(StudentResearch::where('status','approved')->select('department', \DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'))
+                ->merge(FacultyResearch::where('status','approved')->select('department', \DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'))
+                ->merge(Thesis::where('status','approved')->select('department', \DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'))
+                ->merge(Dissertation::where('status','approved')->select('department', \DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'));
+
+            $departmentToCount = [];
+            foreach ($deptCounts as $dept => $count) {
+                if (!$dept) continue;
+                $departmentToCount[$dept] = ($departmentToCount[$dept] ?? 0) + (int) $count;
+            }
+            arsort($departmentToCount);
+            $chartDepartments = array_slice(array_keys($departmentToCount), 0, 8);
+            $chartDepartmentCounts = array_map(fn($k) => $departmentToCount[$k], $chartDepartments);
+
+            $programCounts = StudentResearch::where('status','approved')
+                ->select('program', \DB::raw('count(*) as total'))
+                ->groupBy('program')
+                ->orderByDesc('total')
+                ->limit(8)
+                ->get();
+            $chartPrograms = $programCounts->pluck('program')->map(fn($v)=>$v ?: 'Unknown')->toArray();
+            $chartProgramCounts = $programCounts->pluck('total')->toArray();
+
+            $analytics = \DB::table('research_analytics')
+                ->select(
+                    'research_type', 'research_id',
+                    \DB::raw("SUM(CASE WHEN action='view' THEN 1 ELSE 0 END) as views"),
+                    \DB::raw("SUM(CASE WHEN action='download' THEN 1 ELSE 0 END) as downloads")
+                )
+                ->groupBy('research_type','research_id');
+
+            $topViewed = (clone $analytics)->orderByDesc('views')->limit(5)->get();
+            $topDownloaded = (clone $analytics)->orderByDesc('downloads')->limit(5)->get();
+            $topPopular = (clone $analytics)
+                ->select('research_type','research_id',
+                    \DB::raw("SUM(CASE WHEN action='view' THEN 1 ELSE 0 END) as views"),
+                    \DB::raw("SUM(CASE WHEN action='download' THEN 1 ELSE 0 END) as downloads"),
+                    \DB::raw("(SUM(CASE WHEN action='view' THEN 1 ELSE 0 END)*0.7 + SUM(CASE WHEN action='download' THEN 1 ELSE 0 END)*1.0) as score")
+                )
+                ->orderByDesc('score')->limit(5)->get();
+
+            $hydrate = function($rows) {
+                $items = [];
+                foreach ($rows as $r) {
+                    $model = null; $title = null;
+                    if ($r->research_type === 'student') $model = StudentResearch::find($r->research_id);
+                    elseif ($r->research_type === 'faculty') $model = FacultyResearch::find($r->research_id);
+                    elseif ($r->research_type === 'thesis') $model = Thesis::find($r->research_id);
+                    elseif ($r->research_type === 'dissertation') $model = Dissertation::find($r->research_id);
+                    if (!$model) continue;
+                    $title = $model->title;
+                    $items[] = [
+                        'label' => mb_strimwidth($title, 0, 32, '…'),
+                        'views' => (int) ($r->views ?? 0),
+                        'downloads' => (int) ($r->downloads ?? 0),
+                    ];
+                }
+                return $items;
+            };
+
+            $chartTopViewed = $hydrate($topViewed);
+            $chartTopDownloaded = $hydrate($topDownloaded);
+            $chartTopPopular = $hydrate($topPopular);
+
+            // Build daily views for selected month by research type
+            $daily = \DB::table('research_analytics')
+                ->select(
+                    \DB::raw('DATE(created_at) as day'),
+                    'research_type',
+                    \DB::raw("SUM(CASE WHEN action='view' THEN 1 ELSE 0 END) as views")
+                )
+                ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+                ->groupBy(\DB::raw('DATE(created_at)'), 'research_type')
+                ->orderBy('day')
+                ->get();
+
+            // Initialize each day
+            $days = [];
+            $cursor = $startOfMonth->copy();
+            while ($cursor->lte($endOfMonth)) {
+                $days[$cursor->toDateString()] = [
+                    'day' => $cursor->format('M d'),
+                    'student' => 0,
+                    'faculty' => 0,
+                    'thesis' => 0,
+                    'dissertation' => 0,
+                ];
+                $cursor->addDay();
+            }
+
+            foreach ($daily as $row) {
+                $key = (string) $row->day;
+                if (!isset($days[$key])) continue;
+                $type = $row->research_type;
+                if (!in_array($type, ['student','faculty','thesis','dissertation'], true)) continue;
+                $days[$key][$type] = (int) $row->views;
+            }
+            $chartData = array_values($days);
+        }
+
         return view('admin.dashboard', compact(
             'pendingStudentResearch',
             'pendingFacultyResearch',
             'pendingThesis',
-            'pendingDissertations'
+            'pendingDissertations',
+            'monthName',
+            'offset',
+            'chartData',
+            'chartDepartments',
+            'chartDepartmentCounts',
+            'chartPrograms',
+            'chartProgramCounts',
+            'chartTopViewed',
+            'chartTopDownloaded',
+            'chartTopPopular'
         ));
     }
 
