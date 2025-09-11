@@ -13,10 +13,10 @@
     <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                <!-- Purple Header -->
-                <div class="bg-purple-600 px-8 py-6">
+                <!-- Navy Blue Header -->
+                <div class="bg-[#26225C] px-8 py-6">
                     <h1 class="text-white text-xl font-semibold">Submit Your Research Project</h1>
-                    <p class="text-purple-100 text-sm mt-1">Complete all fields for proper documentation and classification</p>
+                    <p class="text-blue-100 text-sm mt-1">Complete all fields for proper documentation and classification</p>
                 </div>
 
                 <!-- Form Content -->
@@ -27,15 +27,15 @@
                         <!-- Research Title -->
                         <div class="space-y-2">
                             <label for="title" class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
                                 Research Title *
                             </label>
                             <input type="text" name="title" id="title" required 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
                                 placeholder="Enter the full title of your research"
-                                value="{{ old('title') }}">
+                                value="{{ isset($editMode) && $editMode && isset($research) ? $research->title : old('title') }}">
                             @error('title') 
                                 <p class="text-red-600 text-sm">{{ $message }}</p>
                             @enderror
@@ -44,15 +44,15 @@
                         <!-- Co-Researchers -->
                         <div class="space-y-2">
                             <label for="co_researchers" class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
                                 </svg>
                                 Authors *
                             </label>
                             <input type="text" name="co_researchers" id="co_researchers" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
                                 placeholder="Enter all faculty researchers (comma separated)"
-                                value="{{ old('co_researchers') }}">
+                                value="{{ isset($editMode) && $editMode && isset($research) ? $research->co_researchers : old('co_researchers') }}">
                             <p class="text-xs text-gray-500">Example: Dr. John Doe, Prof. Jane Smith, Dr. Alex Johnson</p>
                             @error('co_researchers') 
                                 <p class="text-red-600 text-sm">{{ $message }}</p>
@@ -62,7 +62,7 @@
                         <!-- Department -->
                         <div class="space-y-2">
                             <label for="department" class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                                 </svg>
                                 Department *
@@ -70,13 +70,13 @@
                            <select name="department" id="department" required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     <option value="">Select Department</option>
-                                    <option value="College of Engineering and Architecture" {{ old('department') == 'College of Engineering and Architecture' ? 'selected' : '' }}>College of Engineering and Architecture</option>
-                                    <option value="College of Computer Studies" {{ old('department') == 'College of Computer Studies' ? 'selected' : '' }}>College of Computer Studies</option>
-                                    <option value="College of Health Sciences" {{ old('department') == 'College of Health Sciences' ? 'selected' : '' }}>College of Health Sciences</option>
-                                    <option value="College of Social Work" {{ old('department') == 'College of Social Work' ? 'selected' : '' }}>College of Social Work</option>
-                                    <option value="College of Teacher Education, Arts and Sciences" {{ old('department') == 'College of Teacher Education, Arts and Sciences' ? 'selected' : '' }}>College of Teacher Education, Arts and Sciences</option>
-                                    <option value="School of Business and Accountancy" {{ old('department') == 'School of Business and Accountancy' ? 'selected' : '' }}>School of Business and Accountancy</option>
-                                    <option value="Graduate School" {{ old('department') == 'Graduate School' ? 'selected' : '' }}>Graduate School</option>
+                                    <option value="College of Engineering and Architecture" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Engineering and Architecture') ? 'selected' : (old('department') == 'College of Engineering and Architecture' ? 'selected' : '') }}>College of Engineering and Architecture</option>
+                                    <option value="College of Computer Studies" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Computer Studies') ? 'selected' : (old('department') == 'College of Computer Studies' ? 'selected' : '') }}>College of Computer Studies</option>
+                                    <option value="College of Health Sciences" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Health Sciences') ? 'selected' : (old('department') == 'College of Health Sciences' ? 'selected' : '') }}>College of Health Sciences</option>
+                                    <option value="College of Social Work" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Social Work') ? 'selected' : (old('department') == 'College of Social Work' ? 'selected' : '') }}>College of Social Work</option>
+                                    <option value="College of Teacher Education, Arts and Sciences" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Teacher Education, Arts and Sciences') ? 'selected' : (old('department') == 'College of Teacher Education, Arts and Sciences' ? 'selected' : '') }}>College of Teacher Education, Arts and Sciences</option>
+                                    <option value="School of Business and Accountancy" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'School of Business and Accountancy') ? 'selected' : (old('department') == 'School of Business and Accountancy' ? 'selected' : '') }}>School of Business and Accountancy</option>
+                                    <option value="Graduate School" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'Graduate School') ? 'selected' : (old('department') == 'Graduate School' ? 'selected' : '') }}>Graduate School</option>
                                 </select>
                             @error('department') 
                                 <p class="text-red-600 text-sm">{{ $message }}</p>
@@ -86,14 +86,14 @@
                         <!-- Abstract -->
                         <div class="space-y-2">
                             <label for="abstract" class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
                                 Abstract *
                             </label>
                             <textarea name="abstract" id="abstract" rows="6" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none"
-                                placeholder="Provide a comprehensive summary of your faculty research (300-400 words recommended)">{{ old('abstract') }}</textarea>
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C] resize-none"
+                                placeholder="Provide a comprehensive summary of your faculty research (300-400 words recommended)">{{ isset($editMode) && $editMode && isset($research) ? $research->abstract : old('abstract') }}</textarea>
                             @error('abstract') 
                                 <p class="text-red-600 text-sm">{{ $message }}</p>
                             @enderror
@@ -103,15 +103,15 @@
                         <!-- Keywords -->
                         <div class="space-y-2">
                             <label for="tags" class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
                                 </svg>
                                 Research Keywords (Optional)
                             </label>
                             <input type="text" name="tags" id="tags"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
                                 placeholder="Enter keywords separated by commas"
-                                value="{{ old('tags') }}">
+                                value="{{ isset($editMode) && $editMode && isset($research) ? $research->tags : old('tags') }}">
                         </div>
 
                       <!-- Banner Image Upload -->
@@ -141,7 +141,7 @@
                         <!-- Research File Upload -->
                         <div class="space-y-2">
                             <label class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
                                 Research File *
@@ -169,7 +169,7 @@
                         <div class="space-y-4 border-t pt-6">
                             <div class="flex items-center justify-between">
                                 <h3 class="text-lg font-medium text-gray-900">Research Citations (Optional)</h3>
-                                <button type="button" id="add-citation-btn" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors text-sm">
+                                <button type="button" id="add-citation-btn" class="bg-[#FFC72C] text-[#26225C] px-4 py-2 rounded-md hover:bg-[#FFD700] transition-colors text-sm">
                                     Add Citation
                                 </button>
                             </div>
@@ -182,7 +182,7 @@
 
                         <!-- Submit Button -->
                         <div class="pt-6">
-                            <button type="submit" class="w-full bg-purple-600 text-white py-3 px-4 rounded-md hover:bg-purple-700 transition-colors font-medium flex items-center justify-center">
+                            <button type="submit" class="w-full bg-[#FFC72C] text-[#26225C] py-3 px-4 rounded-md hover:bg-[#FFD700] transition-colors font-medium flex items-center justify-center">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                                 </svg>
@@ -319,7 +319,7 @@
             const citationHtml = `
                 <div class="flex items-center space-x-4" id="citation-${index}">
                     <input type="text" name="citations[]" required
-                        class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
                         placeholder="Enter citation (e.g., Doe, J. (2020). Title of the research. Journal Name, Volume(Issue), Page range.)">
                     <button type="button" onclick="removeCitation(${index})" class="text-red-600 hover:text-red-500">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -59,6 +59,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/research/faculty/{id}/private', [FacultyResearchController::class, 'show'])->name('faculty.show');
     Route::get('/research/thesis/{id}/private', [ThesisController::class, 'show'])->name('thesis.show');
     Route::get('/research/dissertation/{id}/private', [DissertationController::class, 'show'])->name('dissertation.show');
+
+    // Research edit routes for pending submissions
+    Route::get('/student/{id}/edit', [StudentResearchController::class, 'edit'])->name('student.edit');
+    Route::get('/faculty/{id}/edit', [FacultyResearchController::class, 'edit'])->name('faculty.edit');
+    Route::get('/thesis/{id}/edit', [ThesisController::class, 'edit'])->name('thesis.edit');
+    Route::get('/dissertation/{id}/edit', [DissertationController::class, 'edit'])->name('dissertation.edit');
     
     // Direct file download routes (after survey)
     Route::get('/download-file/student/{id}', [StudentResearchController::class, 'downloadFile'])->name('student.download.file');

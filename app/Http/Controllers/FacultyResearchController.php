@@ -94,4 +94,16 @@ class FacultyResearchController extends Controller
         
         return response()->download($filePath, 'Faculty_Research_' . $research->id . '.pdf');
     }
+
+    public function edit($id)
+    {
+        $research = \App\Models\FacultyResearch::findOrFail($id);
+        if (auth()->id() !== $research->user_id) {
+            abort(403, 'Unauthorized');
+        }
+        return view('faculty.upload', [
+            'research' => $research,
+            'editMode' => true
+        ]);
+    }
 }

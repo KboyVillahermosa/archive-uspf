@@ -117,4 +117,17 @@ class DissertationController extends Controller
         $filePath = storage_path('app/public/' . $dissertation->document_file);
         return response()->download($filePath, ($dissertation->title ?: 'Dissertation_' . $dissertation->id) . '.pdf');
     }
+
+    public function edit($id)
+    {
+        $dissertation = \App\Models\Dissertation::findOrFail($id);
+        // Optional: Only allow the owner to edit
+        if (auth()->id() !== $dissertation->user_id) {
+            abort(403, 'Unauthorized');
+        }
+        return view('dissertations.upload', [
+            'dissertation' => $dissertation,
+            'editMode' => true
+        ]);
+    }
 }

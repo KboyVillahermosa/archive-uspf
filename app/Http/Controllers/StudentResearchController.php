@@ -129,4 +129,16 @@ class StudentResearchController extends Controller
         
         return response()->download($filePath, $research->title . '.pdf');
     }
+
+    public function edit($id)
+    {
+        $research = \App\Models\StudentResearch::findOrFail($id);
+        if (auth()->id() !== $research->user_id) {
+            abort(403, 'Unauthorized');
+        }
+        return view('student.upload', [
+            'research' => $research,
+            'editMode' => true
+        ]);
+    }
 }

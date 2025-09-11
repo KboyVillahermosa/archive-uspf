@@ -8,10 +8,10 @@
                 <p class="text-sm text-gray-600 mt-1">Track the status of your submitted research projects</p>
             </div>
             <div class="flex space-x-2">
-                <a href="{{ route('student.upload') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                <a href="{{ route('student.upload') }}" class="bg-[#FFC72C] hover:bg-[#FFD700] text-[#26225C] px-4 py-2 rounded-md text-sm font-medium transition-colors">
                     Submit Student Research
                 </a>
-                <a href="{{ route('faculty.upload') }}" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                <a href="{{ route('faculty.upload') }}" class="bg-[#FFC72C] hover:bg-[#FFD700] text-[#26225C] px-4 py-2 rounded-md text-sm font-medium transition-colors">
                     Submit Faculty Research
                 </a>
             </div>
@@ -205,10 +205,10 @@
                         <h3 class="mt-2 text-sm font-medium text-gray-900">No research submitted</h3>
                         <p class="mt-1 text-sm text-gray-500">Get started by submitting your first research project.</p>
                         <div class="mt-6 flex justify-center space-x-3">
-                            <a href="{{ route('student.upload') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                            <a href="{{ route('student.upload') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-[#26225C] bg-[#FFC72C] hover:bg-[#FFD700]">
                                 Submit Student Research
                             </a>
-                            <a href="{{ route('faculty.upload') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700">
+                            <a href="{{ route('faculty.upload') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-[#26225C] bg-[#FFC72C] hover:bg-[#FFD700]">
                                 Submit Faculty Research
                             </a>
                         </div>
@@ -237,28 +237,42 @@
 
     <script>
         function navigateToResearch(type, id, status) {
-            // Only navigate if the research is approved
+            // Navigate to edit page if pending, show if approved, else show warning
+            const routes = {
+                'student': {
+                    show: '{{ route("student.show", ":id") }}',
+                    edit: '{{ route("student.edit", ":id") }}'
+                },
+                'faculty': {
+                    show: '{{ route("faculty.show", ":id") }}',
+                    edit: '{{ route("faculty.edit", ":id") }}'
+                },
+                'thesis': {
+                    show: '{{ route("thesis.show", ":id") }}',
+                    edit: '{{ route("thesis.edit", ":id") }}'
+                },
+                'dissertation': {
+                    show: '{{ route("dissertation.show", ":id") }}',
+                    edit: '{{ route("dissertation.edit", ":id") }}'
+                }
+            };
+
             if (status === 'approved') {
-                const routes = {
-                    'student': '{{ route("student.show", ":id") }}',
-                    'faculty': '{{ route("faculty.show", ":id") }}',
-                    'thesis': '{{ route("thesis.show", ":id") }}',
-                    'dissertation': '{{ route("dissertation.show", ":id") }}'
-                };
-                
                 if (routes[type]) {
-                    const url = routes[type].replace(':id', id);
+                    const url = routes[type].show.replace(':id', id);
+                    window.location.href = url;
+                }
+            } else if (status === 'pending') {
+                if (routes[type]) {
+                    const url = routes[type].edit.replace(':id', id);
                     window.location.href = url;
                 }
             } else {
                 // Show a message for non-approved research using the consistent notification system
                 let message = '';
-                if (status === 'pending') {
-                    message = 'This research is still pending approval and cannot be viewed yet.';
-                } else if (status === 'rejected') {
+                if (status === 'rejected') {
                     message = 'This research has been rejected and cannot be viewed.';
                 }
-                
                 showWarningNotification(message);
             }
         }

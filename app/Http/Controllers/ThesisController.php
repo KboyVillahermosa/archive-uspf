@@ -117,4 +117,16 @@ class ThesisController extends Controller
         $filePath = storage_path('app/public/' . $thesis->document_file);
         return response()->download($filePath, ($thesis->title ?: 'Thesis_' . $thesis->id) . '.pdf');
     }
+
+    public function edit($id)
+    {
+        $thesis = \App\Models\Thesis::findOrFail($id);
+        if (auth()->id() !== $thesis->user_id) {
+            abort(403, 'Unauthorized');
+        }
+        return view('thesis.upload', [
+            'thesis' => $thesis,
+            'editMode' => true
+        ]);
+    }
 }
