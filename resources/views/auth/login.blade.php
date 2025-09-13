@@ -2,17 +2,17 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <div class="flex flex-col md:flex-row justify-center items-center min-h-full min-w-[50rem] w-[50rem] mx-auto border rounded-lg shadow-lg overflow-hidden">
+    <div class="flex flex-col md:flex-row justify-center items-center min-h-full w-[50rem] max-w-[50rem] mx-auto border rounded-lg shadow-lg overflow-hidden">
         
         <!-- Left Panel (Form) -->
-        <div class="flex flex-col justify-center items-center h-[27rem] w-full md:w-1/2 px-6 py-4 bg-white">
-            <form method="POST" action="{{ route('login') }}" class="w-full md:w-4/5 mx-auto">
+        <div class="flex flex-col justify-center items-center h-auto md:h-[27rem] w-full md:w-1/2 px-6 py-8 bg-white">
+            <form method="POST" action="{{ route('login') }}" class="w-full max-w-md mx-auto">
                 @csrf
 
                 <!-- Logo & Title -->
-                <div class="text-center mb-4">
+                <div class="text-center mb-6">
                     <img src="{{ asset('/images/logo.png') }}" alt="Logo" class="w-20 h-20 mx-auto">
-                    <h1 class="text-2xl font-bold text-gray-900 mt-2">Welcome to USPF Research Archive</h1>
+                    <h1 class="text-xl md:text-2xl font-bold text-gray-900 mt-2">Welcome to USPF Research Archive</h1>
                 </div>
 
                 <!-- Email Address -->
@@ -46,7 +46,7 @@
                 </div>
 
                 <!-- Remember Me & Login Button -->
-                <div class="flex items-center justify-between mt-4">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mt-6">
                     <label for="remember_me" class="inline-flex items-center">
                         <input 
                             id="remember_me" 
@@ -57,7 +57,7 @@
                         <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
                     </label>
 
-                    <x-primary-button class="bg-[#1677FF] hover:bg-[#4096FF] text-white font-semibold py-2 px-6 rounded-md transition duration-200 ease-in-out">
+                    <x-primary-button class="bg-[#1677FF] hover:bg-[#4096FF] text-white font-semibold py-2 px-6 rounded-md transition duration-200 ease-in-out w-full sm:w-auto text-center flex justify-center items-center">
                         {{ __('Log in') }}
                     </x-primary-button>
                 </div>
@@ -75,7 +75,7 @@
         </div>
         
         <!-- Right Panel (Image) -->
-        <div class="flex items-center justify-center w-full md:w-1/2 h-[27rem]" 
+        <div class="hidden md:flex items-center justify-center w-full md:w-1/2 h-[27rem]" 
              style="background: linear-gradient(0deg, rgba(0,132,255,1) 0%, rgba(0,238,255,1) 100%)">
             <img src="{{ asset('/images/isometric.png') }}" alt="Login Illustration" class="w-full h-full object-contain">
         </div>
