@@ -10,184 +10,188 @@
         </div>
     </x-slot>
 
-    <div class="py-12 bg-gray-50 min-h-screen">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+    <div class="bg-gray-50 min-h-screen">
+        <div class="max-w-full max-h-screen mx-auto">
             <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                <!-- Navy Blue Header -->
-                <div class="bg-[#26225C] px-8 py-6">
-                    <h1 class="text-white text-xl font-semibold">Submit Your Research Project</h1>
-                    <p class="text-blue-100 text-sm mt-1">Complete all fields for proper documentation and classification</p>
-                </div>
-
                 <!-- Form Content -->
-                <div class="p-8">
+                <div class="px-6 pb-6">
                     <form id="faculty-upload-form" method="POST" action="{{ route('faculty.store') }}" enctype="multipart/form-data" class="space-y-6">
                         @csrf
-                        
-                        <!-- Research Title -->
-                        <div class="space-y-2">
-                            <label for="title" class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                Research Title *
-                            </label>
-                            <input type="text" name="title" id="title" required 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
-                                placeholder="Enter the full title of your research"
-                                value="{{ isset($editMode) && $editMode && isset($research) ? $research->title : old('title') }}">
-                            @error('title') 
-                                <p class="text-red-600 text-sm">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Co-Researchers -->
-                        <div class="space-y-2">
-                            <label for="co_researchers" class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                                </svg>
-                                Authors *
-                            </label>
-                            <input type="text" name="co_researchers" id="co_researchers" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
-                                placeholder="Enter all faculty researchers (comma separated)"
-                                value="{{ isset($editMode) && $editMode && isset($research) ? $research->co_researchers : old('co_researchers') }}">
-                            <p class="text-xs text-gray-500">Example: Dr. John Doe, Prof. Jane Smith, Dr. Alex Johnson</p>
-                            @error('co_researchers') 
-                                <p class="text-red-600 text-sm">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Department -->
-                        <div class="space-y-2">
-                            <label for="department" class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                </svg>
-                                Department *
-                            </label>
-                           <select name="department" id="department" required
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">Select Department</option>
-                                    <option value="College of Engineering and Architecture" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Engineering and Architecture') ? 'selected' : (old('department') == 'College of Engineering and Architecture' ? 'selected' : '') }}>College of Engineering and Architecture</option>
-                                    <option value="College of Computer Studies" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Computer Studies') ? 'selected' : (old('department') == 'College of Computer Studies' ? 'selected' : '') }}>College of Computer Studies</option>
-                                    <option value="College of Health Sciences" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Health Sciences') ? 'selected' : (old('department') == 'College of Health Sciences' ? 'selected' : '') }}>College of Health Sciences</option>
-                                    <option value="College of Social Work" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Social Work') ? 'selected' : (old('department') == 'College of Social Work' ? 'selected' : '') }}>College of Social Work</option>
-                                    <option value="College of Teacher Education, Arts and Sciences" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Teacher Education, Arts and Sciences') ? 'selected' : (old('department') == 'College of Teacher Education, Arts and Sciences' ? 'selected' : '') }}>College of Teacher Education, Arts and Sciences</option>
-                                    <option value="School of Business and Accountancy" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'School of Business and Accountancy') ? 'selected' : (old('department') == 'School of Business and Accountancy' ? 'selected' : '') }}>School of Business and Accountancy</option>
-                                    <option value="Graduate School" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'Graduate School') ? 'selected' : (old('department') == 'Graduate School' ? 'selected' : '') }}>Graduate School</option>
-                                </select>
-                            @error('department') 
-                                <p class="text-red-600 text-sm">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Abstract -->
-                        <div class="space-y-2">
-                            <label for="abstract" class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                Abstract *
-                            </label>
-                            <textarea name="abstract" id="abstract" rows="6" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C] resize-none"
-                                placeholder="Provide a comprehensive summary of your faculty research (300-400 words recommended)">{{ isset($editMode) && $editMode && isset($research) ? $research->abstract : old('abstract') }}</textarea>
-                            @error('abstract') 
-                                <p class="text-red-600 text-sm">{{ $message }}</p>
-                            @enderror
-                            <p id="abstract-count" class="text-xs text-gray-500 mt-1">0 words</p>
-                        </div>
-
-                        <!-- Keywords -->
-                        <div class="space-y-2">
-                            <label for="tags" class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                                </svg>
-                                Research Keywords (Optional)
-                            </label>
-                            <input type="text" name="tags" id="tags"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
-                                placeholder="Enter keywords separated by commas"
-                                value="{{ isset($editMode) && $editMode && isset($research) ? $research->tags : old('tags') }}">
-                        </div>
-
-                      <!-- Banner Image Upload -->
-                        <div class="space-y-2">
-                            <label class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                    </path>
-                                </svg>
-                                Banner Image
-                            </label>
-                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center bg-gray-50 hover:bg-gray-100 transition-colors">
-                                <input type="file" name="banner_image" id="banner_image" accept="image/*" class="hidden">
-                                <label for="banner_image" class="cursor-pointer">
-                                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 48 48">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" />
-                                    </svg>
-                                    <p class="mt-2 text-sm text-gray-600">
-                                        <span class="font-medium text-blue-600 hover:text-blue-500">Drag & Drop an image here or click to browse</span>
-                                    </p>
-                                    <p class="text-xs text-gray-500">Recommended: 1200 x 400px (3:1 ratio)</p>
-                                </label>
-                            </div>
-                        </div>
-                        <!-- Research File Upload -->
-                        <div class="space-y-2">
-                            <label class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                Research File *
-                            </label>
-                            <div id="research_file_container" class="border-2 border-dashed border-purple-300 rounded-lg p-8 text-center bg-purple-50 hover:bg-purple-100 transition-colors">
-                                <input type="file" name="research_file" id="research_file" accept=".pdf,.doc,.docx" required class="hidden">
-                                <label for="research_file" class="cursor-pointer">
-                                    <div id="research_file_content">
-                                        <svg class="mx-auto h-16 w-16 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 48 48">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        <div class="max-h-screen flex flex-vertical justify-between">
+                            <!-- Left Column -->
+                            <div class="h-full space-y-6 mr-6 flex-1">
+                                <!-- Research Title -->
+                                <div class="space-y-2">
+                                    <label for="title" class="flex items-center text-sm font-medium text-gray-700">
+                                        <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
-                                        <p class="mt-4 text-lg text-gray-700">
-                                            <span class="font-medium text-purple-600 hover:text-purple-500">Drag & Drop your file here or click to browse</span>
-                                        </p>
-                                        <p class="text-sm text-gray-500 mt-2">Accepted formats: PDF, DOC, DOCX</p>
-                                    </div>
-                                </label>
+                                        Research Title *
+                                    </label>
+                                    <input type="text" name="title" id="title" required 
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
+                                        placeholder="Enter the full title of your research"
+                                        value="{{ isset($editMode) && $editMode && isset($research) ? $research->title : old('title') }}">
+                                    @error('title') 
+                                        <p class="text-red-600 text-sm">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Co-Researchers -->
+                                <div class="space-y-2">
+                                    <label for="co_researchers" class="flex items-center text-sm font-medium text-gray-700">
+                                        <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                        </svg>
+                                        Authors *
+                                    </label>
+                                    <input type="text" name="co_researchers" id="co_researchers" required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
+                                        placeholder="Enter all faculty researchers (comma separated)"
+                                        value="{{ isset($editMode) && $editMode && isset($research) ? $research->co_researchers : old('co_researchers') }}">
+                                    <p class="text-xs text-gray-500">Example: Dr. John Doe, Prof. Jane Smith, Dr. Alex Johnson</p>
+                                    @error('co_researchers') 
+                                        <p class="text-red-600 text-sm">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Department -->
+                                <div class="space-y-2">
+                                    <label for="department" class="flex items-center text-sm font-medium text-gray-700">
+                                        <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                        </svg>
+                                        Department *
+                                    </label>
+                                <select name="department" id="department" required
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="">Select Department</option>
+                                            <option value="College of Engineering and Architecture" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Engineering and Architecture') ? 'selected' : (old('department') == 'College of Engineering and Architecture' ? 'selected' : '') }}>College of Engineering and Architecture</option>
+                                            <option value="College of Computer Studies" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Computer Studies') ? 'selected' : (old('department') == 'College of Computer Studies' ? 'selected' : '') }}>College of Computer Studies</option>
+                                            <option value="College of Health Sciences" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Health Sciences') ? 'selected' : (old('department') == 'College of Health Sciences' ? 'selected' : '') }}>College of Health Sciences</option>
+                                            <option value="College of Social Work" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Social Work') ? 'selected' : (old('department') == 'College of Social Work' ? 'selected' : '') }}>College of Social Work</option>
+                                            <option value="College of Teacher Education, Arts and Sciences" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Teacher Education, Arts and Sciences') ? 'selected' : (old('department') == 'College of Teacher Education, Arts and Sciences' ? 'selected' : '') }}>College of Teacher Education, Arts and Sciences</option>
+                                            <option value="School of Business and Accountancy" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'School of Business and Accountancy') ? 'selected' : (old('department') == 'School of Business and Accountancy' ? 'selected' : '') }}>School of Business and Accountancy</option>
+                                            <option value="Graduate School" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'Graduate School') ? 'selected' : (old('department') == 'Graduate School' ? 'selected' : '') }}>Graduate School</option>
+                                        </select>
+                                    @error('department') 
+                                        <p class="text-red-600 text-sm">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Abstract -->
+                                <div class="space-y-2">
+                                    <label for="abstract" class="flex items-center text-sm font-medium text-gray-700">
+                                        <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        Abstract *
+                                    </label>
+                                    <textarea name="abstract" id="abstract" rows="6" required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C] resize-none"
+                                        placeholder="Provide a comprehensive summary of your faculty research (300-400 words recommended)">{{ isset($editMode) && $editMode && isset($research) ? $research->abstract : old('abstract') }}</textarea>
+                                    @error('abstract') 
+                                        <p class="text-red-600 text-sm">{{ $message }}</p>
+                                    @enderror
+                                    <p id="abstract-count" class="text-xs text-gray-500 mt-1">0 words</p>
+                                </div>
+
+                                <!-- Keywords -->
+                                <div class="space-y-2">
+                                    <label for="tags" class="flex items-center text-sm font-medium text-gray-700">
+                                        <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                        </svg>
+                                        Research Keywords (Optional)
+                                    </label>
+                                    <input type="text" name="tags" id="tags"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
+                                        placeholder="Enter keywords separated by commas"
+                                        value="{{ isset($editMode) && $editMode && isset($research) ? $research->tags : old('tags') }}">
+                                </div>
                             </div>
-                            @error('research_file') 
-                                <p class="text-red-600 text-sm">{{ $message }}</p>
-                            @enderror
+
+                            <!-- Right Column -->
+                            <div>
+                                <!-- Banner Image Upload -->
+                                <div class="space-y-2">
+                                    <label class="flex items-center text-sm font-medium text-gray-700">
+                                        <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                            </path>
+                                        </svg>
+                                        Banner Image
+                                    </label>
+                                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center bg-gray-50 hover:bg-gray-100 transition-colors">
+                                        <input type="file" name="banner_image" id="banner_image" accept="image/*" class="hidden">
+                                        <label for="banner_image" class="cursor-pointer">
+                                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 48 48">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" />
+                                            </svg>
+                                            <p class="mt-2 text-sm text-gray-600">
+                                                <span class="font-medium text-blue-600 hover:text-blue-500">Drag & Drop an image here or click to browse</span>
+                                            </p>
+                                            <p class="text-xs text-gray-500">Recommended: 1200 x 400px (3:1 ratio)</p>
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- Research File Upload -->
+                                <div class="space-y-2 mt-4">
+                                    <label class="flex items-center text-sm font-medium text-gray-700">
+                                        <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        Research File *
+                                    </label>
+                                    <div id="research_file_container" class="border-2 border-dashed border-purple-300 rounded-lg p-8 text-center bg-purple-50 hover:bg-purple-100 transition-colors">
+                                        <input type="file" name="research_file" id="research_file" accept=".pdf,.doc,.docx" required class="hidden">
+                                        <label for="research_file" class="cursor-pointer">
+                                            <div id="research_file_content">
+                                                <svg class="mx-auto h-16 w-16 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 48 48">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                <p class="mt-4 text-lg text-gray-700">
+                                                    <span class="font-medium text-purple-600 hover:text-purple-500">Drag & Drop your file here or click to browse</span>
+                                                </p>
+                                                <p class="text-sm text-gray-500 mt-2">Accepted formats: PDF, DOC, DOCX</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    @error('research_file') 
+                                        <p class="text-red-600 text-sm">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Research Citations Section -->
+                                <div class="space-y-4 border-t pt-6">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="text-lg font-medium text-gray-900">Research Citations (Optional)</h3>
+                                        <button type="button" id="add-citation-btn" class="bg-[#FFC72C] text-[#26225C] px-4 py-2 rounded-md hover:bg-[#FFD700] transition-colors text-sm">
+                                            Add Citation
+                                        </button>
+                                    </div>
+                                    <p class="text-sm text-gray-500">Tag research works that you've referenced in your project</p>
+                                    
+                                    <div id="citations-container" class="space-y-3">
+                                        <!-- Citations will be added here dynamically -->
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Research Citations Section -->
-                        <div class="space-y-4 border-t pt-6">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-medium text-gray-900">Research Citations (Optional)</h3>
-                                <button type="button" id="add-citation-btn" class="bg-[#FFC72C] text-[#26225C] px-4 py-2 rounded-md hover:bg-[#FFD700] transition-colors text-sm">
-                                    Add Citation
+                        <!-- button -->
+                        <div>
+                            <!-- Submit Button -->
+                            <div class="pt-6">
+                                <button type="submit" class="w-full bg-[#FFC72C] text-[#26225C] py-3 px-4 rounded-md hover:bg-[#FFD700] transition-colors font-medium flex items-center justify-center">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                    </svg>
+                                    Submit Research Project
                                 </button>
                             </div>
-                            <p class="text-sm text-gray-500">Tag research works that you've referenced in your project</p>
-                            
-                            <div id="citations-container" class="space-y-3">
-                                <!-- Citations will be added here dynamically -->
-                            </div>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="pt-6">
-                            <button type="submit" class="w-full bg-[#FFC72C] text-[#26225C] py-3 px-4 rounded-md hover:bg-[#FFD700] transition-colors font-medium flex items-center justify-center">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                                </svg>
-                                Submit Research Project
-                            </button>
                         </div>
                     </form>
                 </div>

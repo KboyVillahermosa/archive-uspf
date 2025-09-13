@@ -13,16 +13,16 @@
 
     <div class="bg-gray-50 min-h-screen">
         <div class="max-w-full max-h-screen mx-auto">
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden max-h-screen">
+            <div class="bg-white rounded-lg shadow-lg overflow-y-auto max-h-full">
                 <!-- Form Content -->
                 <div class="px-6 pb-6">
                     <form id="student-upload-form" method="POST" action="{{ route('student.store') }}" enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         <div class="max-h-screen flex flex-vertical justify-between">
                             <!-- Left Column -->
-                            <div>
+                            <div class="h-full space-y-6 mr-6 flex-1">
                                 <!-- Research Title -->
-                                <div class="space-y-2 mb-4">
+                                <div class="space-y-2">
                                     <label for="title" class="flex items-center text-sm font-medium text-gray-700">
                                         <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
