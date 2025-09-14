@@ -1,33 +1,43 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <div>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    {{ __('Submit Student Research') }}
-                </h2>
-                <p class="text-sm text-gray-600 mt-1">Share your undergraduate research project with the academic community
-                </p>
+        <div class="flex flex-col items-center justify-center py-6 bg-gradient-to-r from-[#26225C] to-[#3a3770] relative border-b-4 border-[#FFC72C]">
+            <div class="flex flex-col items-center">
+                <div class="h-20 w-20 mb-2 rounded-full shadow-lg border-4 border-[#FFC72C] bg-white flex items-center justify-center overflow-hidden">
+                    <img src="/images/uspf-logo.png" alt="USPF Logo" class="h-16 w-16 object-contain" onerror="this.style.display='none'">
+                </div>
+                <h2 class="font-extrabold text-2xl md:text-3xl text-white tracking-wide">Submit Student Research</h2>
+                <p class="text-blue-100 text-sm mt-1">Share your undergraduate research project with the academic community</p>
             </div>
+            <span class="absolute right-6 top-6 text-xs text-blue-200 font-semibold">Academic Year {{ date('Y') }}</span>
         </div>
     </x-slot>
 
-    <div class="py-12 bg-gray-50 min-h-screen">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                <!-- Navy Blue Header -->
-                <div class="bg-[#26225C] px-8 py-6">
-                    <h1 class="text-white text-xl font-semibold">Submit Your Research Project</h1>
-                    <p class="text-blue-100 text-sm mt-1">Complete all fields for proper documentation and classification
-                    </p>
+    <div class="py-6 bg-gray-50 min-h-screen bg-[url('/images/pattern-light.svg')] bg-top bg-repeat-x">
+        <div class="w-full flex justify-center">
+            <div class="w-full max-w-3xl bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200 mx-2">
+                <!-- Progress Bar -->
+                <div class="w-full h-2 bg-gray-200">
+                    <div class="h-2 bg-[#FFC72C] rounded-r-full transition-all duration-500" style="width: 100%"></div>
+                </div>
+                <!-- Hero Section -->
+                <div class="flex items-center gap-4 px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#26225C] to-[#3a3770]">
+                    <div class="h-12 w-12 flex items-center justify-center rounded-lg bg-white/90 border-2 border-[#FFC72C] overflow-hidden">
+                        <img src="/images/research-hero.svg" alt="Research" class="h-10 w-10 object-contain" onerror="this.style.display='none'">
+                    </div>
+                    <div>
+                        <h1 class="text-white text-lg font-bold">Submit Your Research Project</h1>
+                        <p class="text-blue-100 text-xs mt-1">Complete all fields for proper documentation and classification</p>
+                    </div>
                 </div>
 
                 <!-- Form Content -->
-                <div class="p-8">
-                    <form id="student-upload-form" method="POST" action="{{ route('student.store') }}" enctype="multipart/form-data" class="space-y-6">
+                <div class="p-6 md:p-8">
+                    <form id="student-upload-form" method="POST" action="{{ route('student.store') }}" enctype="multipart/form-data" class="space-y-4">
                         @csrf
                         
-                        <!-- Research Title -->
-                        <div class="space-y-2">
+                        <!-- Section: Research Details -->
+                        <h3 class="text-[#26225C] text-base font-bold mb-2 mt-0 border-l-4 border-[#FFC72C] pl-2 bg-gray-50 py-1 tracking-wide">Research Details</h3>
+                        <div class="space-y-1">
                             <label for="title" class="flex items-center text-sm font-medium text-gray-700">
                                 <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -46,7 +56,7 @@
                         </div>
 
                         <!-- Authors -->
-                        <div class="space-y-2">
+                        <div class="space-y-1">
                             <label for="authors" class="flex items-center text-sm font-medium text-gray-700">
                                 <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -66,8 +76,8 @@
                         </div>
 
                         <!-- Department and Program -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="space-y-2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div class="space-y-1">
                                 <label for="department" class="flex items-center text-sm font-medium text-gray-700">
                                     <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -127,7 +137,7 @@
                                 @enderror
                             </div>
 
-                            <div class="space-y-2">
+                            <div class="space-y-1">
                                 <label for="program" class="flex items-center text-sm font-medium text-gray-700">
                                     <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -156,7 +166,7 @@
                         </div>
 
                         <!-- Abstract -->
-                        <div class="space-y-2">
+                        <div class="space-y-1">
                             <label for="abstract" class="flex items-center text-sm font-medium text-gray-700">
                                 <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -174,7 +184,7 @@
                         </div>
 
                         <!-- Keywords -->
-                        <div class="space-y-2">
+                        <div class="space-y-1">
                             <label for="tags" class="flex items-center text-sm font-medium text-gray-700">
                                 <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -189,8 +199,9 @@
                                 value="{{ isset($editMode) && $editMode && isset($research) ? $research->tags : old('tags') }}">
                         </div>
 
-                        <!-- Banner Image Upload -->
-                        <div class="space-y-2">
+                        <!-- Section: Upload Files -->
+                        <h3 class="text-[#26225C] text-base font-bold mb-2 mt-6 border-l-4 border-[#FFC72C] pl-2 bg-gray-50 py-1 tracking-wide">Upload Files</h3>
+                        <div class="space-y-1">
                             <label class="flex items-center text-sm font-medium text-gray-700">
                                 <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -215,7 +226,7 @@
                         </div>
 
                         <!-- Research File Upload -->
-                        <div class="space-y-2">
+                        <div class="space-y-1">
                             <label class="flex items-center text-sm font-medium text-gray-700">
                                 <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -241,8 +252,9 @@
                             @enderror
                         </div>
 
-                        <!-- Research Citations Section -->
-                        <div class="space-y-4 border-t pt-6">
+                        <!-- Section: Research Citations -->
+                        <h3 class="text-[#26225C] text-base font-bold mb-2 mt-6 border-l-4 border-[#FFC72C] pl-2 bg-gray-50 py-1 tracking-wide">Research Citations (Optional)</h3>
+                        <div class="space-y-3">
                             <div class="flex items-center justify-between">
                                 <h3 class="text-lg font-medium text-gray-900">Research Citations (Optional)</h3>
                                 <button type="button" id="add-citation-btn" class="bg-[#FFC72C] text-[#26225C] px-4 py-2 rounded-md hover:bg-[#FFD700] transition-colors text-sm">
@@ -257,9 +269,9 @@
                         </div>
 
                         <!-- Submit Button -->
-                        <div class="pt-6">
-                            <button type="submit" class="w-full bg-[#FFC72C] text-[#26225C] py-3 px-4 rounded-md hover:bg-[#FFD700] transition-colors font-medium flex items-center justify-center">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="pt-4">
+                            <button type="submit" class="w-full bg-[#FFC72C] text-[#26225C] py-3 px-4 rounded-lg shadow hover:bg-[#FFD700] transition-colors font-semibold flex items-center justify-center gap-2 text-base uppercase tracking-wide">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                                 </svg>
                                 Submit Research Project
@@ -619,4 +631,50 @@
             });
         }
     </script>
+    <style>
+        body {
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        }
+        .bg-pattern {
+            background-image: url('/images/pattern-light.svg');
+            background-repeat: repeat-x;
+            background-position: top;
+        }
+        /* Custom scrollbar for citations */
+        #citations-container::-webkit-scrollbar {
+            width: 6px;
+            background: #f1f1f1;
+        }
+        #citations-container::-webkit-scrollbar-thumb {
+            background: #FFC72C;
+            border-radius: 3px;
+        }
+        /* Consistent icon style */
+        svg {
+            stroke-width: 2 !important;
+            stroke-linecap: round !important;
+            stroke-linejoin: round !important;
+        }
+        /* Consistent card and button style */
+        .rounded-2xl {
+            border-radius: 1.25rem !important;
+        }
+        button, .btn {
+            font-family: inherit;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+        /* Consistent spacing */
+        .space-y-1 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
+        }
+        .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+        }
+    </style>
 </x-app-layout>

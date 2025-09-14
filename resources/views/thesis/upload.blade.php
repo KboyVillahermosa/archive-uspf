@@ -1,31 +1,46 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <div>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    {{ __('Submit Master\'s Thesis') }}
-                </h2>
-                <p class="text-sm text-gray-600 mt-1">Complete all fields for proper documentation and classification</p>
+        <div class="flex flex-col items-center justify-center py-6 bg-gradient-to-r from-[#26225C] to-[#3a3770] relative border-b-4 border-[#FFC72C]">
+            <div class="flex flex-col items-center">
+                <div class="h-20 w-20 mb-2 rounded-full shadow-lg border-4 border-[#FFC72C] bg-white flex items-center justify-center overflow-hidden">
+                    <img src="/images/uspf-logo.png" alt="USPF Logo" class="h-16 w-16 object-contain" onerror="this.style.display='none'">
+                </div>
+                <h2 class="font-extrabold text-2xl md:text-3xl text-white tracking-wide">Submit Master's Thesis</h2>
+                <p class="text-blue-100 text-sm mt-1">Complete all fields for proper documentation and classification</p>
             </div>
+            <span class="absolute right-6 top-6 text-xs text-blue-200 font-semibold">Academic Year {{ date('Y') }}</span>
         </div>
     </x-slot>
 
-    <div class="py-12 bg-gray-50 min-h-screen">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                <!-- Navy Blue Header -->
-                <div class="bg-[#26225C] px-8 py-6">
-                    <h1 class="text-white text-xl font-semibold">Submit Your Research Project</h1>
-                    <p class="text-blue-100 text-sm mt-1">Complete all fields for proper documentation and classification</p>
+    <div class="py-10 min-h-screen bg-gradient-to-br from-[#f6f7fb] via-[#e9eaf6] to-[#f6f7fb] bg-[url('/images/pattern-light.svg')] bg-top bg-repeat-x">
+        <div class="w-full flex justify-center">
+            <div class="w-full max-w-3xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 mx-2 transition-transform duration-500 ease-out animate-fade-in-up hover:shadow-3xl hover:-translate-y-1">
+                <!-- Progress Bar -->
+                <div class="w-full h-2 bg-gray-200">
+                    <div class="h-2 bg-[#FFC72C] rounded-r-full transition-all duration-500" style="width: 100%"></div>
                 </div>
+                <!-- Hero Section -->
+                <div class="flex items-center gap-4 px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-[#26225C] to-[#3a3770] rounded-t-3xl relative">
+                    <div class="h-14 w-14 flex items-center justify-center rounded-xl bg-white/95 border-4 border-[#FFC72C] shadow-md overflow-hidden mr-2">
+                        <img src="/images/research-hero.svg" alt="Research" class="h-10 w-10 object-contain" onerror="this.style.display='none'">
+                    </div>
+                    <div class="flex-1">
+                        <h1 class="text-white text-xl font-extrabold tracking-wide">Submit Your Research Project</h1>
+                        <p class="text-blue-100 text-xs mt-1">Complete all fields for proper documentation and classification</p>
+                        <span class="block text-xs text-blue-200 mt-1">Your submission will be reviewed by the academic committee</span>
+                    </div>
+                </div>
+                <!-- Soft divider -->
+                <div class="w-full h-1 bg-gradient-to-r from-[#FFC72C]/30 via-white to-[#FFC72C]/30"></div>
 
                 <!-- Form Content -->
-                <div class="p-8">
-                    <form id="thesis-upload-form" method="POST" action="{{ route('thesis.store') }}" enctype="multipart/form-data" class="space-y-6">
+                <div class="p-6 md:p-10">
+                    <form id="thesis-upload-form" method="POST" action="{{ route('thesis.store') }}" enctype="multipart/form-data" class="space-y-4">
                         @csrf
                         
-                        <!-- Research Title -->
-                        <div class="space-y-2">
+                        <!-- Section: Research Details -->
+                        <h3 class="text-[#26225C] text-base font-bold mb-2 mt-0 border-l-4 border-[#FFC72C] pl-2 bg-gray-50 py-1 tracking-wide">Research Details</h3>
+                        <div class="space-y-1">
                             <label for="title" class="flex items-center text-sm font-medium text-gray-700">
                                 <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -42,8 +57,8 @@
                         </div>
 
                         <!-- Author and Year -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="space-y-2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div class="space-y-1">
                                 <label for="author" class="flex items-center text-sm font-medium text-gray-700">
                                     <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
@@ -59,7 +74,7 @@
                                 @enderror
                             </div>
 
-                            <div class="space-y-2">
+                            <div class="space-y-1">
                                 <label for="year_completed" class="flex items-center text-sm font-medium text-gray-700">
                                     <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -76,7 +91,7 @@
                         </div>
 
                         <!-- Department -->
-                        <div class="space-y-2">
+                        <div class="space-y-1">
                             <label for="department" class="flex items-center text-sm font-medium text-gray-700">
                                 <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
@@ -100,7 +115,7 @@
                         </div>
 
                         <!-- Keywords -->
-                        <div class="space-y-2">
+                        <div class="space-y-1">
                             <label for="keywords" class="flex items-center text-sm font-medium text-gray-700">
                                 <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
@@ -118,7 +133,7 @@
                         </div>
 
                         <!-- Abstract -->
-                        <div class="space-y-2">
+                        <div class="space-y-1">
                             <label for="abstract" class="flex items-center text-sm font-medium text-gray-700">
                                 <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -133,8 +148,9 @@
                             @enderror
                         </div>
 
-                        <!-- Document Upload -->
-                        <div class="space-y-2">
+                        <!-- Section: Upload Files -->
+                        <h3 class="text-[#26225C] text-base font-bold mb-2 mt-6 border-l-4 border-[#FFC72C] pl-2 bg-gray-50 py-1 tracking-wide">Upload Files</h3>
+                        <div class="space-y-1">
                             <label class="flex items-center text-sm font-medium text-gray-700">
                                 <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -158,8 +174,9 @@
                             @enderror
                         </div>
 
-                        <!-- Research Citations Section -->
-                        <div class="space-y-4 border-t pt-6">
+                        <!-- Section: Research Citations -->
+                        <h3 class="text-[#26225C] text-base font-bold mb-2 mt-6 border-l-4 border-[#FFC72C] pl-2 bg-gray-50 py-1 tracking-wide">Research Citations (Optional)</h3>
+                        <div class="space-y-3">
                             <div class="flex items-center justify-between">
                                 <h3 class="text-lg font-medium text-gray-900">Research Citations (Optional)</h3>
                                 <button type="button" id="add-citation-btn" class="bg-[#FFC72C] text-[#26225C] px-4 py-2 rounded-md hover:bg-[#FFD700] transition-colors text-sm">
@@ -174,12 +191,12 @@
                         </div>
 
                         <!-- Submit Button -->
-                        <div class="pt-6">
-                            <button type="submit" class="w-full bg-[#FFC72C] text-[#26225C] py-3 px-4 rounded-md hover:bg-[#FFD700] transition-colors font-medium flex items-center justify-center">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="pt-4">
+                            <button type="submit" class="w-full bg-[#FFC72C] text-[#26225C] py-3 px-4 rounded-lg shadow hover:bg-[#FFD700] transition-colors font-semibold flex items-center justify-center gap-2 text-base uppercase tracking-wide">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                                 </svg>
-                                Submit Research Project
+                                Submit Thesis
                             </button>
                         </div>
                     </form>
@@ -302,4 +319,69 @@
             });
         });
     </script>
+    <style>
+        @keyframes fade-in-up {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fade-in-up 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        }
+        .bg-pattern {
+            background-image: url('/images/pattern-light.svg');
+            background-repeat: repeat-x;
+            background-position: top;
+        }
+        /* Custom scrollbar for citations */
+        #citations-container::-webkit-scrollbar {
+            width: 6px;
+            background: #f1f1f1;
+        }
+        #citations-container::-webkit-scrollbar-thumb {
+            background: #FFC72C;
+            border-radius: 3px;
+        }
+        /* Consistent icon style */
+        svg {
+            stroke-width: 2 !important;
+            stroke-linecap: round !important;
+            stroke-linejoin: round !important;
+        }
+        /* Consistent card and button style */
+        .rounded-2xl {
+            border-radius: 1.25rem !important;
+        }
+        .rounded-3xl {
+            border-radius: 1.5rem !important;
+        }
+        button, .btn {
+            font-family: inherit;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            transition: box-shadow 0.2s, background 0.2s, color 0.2s, transform 0.2s;
+        }
+        button:hover, .btn:hover {
+            box-shadow: 0 4px 24px 0 #FFC72C33;
+            transform: translateY(-2px) scale(1.01);
+        }
+        /* Consistent spacing */
+        .space-y-1 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
+        }
+        .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+        }
+        /* Card hover shadow */
+        .hover\:shadow-3xl:hover {
+            box-shadow: 0 10px 40px 0 #26225C22, 0 2px 8px 0 #FFC72C22;
+        }
+    </style>
 </x-app-layout>
