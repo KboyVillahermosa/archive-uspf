@@ -29,30 +29,68 @@ class DashboardController extends Controller
             ->latest('approved_at')
             ->take(6)
             ->get();
-            
+
         $approvedFacultyResearch = FacultyResearch::where('status', 'approved')
             ->with('user')
             ->latest('approved_at')
             ->take(6)
             ->get();
-            
+
         $approvedThesis = Thesis::where('status', 'approved')
             ->with('user')
             ->latest('approved_at')
             ->take(6)
             ->get();
-            
+
         $approvedDissertations = Dissertation::where('status', 'approved')
             ->with('user')
             ->latest('approved_at')
             ->take(6)
             ->get();
-        
+
+        // Fetch most viewed and most popular research (top 5)
+        $analytics = DB::table('research_analytics')
+            ->select(
+                'research_type', 'research_id',
+                DB::raw("SUM(CASE WHEN action='view' THEN 1 ELSE 0 END) as views"),
+                DB::raw("SUM(CASE WHEN action='download' THEN 1 ELSE 0 END) as downloads"),
+                DB::raw("(SUM(CASE WHEN action='view' THEN 1 ELSE 0 END)*0.7 + SUM(CASE WHEN action='download' THEN 1 ELSE 0 END)*1.0) as score")
+            )
+            ->groupBy('research_type', 'research_id');
+
+        $topViewed = (clone $analytics)->orderByDesc('views')->limit(5)->get();
+        $topPopular = (clone $analytics)->orderByDesc('score')->limit(5)->get();
+
+        $hydrate = function($rows) {
+            $items = [];
+            foreach ($rows as $r) {
+                $model = null;
+                if ($r->research_type === 'student') $model = \App\Models\StudentResearch::find($r->research_id);
+                elseif ($r->research_type === 'faculty') $model = \App\Models\FacultyResearch::find($r->research_id);
+                elseif ($r->research_type === 'thesis') $model = \App\Models\Thesis::find($r->research_id);
+                elseif ($r->research_type === 'dissertation') $model = \App\Models\Dissertation::find($r->research_id);
+                if (!$model) continue;
+                $items[] = [
+                    'model' => $model,
+                    'type' => $r->research_type,
+                    'views' => (int) ($r->views ?? 0),
+                    'downloads' => (int) ($r->downloads ?? 0),
+                    'score' => (float) ($r->score ?? 0),
+                ];
+            }
+            return $items;
+        };
+
+        $mostViewedResearch = $hydrate($topViewed);
+        $mostPopularResearch = $hydrate($topPopular);
+
         return view('dashboard', compact(
             'approvedStudentResearch',
-            'approvedFacultyResearch', 
+            'approvedFacultyResearch',
             'approvedThesis',
-            'approvedDissertations'
+            'approvedDissertations',
+            'mostViewedResearch',
+            'mostPopularResearch'
         ));
     }
 

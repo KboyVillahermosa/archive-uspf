@@ -1,43 +1,6 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
-
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Welcome Section -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-semibold mb-4">Welcome, {{ Auth::user()->name }}!</h3>
-                    
-                    @if(Auth::user()->student)
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <h4 class="font-medium text-gray-800 mb-3">Student Information</h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <p class="text-sm text-gray-600">ID Number</p>
-                                    <p class="font-medium">{{ Auth::user()->student->id_number }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-600">Full Name</p>
-                                    <p class="font-medium">{{ Auth::user()->student->full_name }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-600">Birthday</p>
-                                    <p class="font-medium">{{ Auth::user()->student->birthday->format('F j, Y') }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-600">Course and Year</p>
-                                    <p class="font-medium">{{ Auth::user()->student->course_and_year }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                </div>
-            </div>
-
             <!-- Quick Upload Section -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
@@ -171,6 +134,13 @@
                     </a>
                 </div>
             </div>
+            <section>
+                 <!-- Most Viewed & Most Popular Research Section -->
+            @include('most.research', [
+                'mostViewedResearch' => $mostViewedResearch ?? [],
+                'mostPopularResearch' => $mostPopularResearch ?? []
+            ])
+            </section>
 
             <!-- Recent Approved Research Section -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
