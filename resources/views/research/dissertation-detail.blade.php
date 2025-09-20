@@ -85,7 +85,7 @@
                     <!-- Citation -->
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-3">How to Cite</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-3">How to Cites</h3>
                             <div class="bg-gray-50 p-4 rounded-lg">
                                 <p class="text-sm text-gray-700 font-mono">
                                     {{ $dissertation->author }} ({{ $dissertation->year_completed }}). <em>{{ $dissertation->title }}</em> (Doctoral dissertation). 
