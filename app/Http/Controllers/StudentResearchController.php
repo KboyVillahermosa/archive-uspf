@@ -50,15 +50,23 @@ class StudentResearchController extends Controller
     public function show($id)
     {
         $research = StudentResearch::with('user')->findOrFail($id);
-        
         // Track view
         ResearchAnalytic::trackView('student', $id, request());
-        
         // Get analytics
         $viewCount = ResearchAnalytic::getViewCount('student', $id);
         $downloadCount = ResearchAnalytic::getDownloadCount('student', $id);
-        
-        return view('research.student-detail', compact('research', 'viewCount', 'downloadCount'));
+
+        // Fetch 'Cited By' (other research that cite this one)
+        $citedBy = \App\Models\ResearchCitation::where('cited_research_id', $id)
+            ->where('cited_research_type', 'student')
+            ->get();
+
+        // Fetch Citations (research this item has cited)
+        $citations = \App\Models\ResearchCitation::where('citing_research_type', 'student')
+            ->where('citing_research_title', $research->title)
+            ->get();
+
+        return view('research.student-detail', compact('research', 'viewCount', 'downloadCount', 'citedBy', 'citations'));
     }
 
     public function showPublic($id)

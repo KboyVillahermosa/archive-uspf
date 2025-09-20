@@ -44,18 +44,26 @@ class DissertationController extends Controller
     public function show($id)
     {
         $dissertation = Dissertation::with(['user', 'approvedBy'])->findOrFail($id);
-        
         if ($dissertation->status !== 'approved') {
             abort(404);
         }
-        
         // Track view
         \App\Models\ResearchAnalytic::trackView('dissertation', $id, request());
         // Get analytics
         $viewCount = \App\Models\ResearchAnalytic::getViewCount('dissertation', $id);
         $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('dissertation', $id);
-        
-        return view('research.dissertation-detail', compact('dissertation', 'viewCount', 'downloadCount'));
+
+        // Fetch 'Cited By' (other research that cite this one)
+        $citedBy = \App\Models\ResearchCitation::where('cited_research_id', $id)
+            ->where('cited_research_type', 'dissertation')
+            ->get();
+
+        // Fetch Citations (research this item has cited)
+        $citations = \App\Models\ResearchCitation::where('citing_research_type', 'dissertation')
+            ->where('citing_research_title', $dissertation->title)
+            ->get();
+
+        return view('research.dissertation-detail', compact('dissertation', 'viewCount', 'downloadCount', 'citedBy', 'citations'));
     }
 
     public function showPublic($id)

@@ -48,18 +48,25 @@ class FacultyResearchController extends Controller
     public function show($id)
     {
         $research = FacultyResearch::with(['user', 'approvedBy'])->findOrFail($id);
-        
         if ($research->status !== 'approved') {
             abort(404);
         }
-        
         $research->incrementViews();
-        
         // Get analytics
         $viewCount = \App\Models\ResearchAnalytic::getViewCount('faculty', $id);
         $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('faculty', $id);
-        
-        return view('research.faculty-detail', compact('research', 'viewCount', 'downloadCount'));
+
+        // Fetch 'Cited By' (other research that cite this one)
+        $citedBy = \App\Models\ResearchCitation::where('cited_research_id', $id)
+            ->where('cited_research_type', 'faculty')
+            ->get();
+
+        // Fetch Citations (research this item has cited)
+        $citations = \App\Models\ResearchCitation::where('citing_research_type', 'faculty')
+            ->where('citing_research_title', $research->title)
+            ->get();
+
+        return view('research.faculty-detail', compact('research', 'viewCount', 'downloadCount', 'citedBy', 'citations'));
     }
 
     public function showPublic($id)

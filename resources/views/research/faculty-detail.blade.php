@@ -78,6 +78,41 @@
                             </div>
 
                             <!-- Tags -->
+                            <!-- Cited By Section -->
+                            <div class="mt-8">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-3">Cited By</h3>
+                                @if(isset($citedBy) && $citedBy->count())
+                                    <ul class="space-y-2">
+                                        @foreach($citedBy as $citation)
+                                            <li class="border-b pb-2">
+                                                <span class="font-medium capitalize">{{ $citation->citing_research_type }}</span>:
+                                                {{ $citation->citing_research_title }}
+                                                <span class="text-xs text-gray-500">(by {{ optional($citation->citingUser)->name }})</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <div class="text-gray-500">No citations yet.</div>
+                                @endif
+                            </div>
+
+                            <!-- Citations Section -->
+                            <div class="mt-8">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-3">Citations</h3>
+                                @if(isset($citations) && $citations->count())
+                                    <ul class="space-y-2">
+                                        @foreach($citations as $citation)
+                                            <li class="border-b pb-2">
+                                                <span class="font-medium capitalize">{{ $citation->cited_research_type }}</span>:
+                                                {{ $citation->cited_research_title }}
+                                                <span class="text-xs text-gray-500">(by {{ optional($citation->citedUser)->name ?? 'N/A' }})</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <div class="text-gray-500">No references cited.</div>
+                                @endif
+                            </div>
                             @if($research->tags)
                                 <div class="mb-6">
                                     <h3 class="text-lg font-semibold text-gray-900 mb-3">Research Keywords</h3>

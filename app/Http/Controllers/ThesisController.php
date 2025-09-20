@@ -44,18 +44,26 @@ class ThesisController extends Controller
     public function show($id)
     {
         $thesis = Thesis::with(['user', 'approvedBy'])->findOrFail($id);
-        
         if ($thesis->status !== 'approved') {
             abort(404);
         }
-        
         // Track view
         \App\Models\ResearchAnalytic::trackView('thesis', $id, request());
         // Get analytics
         $viewCount = \App\Models\ResearchAnalytic::getViewCount('thesis', $id);
         $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('thesis', $id);
-        
-        return view('research.thesis-detail', compact('thesis', 'viewCount', 'downloadCount'));
+
+        // Fetch 'Cited By' (other research that cite this one)
+        $citedBy = \App\Models\ResearchCitation::where('cited_research_id', $id)
+            ->where('cited_research_type', 'thesis')
+            ->get();
+
+        // Fetch Citations (research this item has cited)
+        $citations = \App\Models\ResearchCitation::where('citing_research_type', 'thesis')
+            ->where('citing_research_title', $thesis->title)
+            ->get();
+
+        return view('research.thesis-detail', compact('thesis', 'viewCount', 'downloadCount', 'citedBy', 'citations'));
     }
 
     public function showPublic($id)
