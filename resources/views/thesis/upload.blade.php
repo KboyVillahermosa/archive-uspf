@@ -236,32 +236,139 @@
             }
         });
 
-        // Add citation functionality
-        let citationIndex = 0;
+        // Citation functionality
+        let citationCount = 0;
+        const citations = [];
 
         document.getElementById('add-citation-btn').addEventListener('click', function() {
-            citationIndex++;
-            const container = document.getElementById('citations-container');
-            const citationDiv = document.createElement('div');
-            citationDiv.className = 'flex items-center space-x-4';
-            citationDiv.innerHTML = `
-                <input type="text" name="citations[${citationIndex}][title]" required
-                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
-                    placeholder="Enter citation title">
-                <input type="text" name="citations[${citationIndex}][link]" required
-                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
-                    placeholder="Enter citation link (URL)">
-                <button type="button" class="remove-citation-btn bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 transition-colors text-sm">
-                    Remove
-                </button>
-            `;
-            container.appendChild(citationDiv);
-
-            // Remove citation event
-            citationDiv.querySelector('.remove-citation-btn').addEventListener('click', function() {
-                container.removeChild(citationDiv);
-            });
+            addCitationForm();
         });
+
+        function addCitationForm() {
+            citationCount++;
+            const container = document.getElementById('citations-container');
+            
+            const citationDiv = document.createElement('div');
+            citationDiv.className = 'border border-gray-200 rounded-lg p-4 bg-gray-50';
+            citationDiv.id = `citation-${citationCount}`;
+            
+            citationDiv.innerHTML = `
+                <div class="flex items-start justify-between mb-3">
+                    <h4 class="font-medium text-gray-900">Reference #${citationCount}</h4>
+                    <button type="button" onclick="removeCitation(${citationCount})" class="text-red-600 hover:text-red-800">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Search Research to Cite</label>
+                        <div class="relative">
+                            <input type="text" id="search-${citationCount}" placeholder="Type to search approved research..." 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C]">
+                            <div id="results-${citationCount}" class="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto hidden"></div>
+                        </div>
+                        <input type="hidden" id="selected-research-${citationCount}" name="citations[${citationCount}][research_id]">
+                        <input type="hidden" id="selected-type-${citationCount}" name="citations[${citationCount}][research_type]">
+                        <div id="selected-display-${citationCount}" class="mt-2 hidden">
+                            <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium text-blue-900" id="selected-title-${citationCount}"></p>
+                                        <p class="text-sm text-blue-700" id="selected-authors-${citationCount}"></p>
+                                    </div>
+                                    <button type="button" onclick="clearSelection(${citationCount})" class="text-blue-600 hover:text-blue-800">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">How did you use this research? (Optional)</label>
+                        <textarea name="citations[${citationCount}][context]" rows="2" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C]"
+                            placeholder="Briefly describe how this research helped your work..."></textarea>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(citationDiv);
+            setupCitationSearch(citationCount);
+        }
+
+        function setupCitationSearch(count) {
+            const searchInput = document.getElementById(`search-${count}`);
+            const resultsDiv = document.getElementById(`results-${count}`);
+            let searchTimeout;
+
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim();
+                
+                if (query.length < 2) {
+                    resultsDiv.classList.add('hidden');
+                    return;
+                }
+                
+                searchTimeout = setTimeout(() => {
+                    fetch(`/citations/search?q=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            displaySearchResults(count, data);
+                        })
+                        .catch(error => {
+                            console.error('Search error:', error);
+                        });
+                }, 300);
+            });
+        }
+
+        function displaySearchResults(count, results) {
+            const resultsDiv = document.getElementById(`results-${count}`);
+            
+            if (results.length === 0) {
+                resultsDiv.innerHTML = '<div class="p-3 text-gray-500 text-sm">No approved research found</div>';
+                resultsDiv.classList.remove('hidden');
+                return;
+            }
+            
+            resultsDiv.innerHTML = results.map(item => `
+                <div class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0" 
+                     onclick="selectResearch(${count}, ${item.id}, '${item.type}', '${item.title.replace(/'/g, "\\'")}', '${item.authors.replace(/'/g, "\\'")}')">
+                    <div class="font-medium text-gray-900">${item.title}</div>
+                    <div class="text-sm text-gray-600">${item.authors}</div>
+                    <div class="text-xs text-blue-600 mt-1">${item.type.charAt(0).toUpperCase() + item.type.slice(1)} Research</div>
+                </div>
+            `).join('');
+            
+            resultsDiv.classList.remove('hidden');
+        }
+
+        function selectResearch(count, id, type, title, authors) {
+            document.getElementById(`selected-research-${count}`).value = id;
+            document.getElementById(`selected-type-${count}`).value = type;
+            document.getElementById(`selected-title-${count}`).textContent = title;
+            document.getElementById(`selected-authors-${count}`).textContent = authors;
+            document.getElementById(`search-${count}`).value = '';
+            document.getElementById(`results-${count}`).classList.add('hidden');
+            document.getElementById(`selected-display-${count}`).classList.remove('hidden');
+        }
+
+        function clearSelection(count) {
+            document.getElementById(`selected-research-${count}`).value = '';
+            document.getElementById(`selected-type-${count}`).value = '';
+            document.getElementById(`selected-display-${count}`).classList.add('hidden');
+        }
+
+        function removeCitation(count) {
+            document.getElementById(`citation-${count}`).remove();
+        }
 
         // Force AJAX form submission for thesis upload
         document.getElementById('thesis-upload-form').addEventListener('submit', function(e) {
@@ -287,6 +394,9 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
+                    // Save citations after successful research submission
+                    saveCitations(data.research_id, 'thesis');
+                    
                     if (typeof window.toastr !== 'undefined') {
                         window.toastr.success(data.message);
                         setTimeout(() => {
@@ -318,6 +428,39 @@
                 submitBtn.innerHTML = originalText;
             });
         });
+
+        function saveCitations(researchId, researchType) {
+            const citationElements = document.querySelectorAll('[id^="citation-"]');
+            const title = document.getElementById('title').value;
+            
+            citationElements.forEach(element => {
+                const citationId = element.id.split('-')[1];
+                const researchIdField = document.getElementById(`selected-research-${citationId}`);
+                const researchTypeField = document.getElementById(`selected-type-${citationId}`);
+                const contextField = element.querySelector('textarea');
+                
+                if (researchIdField && researchIdField.value) {
+                    const citationData = {
+                        citing_research_title: title,
+                        citing_research_type: researchType,
+                        cited_research_id: researchIdField.value,
+                        cited_research_type: researchTypeField.value,
+                        citation_context: contextField ? contextField.value : ''
+                    };
+                    
+                    fetch('/citations', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify(citationData)
+                    }).catch(error => {
+                        console.error('Citation save error:', error);
+                    });
+                }
+            });
+        }
     </script>
     <style>
         @keyframes fade-in-up {

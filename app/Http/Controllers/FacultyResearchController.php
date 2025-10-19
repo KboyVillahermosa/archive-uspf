@@ -36,12 +36,13 @@ class FacultyResearchController extends Controller
             $data['research_file'] = $request->file('research_file')->store('research/faculty', 'public');
         }
 
-        FacultyResearch::create($data);
+        $research = FacultyResearch::create($data);
 
         // Always return JSON response for success
         return response()->json([
             'status' => 'success',
-            'message' => 'Faculty research submitted successfully! It is now pending approval.'
+            'message' => 'Faculty research submitted successfully! It is now pending approval.',
+            'research_id' => $research->id
         ]);
     }
 

@@ -32,12 +32,13 @@ class ThesisController extends Controller
             $data['document_file'] = $request->file('document_file')->store('thesis', 'public');
         }
 
-        Thesis::create($data);
+        $thesis = Thesis::create($data);
 
         // Always return JSON response for success
         return response()->json([
             'status' => 'success',
-            'message' => 'Thesis submitted successfully! It is now pending approval.'
+            'message' => 'Thesis submitted successfully! It is now pending approval.',
+            'research_id' => $thesis->id
         ]);
     }
 

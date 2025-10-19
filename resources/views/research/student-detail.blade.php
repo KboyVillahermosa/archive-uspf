@@ -464,12 +464,12 @@
                 const typeName = citation.citing_type || citation.cited_type || 'research';
                 const color = typeColors[typeName] || 'gray';
                 const title = citation.citing_title || citation.cited_title || 'Unknown Title';
-                const user = citation.citing_user || 'Unknown Author';
+                const user = citation.citing_user || citation.cited_authors || 'Unknown Author';
                 const context = citation.citation_context || '';
                 const date = citation.created_at || '';
 
                 return `
-                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer" onclick="viewResearch('${typeName}', ${citation.cited_research_id || citation.citing_research_id || 'null'})">
                         <div class="flex items-start justify-between mb-2">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${color}-100 text-${color}-800">
                                 ${typeName.charAt(0).toUpperCase() + typeName.slice(1)} Research
@@ -494,5 +494,33 @@
         document.addEventListener('DOMContentLoaded', function() {
             showTab('cited-by');
         });
+
+        function viewResearch(type, id) {
+            if (!id || id === 'null') {
+                console.error('No research ID provided');
+                return;
+            }
+            
+            let url = '';
+            switch(type) {
+                case 'student':
+                    url = `/research/student/${id}`;
+                    break;
+                case 'faculty':
+                    url = `/research/faculty/${id}`;
+                    break;
+                case 'thesis':
+                    url = `/research/thesis/${id}`;
+                    break;
+                case 'dissertation':
+                    url = `/research/dissertation/${id}`;
+                    break;
+                default:
+                    console.error('Unknown research type:', type);
+                    return;
+            }
+            
+            window.open(url, '_blank');
+        }
     </script>
 </x-app-layout>
