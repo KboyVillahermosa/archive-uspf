@@ -1,41 +1,30 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex flex-col items-center justify-center py-6 bg-gradient-to-r from-[#26225C] to-[#3a3770] relative border-b-4 border-[#FFC72C]">
-            <div class="flex flex-col items-center">
-                <div class="h-20 w-20 mb-2 rounded-full shadow-lg border-4 border-[#FFC72C] bg-white flex items-center justify-center overflow-hidden">
-                    <img src="/images/uspf-logo.png" alt="USPF Logo" class="h-16 w-16 object-contain" onerror="this.style.display='none'">
-                </div>
-                <h2 class="font-extrabold text-2xl md:text-3xl text-white tracking-wide">Submit Doctoral Dissertation</h2>
-                <p class="text-blue-100 text-sm mt-1">Complete all fields for proper documentation and classification</p>
-            </div>
-            <span class="absolute right-6 top-6 text-xs text-blue-200 font-semibold">Academic Year {{ date('Y') }}</span>
-        </div>
-    </x-slot>
-
-    <div class="py-10 min-h-screen bg-gradient-to-br from-[#f6f7fb] via-[#e9eaf6] to-[#f6f7fb] bg-[url('/images/pattern-light.svg')] bg-top bg-repeat-x">
+    <div class="py-8 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
         <div class="w-full flex justify-center">
-            <div class="w-full max-w-3xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 mx-2 transition-transform duration-500 ease-out animate-fade-in-up hover:shadow-3xl hover:-translate-y-1">
-                <!-- Progress Bar -->
-                <div class="w-full h-2 bg-gray-200">
-                    <div class="h-2 bg-[#FFC72C] rounded-r-full transition-all duration-500" style="width: 100%"></div>
-                </div>
-                <!-- Hero Section -->
-                <div class="flex items-center gap-4 px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-[#26225C] to-[#3a3770] rounded-t-3xl relative">
-                    <div class="h-14 w-14 flex items-center justify-center rounded-xl bg-white/95 border-4 border-[#FFC72C] shadow-md overflow-hidden mr-2">
-                        <img src="/images/research-hero.svg" alt="Research" class="h-10 w-10 object-contain" onerror="this.style.display='none'">
+            <div class="w-full max-w-4xl bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200 mx-2">
+                <!-- Header Section -->
+                <div class="bg-gradient-to-r from-[#26225C] to-[#3a3770] px-8 py-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="h-12 w-12 bg-white/10 rounded-xl flex items-center justify-center">
+                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h1 class="text-2xl font-bold text-white">Submit Doctoral Dissertation</h1>
+                                <p class="text-blue-100 text-sm">Complete all fields for proper documentation and classification</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs text-blue-200 font-semibold">Academic Year {{ date('Y') }}</span>
+                        </div>
                     </div>
-                    <div class="flex-1">
-                        <h1 class="text-white text-xl font-extrabold tracking-wide">Submit Your Research Project</h1>
-                        <p class="text-blue-100 text-xs mt-1">Complete all fields for proper documentation and classification</p>
-                        <span class="block text-xs text-blue-200 mt-1">Your submission will be reviewed by the academic committee</span>
-                    </div>
                 </div>
-                <!-- Soft divider -->
-                <div class="w-full h-1 bg-gradient-to-r from-[#FFC72C]/30 via-white to-[#FFC72C]/30"></div>
 
                 <!-- Form Content -->
-                <div class="p-6 md:p-10">
-                    <form id="dissertation-upload-form" method="POST" action="{{ route('dissertations.store') }}" enctype="multipart/form-data" class="space-y-4">
+                <div class="p-8">
+                    <form id="dissertation-upload-form" method="POST" action="{{ route('dissertations.store') }}" enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         
                         <!-- Section: Research Details -->
