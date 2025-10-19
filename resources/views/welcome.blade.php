@@ -170,24 +170,12 @@
                 grid-template-columns: 1fr;
             }
         }
-        
-        /* Navbar scroll effect */
-        .navbar-transparent {
-            background: transparent;
-            backdrop-filter: none;
-        }
-        
-        .navbar-scrolled {
-            background: linear-gradient(135deg, #26225C 0%, #3a3770 100%);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
     </style>
     </head>
 
 <body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
     <!-- Navigation Bar -->
-    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+    <nav class="bg-gradient-to-r from-[#26225C] to-[#3a3770] shadow-xl sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
@@ -211,22 +199,59 @@
                     </div>
                 </div>
 
-                <!-- Auth Links -->
+                <!-- Right side: Auth Links and Mobile Menu -->
                 <div class="flex items-center space-x-4">
-                    @if (Route::has('login'))
-                        @auth
-                            <a href="{{ url('/dashboard') }}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">Dashboard</a>
-                        @else
-                            <a href="{{ route('login') }}" class="text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">Log in</a>
-                            @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold">Register</a>
-                            @endif
-                        @endauth
-                    @endif
+                    <!-- Auth Links (Desktop) -->
+                    <div class="hidden md:flex items-center space-x-4">
+                        @if (Route::has('login'))
+                            @auth
+                                <a href="{{ url('/dashboard') }}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">Dashboard</a>
+                            @else
+                                <a href="{{ route('login') }}" class="text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">Log in</a>
+                                @if (Route::has('register'))
+                                    <a href="{{ route('register') }}" class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold">Register</a>
+                                @endif
+                            @endauth
+                        @endif
+                    </div>
+
+                    <!-- Mobile menu button -->
+                    <div class="md:hidden">
+                        <button type="button" id="mobile-menu-button" class="text-white hover:text-yellow-300 focus:outline-none focus:text-yellow-300 transition-colors duration-200" aria-controls="mobile-menu" aria-expanded="false">
+                            <span class="sr-only">Open main menu</span>
+                            <!-- Hamburger icon -->
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="md:hidden hidden bg-gradient-to-r from-[#26225C] to-[#3a3770] shadow-lg">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <a href="{{ route('research.by-department') }}" class="text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Browse Research</a>
+            <a href="{{ route('research.by-department') }}" class="text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Departments</a>
+            <a href="#" class="text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">About</a>
+            
+            <!-- Mobile Auth Links -->
+            <div class="border-t border-white/20 pt-4 mt-4">
+                @if (Route::has('login'))
+                    @auth
+                        <a href="{{ url('/dashboard') }}" class="btn-primary text-white block w-full text-center px-4 py-2 rounded-lg text-sm font-semibold mb-2">Dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}" class="text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Log in</a>
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="btn-secondary block w-full text-center px-4 py-2 rounded-lg text-sm font-semibold mt-2">Register</a>
+                        @endif
+                    @endif
+                @endif
+            </div>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section class="relative w-full h-[100vh] min-h-[600px] flex items-center justify-center overflow-hidden">
@@ -554,23 +579,57 @@
             </div>
         </div>
     </footer>
-
-    <!-- JavaScript for navbar scroll effect -->
+    
+    <!-- Mobile Menu JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const navbar = document.getElementById('navbar');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const hamburgerIcon = mobileMenuButton.querySelector('svg');
             
-            // Add transparent class initially
-            navbar.classList.add('navbar-transparent');
-            
-            // Handle scroll event
-            window.addEventListener('scroll', function() {
-                if (window.scrollY > 100) {
-                    navbar.classList.remove('navbar-transparent');
-                    navbar.classList.add('navbar-scrolled');
+            mobileMenuButton.addEventListener('click', function() {
+                const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+                
+                // Toggle menu visibility
+                mobileMenu.classList.toggle('hidden');
+                
+                // Update aria-expanded attribute
+                mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+                
+                // Animate hamburger icon
+                if (!isExpanded) {
+                    // Transform to X
+                    hamburgerIcon.innerHTML = `
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    `;
                 } else {
-                    navbar.classList.remove('navbar-scrolled');
-                    navbar.classList.add('navbar-transparent');
+                    // Transform back to hamburger
+                    hamburgerIcon.innerHTML = `
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    `;
+                }
+            });
+            
+            // Close mobile menu when clicking on a link
+            const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuButton.setAttribute('aria-expanded', 'false');
+                    hamburgerIcon.innerHTML = `
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    `;
+                });
+            });
+            
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!mobileMenuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuButton.setAttribute('aria-expanded', 'false');
+                    hamburgerIcon.innerHTML = `
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    `;
                 }
             });
         });
