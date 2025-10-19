@@ -32,12 +32,13 @@ class DissertationController extends Controller
             $data['document_file'] = $request->file('document_file')->store('dissertations', 'public');
         }
 
-        Dissertation::create($data);
+        $dissertation = Dissertation::create($data);
 
         // Always return JSON response for success
         return response()->json([
             'status' => 'success',
-            'message' => 'Dissertation submitted successfully! It is now pending approval.'
+            'message' => 'Dissertation submitted successfully! It is now pending approval.',
+            'research_id' => $dissertation->id
         ]);
     }
 

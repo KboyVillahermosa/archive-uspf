@@ -97,6 +97,7 @@ class ResearchCitationController extends Controller
         $request->validate([
             'citing_research_title' => 'required|string|max:255',
             'citing_research_type' => 'required|in:student,faculty,thesis,dissertation',
+            'citing_research_id' => 'nullable|integer',
             'cited_research_id' => 'required|integer',
             'cited_research_type' => 'required|in:student,faculty,thesis,dissertation',
             'citation_context' => 'nullable|string|max:500'
@@ -121,6 +122,7 @@ class ResearchCitationController extends Controller
             'citing_user_id' => Auth::id(),
             'citing_research_title' => $request->citing_research_title,
             'citing_research_type' => $request->citing_research_type,
+            'citing_research_id' => $request->citing_research_id,
             'cited_research_id' => $request->cited_research_id,
             'cited_research_type' => $request->cited_research_type,
             'citation_context' => $request->citation_context
@@ -151,8 +153,10 @@ class ResearchCitationController extends Controller
                     'id' => $citation->id,
                     'citing_title' => $citation->citing_research_title,
                     'citing_type' => $citation->citing_research_type,
+                    'citing_research_id' => $citation->citing_research_id,
                     'cited_title' => $citedResearch ? $citedResearch->title : 'Research not found',
                     'cited_type' => $citation->cited_research_type,
+                    'cited_research_id' => $citation->cited_research_id,
                     'cited_authors' => $this->getResearchAuthors($citedResearch, $citation->cited_research_type),
                     'citation_context' => $citation->citation_context,
                     'created_at' => $citation->created_at->format('M d, Y')
@@ -173,6 +177,7 @@ class ResearchCitationController extends Controller
                 return [
                     'citing_title' => $citation->citing_research_title,
                     'citing_type' => $citation->citing_research_type,
+                    'citing_research_id' => $citation->citing_research_id,
                     'citing_user' => $citation->citingUser->name,
                     'citation_context' => $citation->citation_context,
                     'created_at' => $citation->created_at->format('M d, Y')

@@ -13,6 +13,7 @@ class ResearchCitation extends Model
         'citing_user_id',
         'citing_research_title', 
         'citing_research_type',
+        'citing_research_id',
         'cited_research_id',
         'cited_research_type',
         'citation_context'

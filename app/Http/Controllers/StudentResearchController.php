@@ -38,12 +38,13 @@ class StudentResearchController extends Controller
             $data['research_file'] = $request->file('research_file')->store('research/student', 'public');
         }
 
-        StudentResearch::create($data);
+        $research = StudentResearch::create($data);
 
         // Always return JSON response for success
         return response()->json([
             'status' => 'success',
-            'message' => 'Student research submitted successfully! It is now pending approval.'
+            'message' => 'Student research submitted successfully! It is now pending approval.',
+            'research_id' => $research->id
         ]);
     }
 
