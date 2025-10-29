@@ -87,9 +87,24 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/pending-research', [AdminController::class, 'pendingResearch'])->name('pending-research');
     // Users management
-    Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::get('/users', [AdminController::class, 'users'])->name('users.index');
+    Route::get('/users/create', [AdminController::class, 'create'])->name('users.create');
+    Route::post('/users', [AdminController::class, 'store'])->name('users.store');
+    Route::get('/users/{user}', [AdminController::class, 'show'])->name('users.show');
+    Route::get('/users/{user}/edit', [AdminController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [AdminController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [AdminController::class, 'destroy'])->name('users.destroy');
+    Route::get('/users/{user}/password', [AdminController::class, 'password'])->name('users.password');
     Route::post('/users/import', [AdminController::class, 'importUsers'])->name('users.import');
     Route::get('/users/template', [AdminController::class, 'downloadUserTemplate'])->name('users.template');
+    
+    // Roles management
+    Route::get('/roles', [\App\Http\Controllers\RoleController::class, 'index'])->name('roles.index');
+    Route::get('/roles/create', [\App\Http\Controllers\RoleController::class, 'create'])->name('roles.create');
+    Route::post('/roles', [\App\Http\Controllers\RoleController::class, 'store'])->name('roles.store');
+    Route::get('/roles/{role}/edit', [\App\Http\Controllers\RoleController::class, 'edit'])->name('roles.edit');
+    Route::put('/roles/{role}', [\App\Http\Controllers\RoleController::class, 'update'])->name('roles.update');
+    Route::delete('/roles/{role}', [\App\Http\Controllers\RoleController::class, 'destroy'])->name('roles.destroy');
     
     // Student research approval
     Route::post('/approve/student/{id}', [AdminController::class, 'approveStudentResearch'])->name('approve.student');

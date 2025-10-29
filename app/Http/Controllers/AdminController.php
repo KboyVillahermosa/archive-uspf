@@ -11,6 +11,7 @@ use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
 {
@@ -296,12 +297,173 @@ class AdminController extends Controller
     }
 
     /**
-     * List all users with pagination
+     * Display a listing of users.
      */
     public function users(Request $request)
     {
-        $users = User::orderBy('created_at', 'desc')->paginate(15);
-        return view('admin.users', compact('users'));
+        $this->authorize('viewAny', User::class);
+        $users = User::with('roles')->orderBy('created_at', 'desc')->paginate(15);
+        $roles = Role::all();
+        return view('admin.users.index', compact('users', 'roles'));
+    }
+
+    /**
+     * Show the form for creating a new user.
+     */
+    public function create()
+    {
+        $this->authorize('create', User::class);
+        $roles = Role::all();
+        return view('admin.users.create', compact('roles'));
+    }
+
+    /**
+     * Store a newly created user in storage.
+     */
+    public function store(Request $request)
+    {
+        $this->authorize('create', User::class);
+        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'nullable|string|exists:roles,name',
+            'status' => 'nullable|in:active,inactive',
+        ], [
+            'role.exists' => 'The selected role does not exist.',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'status' => $request->status ?? 'active',
+            'role' => $request->role ?? 'student',
+        ]);
+
+        // Assign Spatie role
+        if ($request->filled('role') && $request->role !== '') {
+            $user->assignRole($request->role);
+        }
+        
+        // Refresh user to reload relationships
+        $user->refresh();
+
+        if ($request->expectsJson() || $request->wantsJson()) {
+            return response()->json([
+                'status' => 'success', 
+                'message' => 'User created successfully!',
+                'user' => $user->load('roles')
+            ]);
+        }
+        return redirect()->route('admin.users.index')->with('success', 'User created successfully!');
+    }
+
+    /**
+     * Display the specified user.
+     */
+    public function show(User $user)
+    {
+        $this->authorize('view', $user);
+        $user->load('roles');
+        return view('admin.users.show', compact('user'));
+    }
+
+    /**
+     * Show the form for editing the specified user.
+     */
+    public function edit(User $user)
+    {
+        $this->authorize('update', $user);
+        $roles = Role::all();
+        return view('admin.users.edit', compact('user', 'roles'));
+    }
+
+    /**
+     * Update the specified user in storage.
+     */
+    public function update(Request $request, User $user)
+    {
+        $this->authorize('update', $user);
+
+        // Handle password change separately
+        if ($request->has('type') && $request->type === 'password') {
+            $request->validate([
+                'password' => 'required|string|min:8|confirmed',
+            ]);
+
+            $user->update([
+                'password' => Hash::make($request->password),
+            ]);
+
+            if ($request->expectsJson() || $request->wantsJson()) {
+                return response()->json([
+                    'status' => 'success', 
+                    'message' => 'Password updated successfully!'
+                ]);
+            }
+            return redirect()->route('admin.users.show', $user)->with('success', 'Password updated successfully!');
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'role' => 'nullable|string|exists:roles,name',
+            'status' => 'nullable|in:active,inactive',
+        ], [
+            'role.exists' => 'The selected role does not exist.',
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'status' => $request->status ?? $user->status,
+            'role' => $request->role ?? $user->role,
+        ]);
+
+        // Sync Spatie role
+        if ($request->filled('role') && $request->role !== '') {
+            $user->syncRoles([$request->role]);
+        } else {
+            $user->syncRoles([]);
+        }
+        
+        // Refresh user to reload relationships
+        $user->refresh();
+
+        if ($request->expectsJson() || $request->wantsJson()) {
+            return response()->json([
+                'status' => 'success', 
+                'message' => 'User updated successfully!',
+                'user' => $user->load('roles')
+            ]);
+        }
+        return redirect()->route('admin.users.show', $user)->with('success', 'User updated successfully!');
+    }
+
+    /**
+     * Remove the specified user from storage.
+     */
+    public function destroy(User $user)
+    {
+        $this->authorize('delete', $user);
+        
+        $user->delete();
+
+        if (request()->expectsJson() || request()->wantsJson()) {
+            return response()->json(['status' => 'success', 'message' => 'User deleted successfully!']);
+        }
+        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully!');
+    }
+
+    /**
+     * Show the form for changing user password.
+     */
+    public function password(User $user)
+    {
+        $this->authorize('update', $user);
+        return view('admin.users.password-form', compact('user'));
     }
 
     /**
@@ -378,16 +540,23 @@ class AdminController extends Controller
                     'name' => $name,
                     'role' => $role,
                 ]);
+                // Sync Spatie role
+                if ($role && in_array($role, ['admin', 'faculty', 'student'], true)) {
+                    $user->syncRoles([$role]);
+                }
                 $updated++;
             } else {
-                User::create([
+                $user = User::create([
                     'name' => $name,
                     'email' => $email,
                     'password' => Hash::make($password),
                     'role' => $role,
                 ]);
+                // Assign Spatie role
+                if ($role && in_array($role, ['admin', 'faculty', 'student'], true)) {
+                    $user->assignRole($role);
+                }
                 $created++;
-                $user = User::where('email', $email)->first();
             }
 
             // If student, create/update linked Student record

@@ -15,13 +15,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Seed roles and permissions first
+        $this->call([
+            RoleSeeder::class,
+        ]);
+
         // Create student user
         $user = User::factory()->create([
             'name' => 'Francisco Combong Villahermosa',
             'email' => 'fvillahermosa_ccs@uspf.edu.ph',
             'password' => Hash::make('password'),
             'role' => 'student',
+            'status' => 'active',
         ]);
+        
+        // Assign student role
+        $user->assignRole('student');
 
         // Create student record
         Student::create([
@@ -35,19 +44,27 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create admin user
-        User::factory()->create([
+        $admin = User::factory()->create([
             'name' => 'Admin User',
             'email' => 'admin@uspf.edu.ph',
             'password' => Hash::make('admin123'),
             'role' => 'admin',
+            'status' => 'active',
         ]);
+        
+        // Assign admin role
+        $admin->assignRole('admin');
 
         // Create faculty user
-        User::factory()->create([
+        $faculty = User::factory()->create([
             'name' => 'Dr. Jane Smith',
             'email' => 'faculty@uspf.edu.ph',
             'password' => Hash::make('faculty123'),
             'role' => 'faculty',
+            'status' => 'active',
         ]);
+        
+        // Assign faculty role
+        $faculty->assignRole('faculty');
     }
 }

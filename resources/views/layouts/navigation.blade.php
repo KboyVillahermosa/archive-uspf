@@ -107,8 +107,11 @@
                         <x-nav-link :href="route('admin.pending-research')" :active="request()->routeIs('admin.pending-research')">
                             {{ __('Pending Research') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users')">
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
                             {{ __('Manage Users') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.roles.index')" :active="request()->routeIs('admin.roles.*')">
+                            {{ __('Roles & Permissions') }}
                         </x-nav-link>
                         @endif
                     @endauth
@@ -221,8 +224,11 @@
                 <x-responsive-nav-link :href="route('admin.pending-research')" :active="request()->routeIs('admin.pending-research')">
                     {{ __('Pending Research') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users')">
+                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
                     {{ __('Manage Users') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.roles.index')" :active="request()->routeIs('admin.roles.*')">
+                    {{ __('Roles & Permissions') }}
                 </x-responsive-nav-link>
                 @endif
             @endauth

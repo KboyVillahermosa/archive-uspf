@@ -23,6 +23,7 @@
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-800">Users</h3>
                         <div class="flex items-center space-x-2">
+                            <a href="{{ route('admin.roles') }}" class="px-3 py-2 text-sm bg-purple-100 hover:bg-purple-200 border border-purple-300 rounded text-purple-700">Manage Roles</a>
                             <a href="{{ route('admin.users.template') }}" class="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded">Download CSV Template</a>
                         </div>
                     </div>
@@ -44,6 +45,7 @@
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -52,18 +54,25 @@
                                         <td class="px-4 py-2 text-sm text-gray-900">{{ $user->name }}</td>
                                         <td class="px-4 py-2 text-sm text-gray-600">{{ $user->email }}</td>
                                         <td class="px-4 py-2 text-sm">
+                                            @php
+                                                $userRole = $user->roles->first();
+                                                $roleName = $userRole ? $userRole->name : ($user->role ?? 'student');
+                                            @endphp
                                             <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium
-                                                @if($user->role==='admin') bg-red-100 text-red-800
-                                                @elseif($user->role==='faculty') bg-purple-100 text-purple-800
+                                                @if($roleName==='admin') bg-red-100 text-red-800
+                                                @elseif($roleName==='faculty') bg-purple-100 text-purple-800
                                                 @else bg-blue-100 text-blue-800 @endif">
-                                                {{ ucfirst($user->role) }}
+                                                {{ ucfirst(str_replace('_', ' ', $roleName)) }}
                                             </span>
                                         </td>
                                         <td class="px-4 py-2 text-sm text-gray-500">{{ $user->created_at->diffForHumans() }}</td>
+                                        <td class="px-4 py-2 text-sm">
+                                            <a href="{{ route('admin.users.show', $user->id) }}" class="text-blue-600 hover:text-blue-800">Edit</a>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="px-4 py-4 text-center text-sm text-gray-500">No users found.</td>
+                                        <td colspan="5" class="px-4 py-4 text-center text-sm text-gray-500">No users found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
