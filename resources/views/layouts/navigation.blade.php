@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-[#26225C] border-b border-[#26225C] shadow-lg">
+<nav x-data="{ open: false }" class="bg-[#26225C] border-b border-[#26225C] shadow-lg w-full">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -11,14 +11,28 @@
                     </a>
                 </div>
 
+                <!-- Sidebar Toggle Button (for admin/faculty) -->
+                @auth
+                    @if(Auth::user()->role === 'admin' || Auth::user()->role === 'faculty' || (Auth::user()->hasRole('admin') || Auth::user()->hasRole('faculty')))
+                    <button @click="$dispatch('sidebar-toggle')" 
+                            class="ml-4 inline-flex items-center justify-center p-2 rounded-lg text-white hover:text-yellow-300 hover:bg-[#1a1840] focus:outline-none focus:ring-2 focus:ring-yellow-300 transition-colors">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    @endif
+                @endauth
+
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:ml-10 sm:flex sm:items-center">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                    
                     @auth
-                        @if(Auth::user()->role !== 'admin')
+                        @if(Auth::user()->role !== 'admin' && Auth::user()->role !== 'faculty' && !Auth::user()->hasRole('admin') && !Auth::user()->hasRole('faculty'))
+                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                        @endif
+                        
+                        @if(Auth::user()->role !== 'admin' && Auth::user()->role !== 'faculty' && !Auth::user()->hasRole('admin') && !Auth::user()->hasRole('faculty'))
                         <!-- Research History Link -->
                         <x-nav-link :href="route('research.history')" :active="request()->routeIs('research.history')">
                             {{ __('My Research') }}
@@ -98,21 +112,6 @@
                                 </div>
                             </div>
                         </div>
-                        @endif
-
-                        @if(Auth::user()->role === 'admin')
-                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
-                            {{ __('Admin Dashboard') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.pending-research')" :active="request()->routeIs('admin.pending-research')">
-                            {{ __('Pending Research') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
-                            {{ __('Manage Users') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.roles.index')" :active="request()->routeIs('admin.roles.*')">
-                            {{ __('Roles & Permissions') }}
-                        </x-nav-link>
                         @endif
                     @endauth
                 </div>
@@ -217,20 +216,6 @@
                 </div>
                 @endif
                 
-                @if(Auth::user()->role === 'admin')
-                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
-                    {{ __('Admin Dashboard') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('admin.pending-research')" :active="request()->routeIs('admin.pending-research')">
-                    {{ __('Pending Research') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
-                    {{ __('Manage Users') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('admin.roles.index')" :active="request()->routeIs('admin.roles.*')">
-                    {{ __('Roles & Permissions') }}
-                </x-responsive-nav-link>
-                @endif
             @endauth
         </div>
 

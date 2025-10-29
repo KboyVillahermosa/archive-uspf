@@ -5,8 +5,8 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div>
+        <div class="max-w-7xl mx-auto space-y-6">
             <div class="flex items-center justify-between">
                 <div></div>
                 <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded">
