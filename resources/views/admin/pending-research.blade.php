@@ -1,15 +1,41 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Pending Research Review') }}
-        </h2>
+        @php
+            $user = auth()->user();
+            $isFaculty = $user->role === 'faculty' || $user->hasRole('faculty');
+            $isAdmin = $user->role === 'admin' || $user->hasRole('admin');
+        @endphp
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    @if($isFaculty && !$isAdmin)
+                        {{ __('Department Pending Research') }}
+                    @else
+                        {{ __('Pending Research Review') }}
+                    @endif
+                </h2>
+                @if($isFaculty && !$isAdmin && $user->department)
+                    <p class="mt-1 text-sm text-gray-600">
+                        Showing pending research for {{ $user->department }}
+                        @if($user->course) - {{ $user->course }} course/program @endif
+                    </p>
+                @endif
+            </div>
+            <div class="flex items-center space-x-2">
+                @if($isFaculty && $user->department)
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        {{ $user->department }}
+                    </span>
+                @endif
+            </div>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div>
+        <div class="max-w-7xl mx-auto space-y-6">
             <div class="flex items-center justify-between">
                 <div></div>
-                <a href="{{ route('admin.users') }}" class="inline-flex items-center px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded">
+                <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded">
                     <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857" />
                     </svg>

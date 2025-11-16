@@ -4,6 +4,45 @@ import toastr from 'toastr';
 
 // Initialize Alpine.js
 window.Alpine = Alpine;
+
+// Define global sidebar function for reuse
+document.addEventListener('alpine:init', () => {
+    Alpine.data('sidebar', () => ({
+        expanded: localStorage.getItem('sidebarExpanded') !== 'false', // Default: true
+        mobileOpen: false,
+        
+        init() {
+            // Close mobile on window resize if desktop
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 768) {
+                    this.mobileOpen = false;
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Handle body overflow when mobile sidebar is open
+            this.$watch('mobileOpen', value => {
+                if (value && window.innerWidth < 768) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            });
+        },
+        
+        toggle() {
+            if (window.innerWidth >= 768) {
+                // Desktop: toggle expanded/collapsed
+                this.expanded = !this.expanded;
+                localStorage.setItem('sidebarExpanded', this.expanded);
+            } else {
+                // Mobile: open overlay sidebar
+                this.mobileOpen = true;
+            }
+        }
+    }));
+});
+
 Alpine.start();
 
 // Configure toastr

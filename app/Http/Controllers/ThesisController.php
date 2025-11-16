@@ -15,31 +15,69 @@ class ThesisController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'author' => 'required|string|max:255',
-            'department' => 'required|string|max:255',
-            'year_completed' => 'required|integer|min:1900|max:' . (date('Y') + 1),
-            'keywords' => 'required|string',
-            'document_file' => 'required|mimes:pdf|max:10240',
-            'abstract' => 'required|string',
-        ]);
-
-        $data = $request->all();
-        $data['user_id'] = auth()->id();
-
-        if ($request->hasFile('document_file')) {
-            $data['document_file'] = $request->file('document_file')->store('thesis', 'public');
+        try {
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'author' => 'required|string|max:255',
+                'department' => 'required|exists:departments,id',
+                'program' => 'required|exists:programs,id',
+                'year_completed' => 'required|integer|min:1900|max:' . (date('Y') + 1),
+                'keywords' => 'required|string',
+                'document_file' => 'required|mimes:pdf|max:10240',
+                'abstract' => 'required|string',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Return JSON error response for AJAX requests
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Validation failed',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+            throw $e;
         }
 
-        $thesis = Thesis::create($data);
+        try {
+            $data = $request->all();
+            $data['user_id'] = auth()->id();
+            
+            // Convert department and program IDs to names for compatibility
+            $department = \App\Models\Department::find($request->department);
+            $program = \App\Models\Program::find($request->program);
+            
+            $data['department'] = $department->name;
+            $data['program'] = $program->name;
 
-        // Always return JSON response for success
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Thesis submitted successfully! It is now pending approval.',
-            'research_id' => $thesis->id
-        ]);
+            if ($request->hasFile('document_file')) {
+                $data['document_file'] = $request->file('document_file')->store('thesis', 'public');
+            }
+
+            $thesis = Thesis::create($data);
+
+            // Always return JSON response for success
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Thesis submitted successfully! It is now pending approval.',
+                    'research_id' => $thesis->id
+                ]);
+            }
+            
+            return redirect()->route('research.history')->with('success', 'Thesis submitted successfully!');
+            
+        } catch (\Exception $e) {
+            \Log::error('Thesis submission error: ' . $e->getMessage());
+            
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'An error occurred while submitting your thesis. Please try again.'
+                ], 500);
+            }
+            
+            return back()->withInput()->with('error', 'An error occurred while submitting your thesis. Please try again.');
+        }
     }
 
     public function show($id)

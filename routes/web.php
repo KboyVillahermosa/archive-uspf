@@ -82,14 +82,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/research-citations/{type}/{id}', [ResearchCitationController::class, 'getResearchCitations'])->name('citations.research');
 });
 
-// Admin routes
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+// Admin dashboard - admin and faculty with permissions
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+});
+
+// Pending Research - accessible to admin and faculty with approve permissions
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/pending-research', [AdminController::class, 'pendingResearch'])->name('pending-research');
-    // Users management
-    Route::get('/users', [AdminController::class, 'users'])->name('users');
-    Route::post('/users/import', [AdminController::class, 'importUsers'])->name('users.import');
-    Route::get('/users/template', [AdminController::class, 'downloadUserTemplate'])->name('users.template');
     
     // Student research approval
     Route::post('/approve/student/{id}', [AdminController::class, 'approveStudentResearch'])->name('approve.student');
@@ -106,6 +106,37 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Dissertation approval
     Route::post('/approve/dissertation/{id}', [AdminController::class, 'approveDissertation'])->name('approve.dissertation');
     Route::post('/reject/dissertation/{id}', [AdminController::class, 'rejectDissertation'])->name('reject.dissertation');
+});
+
+// Users management - accessible to admin and faculty with view-any users permission
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/users', [AdminController::class, 'users'])->name('users.index');
+    Route::get('/users/create', [AdminController::class, 'create'])->name('users.create');
+    Route::get('/users/template', [AdminController::class, 'downloadUserTemplate'])->name('users.template');
+    Route::post('/users', [AdminController::class, 'store'])->name('users.store');
+    Route::post('/users/import', [AdminController::class, 'importUsers'])->name('users.import');
+    Route::get('/users/{user}', [AdminController::class, 'show'])->name('users.show');
+    Route::get('/users/{user}/edit', [AdminController::class, 'edit'])->name('users.edit');
+    Route::get('/users/{user}/password', [AdminController::class, 'password'])->name('users.password');
+    Route::put('/users/{user}', [AdminController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [AdminController::class, 'destroy'])->name('users.destroy');
+});
+
+// Roles management - accessible to admin and faculty with view-any roles permission
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/roles', [\App\Http\Controllers\RoleController::class, 'index'])->name('roles.index');
+    Route::get('/roles/create', [\App\Http\Controllers\RoleController::class, 'create'])->name('roles.create');
+    Route::post('/roles', [\App\Http\Controllers\RoleController::class, 'store'])->name('roles.store');
+    Route::get('/roles/{role}/edit', [\App\Http\Controllers\RoleController::class, 'edit'])->name('roles.edit');
+    Route::put('/roles/{role}', [\App\Http\Controllers\RoleController::class, 'update'])->name('roles.update');
+    Route::delete('/roles/{role}', [\App\Http\Controllers\RoleController::class, 'destroy'])->name('roles.destroy');
+});
+
+// API routes for dynamic dropdowns
+Route::prefix('api')->group(function () {
+    Route::get('/departments', [\App\Http\Controllers\Api\DepartmentController::class, 'index']);
+    Route::get('/departments/{departmentId}/programs', [\App\Http\Controllers\Api\DepartmentController::class, 'programs']);
+    Route::get('/programs', [\App\Http\Controllers\Api\DepartmentController::class, 'allPrograms']);
 });
 
 require __DIR__.'/auth.php';

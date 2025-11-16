@@ -69,7 +69,7 @@
 
                         <!-- Department and Program -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="space-y-4">
+                            <div class="space-y-1">
                                 <label for="department" class="flex items-center text-sm font-medium text-gray-700">
                                     <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -78,58 +78,17 @@
                                     </svg>
                                     Department *
                                 </label>
-                               <select name="program" id="program" required
+                                <select name="department" id="department" required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]">
-                                    <option value="">Select Program</option>
-                                    <option value="BSIT" {{ (isset($editMode) && $editMode && isset($research) && $research->program == 'BSIT') ? 'selected' : (old('program') == 'BSIT' ? 'selected' : '') }}>Bachelor of Science in Information Technology</option>
-                                    <option value="BSCS" {{ (isset($editMode) && $editMode && isset($research) && $research->program == 'BSCS') ? 'selected' : (old('program') == 'BSCS' ? 'selected' : '') }}>Bachelor of Science in Computer Science</option>
-                                    
-                                    <!-- CEA Programs -->
-                                    <option value="BSA-Arch" {{ old('program') == 'BSA-Arch' ? 'selected' : '' }}>Bachelor of Science in Architecture</option>
-                                    <option value="BSCE" {{ old('program') == 'BSCE' ? 'selected' : '' }}>Bachelor of Science in Civil Engineering</option>
-                                    <option value="BSGE" {{ old('program') == 'BSGE' ? 'selected' : '' }}>Bachelor of Science in Geodetic Engineering</option>
-                                    
-                                    <!-- CHS Programs -->
-                                    <option value="BSN" {{ old('program') == 'BSN' ? 'selected' : '' }}>Bachelor of Science in Nursing</option>
-                                    <option value="BSP" {{ old('program') == 'BSP' ? 'selected' : '' }}>Bachelor of Science in Pharmacy</option>
-                                    
-                                    <!-- CSW Programs -->
-                                    <option value="CSW" {{ old('program') == 'CSW' ? 'selected' : '' }}>College of Social Work</option>
-                                    
-                                    <!-- CTEAS Programs -->
-                                    <option value="BEED" {{ old('program') == 'BEED' ? 'selected' : '' }}>Bachelor of Elementary Education</option>
-                                    <option value="BSED-Secondary" {{ old('program') == 'BSED-Secondary' ? 'selected' : '' }}>Bachelor of Secondary Education</option>
-                                    <option value="BA-ELS" {{ old('program') == 'BA-ELS' ? 'selected' : '' }}>Bachelor of Arts in English Language Studies</option>
-                                    <option value="BA-LCS" {{ old('program') == 'BA-LCS' ? 'selected' : '' }}>Bachelor of Arts in Literature and Cultural Studies</option>
-                                    <option value="BA-Music" {{ old('program') == 'BA-Music' ? 'selected' : '' }}>Bachelor of Arts in Music</option>
-                                    <option value="BA-PoliSci" {{ old('program') == 'BA-PoliSci' ? 'selected' : '' }}>Bachelor of Arts in Political Science</option>
-                                    
-                                    <!-- SBA Programs -->
-                                    <option value="BSTM" {{ old('program') == 'BSTM' ? 'selected' : '' }}>Bachelor of Science in Tourism Management</option>
-                                    <option value="BSHM" {{ old('program') == 'BSHM' ? 'selected' : '' }}>Bachelor of Science in Hospitality Management</option>
-                                    <option value="BSA-Acct" {{ old('program') == 'BSA-Acct' ? 'selected' : '' }}>Bachelor of Science in Accountancy</option>
-                                    <option value="BSBA" {{ old('program') == 'BSBA' ? 'selected' : '' }}>Bachelor of Science in Business Administration</option>
-                                    
-                                    <!-- Graduate School Programs -->
-                                    <option value="EdD" {{ old('program') == 'EdD' ? 'selected' : '' }}>Doctor of Education major in Educational Management</option>
-                                    <option value="MSW" {{ old('program') == 'MSW' ? 'selected' : '' }}>Master of Science in Social Work</option>
-                                    <option value="MBA" {{ old('program') == 'MBA' ? 'selected' : '' }}>Master of Business Administration</option>
-                                    <option value="MAEd-EM" {{ old('program') == 'MAEd-EM' ? 'selected' : '' }}>Master of Arts in Education major in Educational Management</option>
-                                    <option value="MAEd-CI" {{ old('program') == 'MAEd-CI' ? 'selected' : '' }}>Master of Arts in Education major in Curriculum and Instruction</option>
-                                    <option value="MAEd-EE" {{ old('program') == 'MAEd-EE' ? 'selected' : '' }}>Master of Arts in Education major in Elementary Education</option>
-                                    <option value="MAEd-ECE" {{ old('program') == 'MAEd-ECE' ? 'selected' : '' }}>Master of Arts in Education major in Early Childhood Education</option>
-                                    <option value="MAEd-ME" {{ old('program') == 'MAEd-ME' ? 'selected' : '' }}>Master of Arts in Education major in Math Education</option>
-                                    <option value="MAEd-SE" {{ old('program') == 'MAEd-SE' ? 'selected' : '' }}>Master of Arts in Education major in Science Education</option>
-                                    <option value="MAEd-ELT" {{ old('program') == 'MAEd-ELT' ? 'selected' : '' }}>Master of Arts in Education major in English Language Teaching</option>
-                                    <option value="MAEd-PE" {{ old('program') == 'MAEd-PE' ? 'selected' : '' }}>Master of Arts in Education major in Physical Education</option>
-                                    <option value="MAEd-SpEd" {{ old('program') == 'MAEd-SpEd' ? 'selected' : '' }}>Master of Arts in Education major in Special Education</option>
+                                    <option value="">Select Department</option>
+                                    <!-- Department options will be loaded dynamically -->
                                 </select>
                                 @error('department') 
                                     <p class="text-red-600 text-sm">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <div class="space-y-4">
+                            <div class="space-y-1">
                                 <label for="program" class="flex items-center text-sm font-medium text-gray-700">
                                     <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -140,16 +99,10 @@
                                     </svg>
                                     Program *
                                 </label>
-                                <select name="department" id="department" required
+                                <select name="program" id="program" required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]">
-                                    <option value="">Select Department</option>
-                                    <option value="College of Engineering and Architecture" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Engineering and Architecture') ? 'selected' : (old('department') == 'College of Engineering and Architecture' ? 'selected' : '') }}>College of Engineering and Architecture</option>
-                                    <option value="College of Computer Studies" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Computer Studies') ? 'selected' : (old('department') == 'College of Computer Studies' ? 'selected' : '') }}>College of Computer Studies</option>
-                                    <option value="College of Health Sciences" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Health Sciences') ? 'selected' : (old('department') == 'College of Health Sciences' ? 'selected' : '') }}>College of Health Sciences</option>
-                                    <option value="College of Social Work" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Social Work') ? 'selected' : (old('department') == 'College of Social Work' ? 'selected' : '') }}>College of Social Work</option>
-                                    <option value="College of Teacher Education, Arts and Sciences" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Teacher Education, Arts and Sciences') ? 'selected' : (old('department') == 'College of Teacher Education, Arts and Sciences' ? 'selected' : '') }}>College of Teacher Education, Arts and Sciences</option>
-                                    <option value="School of Business and Accountancy" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'School of Business and Accountancy') ? 'selected' : (old('department') == 'School of Business and Accountancy' ? 'selected' : '') }}>School of Business and Accountancy</option>
-                                    <option value="Graduate School" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'Graduate School') ? 'selected' : (old('department') == 'Graduate School' ? 'selected' : '') }}>Graduate School</option>
+                                    <option value="">Select Program</option>
+                                    <!-- Program options will be loaded dynamically based on department selection -->
                                 </select>
                                 @error('program') 
                                     <p class="text-red-600 text-sm">{{ $message }}</p>
@@ -277,6 +230,65 @@
 
                          
     <script>
+        // Load departments on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDepartments();
+        });
+
+        // Function to load departments from API
+        async function loadDepartments() {
+            try {
+                const response = await fetch('/api/departments');
+                const departments = await response.json();
+                
+                const departmentSelect = document.getElementById('department');
+                departmentSelect.innerHTML = '<option value="">Select Department</option>';
+                
+                departments.forEach(department => {
+                    const option = document.createElement('option');
+                    option.value = department.id;
+                    option.textContent = department.name;
+                    departmentSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading departments:', error);
+                toastr.error('Failed to load departments');
+            }
+        }
+
+        // Function to load programs based on selected department
+        async function loadPrograms(departmentId) {
+            try {
+                const response = await fetch(`/api/departments/${departmentId}/programs`);
+                const programs = await response.json();
+                
+                const programSelect = document.getElementById('program');
+                programSelect.innerHTML = '<option value="">Select Program</option>';
+                
+                programs.forEach(program => {
+                    const option = document.createElement('option');
+                    option.value = program.id;
+                    option.textContent = program.name;
+                    programSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading programs:', error);
+                toastr.error('Failed to load programs');
+            }
+        }
+
+        // Handle department selection change
+        document.getElementById('department').addEventListener('change', function() {
+            const departmentId = this.value;
+            if (departmentId) {
+                loadPrograms(departmentId);
+            } else {
+                // Clear programs if no department selected
+                const programSelect = document.getElementById('program');
+                programSelect.innerHTML = '<option value="">Select Program</option>';
+            }
+        });
+
         // Word count for abstract
         document.getElementById('abstract').addEventListener('input', function(e) {
             const words = e.target.value.trim().split(/\s+/).filter(word => word.length > 0).length;
@@ -486,6 +498,12 @@
                 Submitting...
             `;
             
+            // Clear previous error messages
+            document.querySelectorAll('.text-red-600').forEach(error => error.remove());
+            document.querySelectorAll('input, select, textarea').forEach(field => {
+                field.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+            });
+            
             // Create FormData and handle citations
             const formData = new FormData(form);
             
@@ -498,43 +516,90 @@
                     'Accept': 'application/json'
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok && response.status === 422) {
+                    return response.json().then(err => {
+                        throw {validation: true, errors: err.errors || err, message: err.message || 'Validation failed'};
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.status === 'success') {
                     // Save citations after successful research submission
                     saveCitations(data.research_id, 'student');
                     
-                    if (typeof window.showSuccessNotification === 'function') {
-                        window.showSuccessNotification(
-                            'Student research submitted successfully! It is now pending approval.',
-                            '{{ route("research.history") }}'
-                        );
-                    } else {
-                        alert('Student research submitted successfully! Redirecting to research history...');
-                        setTimeout(() => {
-                            window.location.href = '{{ route("research.history") }}';
-                        }, 1000);
-                    }
-                } else {
                     if (typeof window.toastr !== 'undefined') {
-                        window.toastr.error(data.message || 'Something went wrong');
+                        window.toastr.success(data.message || 'Student research submitted successfully! It is now pending approval.');
                     } else {
-                        alert('Error: ' + (data.message || 'Something went wrong'));
+                        alert(data.message || 'Student research submitted successfully!');
+                    }
+                    
+                    // Redirect after short delay to show toast
+                    setTimeout(() => {
+                        window.location.href = '{{ route("research.history") }}';
+                    }, 1500);
+                } else {
+                    // Handle validation errors
+                    let errorMessage = data.message || 'An error occurred';
+                    if (data.errors) {
+                        displayValidationErrors(data.errors);
+                        errorMessage = 'Please check the form for errors.';
+                    }
+                    
+                    if (typeof window.toastr !== 'undefined') {
+                        window.toastr.error(errorMessage);
+                    } else {
+                        alert('Error: ' + errorMessage);
                     }
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalText;
                 }
             })
             .catch(error => {
-                if (typeof window.toastr !== 'undefined') {
-                    window.toastr.error('Failed to submit research');
+                console.error('Error:', error);
+                
+                // Handle validation errors
+                if (error.validation) {
+                    let errorMessage = error.message || 'Validation failed';
+                    if (error.errors) {
+                        displayValidationErrors(error.errors);
+                        errorMessage = 'Please check the form for errors.';
+                    }
+                    
+                    if (typeof window.toastr !== 'undefined') {
+                        window.toastr.error(errorMessage);
+                    } else {
+                        alert('Validation Error: ' + errorMessage);
+                    }
                 } else {
-                    alert('Failed to submit research');
+                    if (typeof window.toastr !== 'undefined') {
+                        window.toastr.error('Failed to submit research. Please try again.');
+                    } else {
+                        alert('Failed to submit research. Please try again.');
+                    }
                 }
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
             });
         });
+
+        function displayValidationErrors(errors) {
+            Object.keys(errors).forEach(field => {
+                const fieldElement = document.getElementById(field) || document.querySelector(`[name="${field}"]`);
+                if (fieldElement) {
+                    const errorElement = document.createElement('p');
+                    errorElement.className = 'text-red-600 text-sm mt-1';
+                    errorElement.textContent = errors[field][0];
+                    
+                    // Insert after the field
+                    fieldElement.parentNode.insertBefore(errorElement, fieldElement.nextSibling);
+                    
+                    // Add error styling to field
+                    fieldElement.classList.add('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+                }
+            });
+        }
 
         function saveCitations(researchId, researchType) {
             const citationElements = document.querySelectorAll('[id^="citation-"]');

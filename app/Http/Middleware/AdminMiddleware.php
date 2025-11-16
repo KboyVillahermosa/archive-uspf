@@ -10,7 +10,16 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check() || auth()->user()->role !== 'admin') {
+        if (!auth()->check()) {
+            abort(403, 'Access denied. Authentication required.');
+        }
+
+        $user = auth()->user();
+        
+        // Check Spatie role first, fallback to legacy role column
+        $isAdmin = $user->hasRole('admin') || ($user->role === 'admin');
+        
+        if (!$isAdmin) {
             abort(403, 'Access denied. Admin privileges required.');
         }
 
