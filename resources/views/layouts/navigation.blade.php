@@ -1,25 +1,49 @@
-<nav x-data="{ open: false }" class="bg-[#26225C] border-b border-[#26225C] shadow-lg w-full">
+<nav x-data="{ open: false }" class="bg-[#26225C] border-b border-[#FFC72C] shadow-lg w-full">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-full px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex items-center">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
-                        <x-application-logo class="block h-9 w-auto fill-current text-white" />
-                        <span class="hidden sm:block text-white font-semibold text-lg">USPF Archive</span>
-                    </a>
-                </div>
+                <!-- Logo (show for guests/students always, show for admin/faculty only on mobile) -->
+                @auth
+                    @if(Auth::user()->role === 'admin' || Auth::user()->role === 'faculty' || (Auth::user()->hasRole('admin') || Auth::user()->hasRole('faculty')))
+                        <!-- Logo for admin/faculty - only visible on mobile -->
+                        <div class="shrink-0 flex items-center md:hidden">
+                            <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
+                                <x-application-logo class="block h-9 w-auto fill-current text-white" />
+                                <span class="text-white font-semibold text-sm">USPF Archive</span>
+                            </a>
+                        </div>
+                    @else
+                        <!-- Logo for regular users - always visible -->
+                        <div class="shrink-0 flex items-center">
+                            <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
+                                <x-application-logo class="block h-9 w-auto fill-current text-white" />
+                                <span class="hidden sm:block text-white font-semibold text-lg">USPF Archive</span>
+                            </a>
+                        </div>
+                    @endif
+                @else
+                    <!-- Logo for guests - always visible -->
+                    <div class="shrink-0 flex items-center">
+                        <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
+                            <x-application-logo class="block h-9 w-auto fill-current text-white" />
+                            <span class="hidden sm:block text-white font-semibold text-lg">USPF Archive</span>
+                        </a>
+                    </div>
+                @endauth
 
                 <!-- Sidebar Toggle Button (for admin/faculty) -->
                 @auth
                     @if(Auth::user()->role === 'admin' || Auth::user()->role === 'faculty' || (Auth::user()->hasRole('admin') || Auth::user()->hasRole('faculty')))
-                    <button @click="$dispatch('sidebar-toggle')" 
-                            class="ml-4 inline-flex items-center justify-center p-2 rounded-lg text-white hover:text-yellow-300 hover:bg-[#1a1840] focus:outline-none focus:ring-2 focus:ring-yellow-300 transition-colors">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
+                    <div class="flex items-center ml-4">
+                        <!-- Single responsive sidebar toggle button -->
+                        <button @click="$dispatch('sidebar-toggle')" 
+                                class="inline-flex items-center justify-center p-2 rounded-lg text-white hover:text-[#FFC72C] hover:bg-[#1a1840] focus:outline-none focus:ring-2 focus:ring-[#FFC72C] transition-all duration-200">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+                    </div>
                     @endif
                 @endauth
 
@@ -61,54 +85,78 @@
                                         <h3 class="text-sm font-semibold text-gray-900">Upload Research</h3>
                                         <p class="text-xs text-gray-500">Choose the type of research to upload</p>
                                     </div>
-                                    <a href="{{ route('student.upload') }}" 
-                                       class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150">
-                                        <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                                            <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <div class="font-medium">Student Research</div>
-                                            <div class="text-xs text-gray-500">Undergraduate research papers</div>
-                                        </div>
-                                    </a>
-                                    <a href="{{ route('faculty.upload') }}" 
-                                       class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors duration-150">
-                                        <div class="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
-                                            <svg class="h-4 w-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <div class="font-medium">Faculty Research</div>
-                                            <div class="text-xs text-gray-500">Academic research papers</div>
-                                        </div>
-                                    </a>
-                                    <a href="{{ route('thesis.upload') }}" 
-                                       class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors duration-150">
-                                        <div class="flex-shrink-0 w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                                            <svg class="h-4 w-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <div class="font-medium">Thesis</div>
-                                            <div class="text-xs text-gray-500">Master's degree thesis</div>
-                                        </div>
-                                    </a>
-                                    <a href="{{ route('dissertations.upload') }}" 
-                                       class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition-colors duration-150">
-                                        <div class="flex-shrink-0 w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center mr-3">
-                                            <svg class="h-4 w-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <div class="font-medium">Dissertation</div>
-                                            <div class="text-xs text-gray-500">Doctoral dissertation</div>
-                                        </div>
-                                    </a>
+                                           @if(auth()->user()->hasPermissionTo('create student-research') || auth()->user()->hasRole('admin'))
+                                           <a href="{{ route('student.upload') }}" 
+                                              class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150">
+                                               <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                                   <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                                   </svg>
+                                               </div>
+                                               <div>
+                                                   <div class="font-medium">Student Research</div>
+                                                   <div class="text-xs text-gray-500">Undergraduate research papers</div>
+                                               </div>
+                                           </a>
+                                           @endif
+                                           @if(auth()->user()->hasPermissionTo('create faculty-research') || auth()->user()->hasRole('admin'))
+                                           <a href="{{ route('faculty.upload') }}" 
+                                              class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors duration-150">
+                                               <div class="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                                   <svg class="h-4 w-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                                                   </svg>
+                                               </div>
+                                               <div>
+                                                   <div class="font-medium">Faculty Research</div>
+                                                   <div class="text-xs text-gray-500">Academic research papers</div>
+                                               </div>
+                                           </a>
+                                           @endif
+                                           @php
+                                               $canCreateThesis = false;
+                                               try {
+                                                   $canCreateThesis = auth()->user()->hasPermissionTo('create thesis');
+                                               } catch (\Exception $e) {
+                                                   $canCreateThesis = false;
+                                               }
+                                           @endphp
+                                           @if($canCreateThesis || auth()->user()->hasRole('admin'))
+                                           <a href="{{ route('thesis.upload') }}" 
+                                              class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors duration-150">
+                                               <div class="flex-shrink-0 w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                                   <svg class="h-4 w-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                   </svg>
+                                               </div>
+                                               <div>
+                                                   <div class="font-medium">Thesis</div>
+                                                   <div class="text-xs text-gray-500">Master's degree thesis</div>
+                                               </div>
+                                           </a>
+                                           @endif
+                                           @php
+                                               $canCreateDissertations = false;
+                                               try {
+                                                   $canCreateDissertations = auth()->user()->hasPermissionTo('create dissertations');
+                                               } catch (\Exception $e) {
+                                                   $canCreateDissertations = false;
+                                               }
+                                           @endphp
+                                           @if($canCreateDissertations || auth()->user()->hasRole('admin'))
+                                           <a href="{{ route('dissertations.upload') }}" 
+                                              class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition-colors duration-150">
+                                               <div class="flex-shrink-0 w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                                                   <svg class="h-4 w-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                   </svg>
+                                               </div>
+                                               <div>
+                                                   <div class="font-medium">Dissertation</div>
+                                                   <div class="text-xs text-gray-500">Doctoral dissertation</div>
+                                               </div>
+                                           </a>
+                                           @endif
                                 </div>
                             </div>
                         </div>
@@ -169,16 +217,31 @@
             </div>
             @endauth
 
-            <!-- Hamburger -->
-            <div class="-mr-2 flex items-center sm:hidden">
-                <button @click="open = ! open" 
-                    class="inline-flex items-center justify-center p-2 rounded-lg text-white hover:text-yellow-300 hover:bg-[#1a1840] focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:ring-offset-2 focus:ring-offset-[#26225C] transition-all duration-200 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
+            <!-- Hamburger (only for users without sidebar) -->
+            @auth
+                @if(!(Auth::user()->role === 'admin' || Auth::user()->role === 'faculty' || (Auth::user()->hasRole('admin') || Auth::user()->hasRole('faculty'))))
+                <div class="-mr-2 flex items-center sm:hidden">
+                    <button @click="open = ! open" 
+                        class="inline-flex items-center justify-center p-2 rounded-lg text-white hover:text-yellow-300 hover:bg-[#1a1840] focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:ring-offset-2 focus:ring-offset-[#26225C] transition-all duration-200 ease-in-out">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                @endif
+            @else
+                <!-- Hamburger for guests -->
+                <div class="-mr-2 flex items-center sm:hidden">
+                    <button @click="open = ! open" 
+                        class="inline-flex items-center justify-center p-2 rounded-lg text-white hover:text-yellow-300 hover:bg-[#1a1840] focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:ring-offset-2 focus:ring-offset-[#26225C] transition-all duration-200 ease-in-out">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            @endauth
         </div>
     </div>
 
@@ -200,18 +263,42 @@
                 <div class="px-4 py-2">
                     <div class="text-sm font-semibold text-yellow-300 uppercase tracking-wider mb-2">Upload Research</div>
                     <div class="space-y-1 ml-4">
-                        <x-responsive-nav-link :href="route('student.upload')">
-                            📚 Student Research
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('faculty.upload')">
-                            🔬 Faculty Research
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('thesis.upload')">
-                            📖 Thesis
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('dissertations.upload')">
-                            📋 Dissertation
-                        </x-responsive-nav-link>
+                               @if(auth()->user()->hasPermissionTo('create student-research') || auth()->user()->hasRole('admin'))
+                               <x-responsive-nav-link :href="route('student.upload')">
+                                   📚 Student Research
+                               </x-responsive-nav-link>
+                               @endif
+                               @if(auth()->user()->hasPermissionTo('create faculty-research') || auth()->user()->hasRole('admin'))
+                               <x-responsive-nav-link :href="route('faculty.upload')">
+                                   🔬 Faculty Research
+                               </x-responsive-nav-link>
+                               @endif
+                               @php
+                                   $canCreateThesisNav = false;
+                                   try {
+                                       $canCreateThesisNav = auth()->user()->hasPermissionTo('create thesis');
+                                   } catch (\Exception $e) {
+                                       $canCreateThesisNav = false;
+                                   }
+                               @endphp
+                               @if($canCreateThesisNav || auth()->user()->hasRole('admin'))
+                               <x-responsive-nav-link :href="route('thesis.upload')">
+                                   📖 Thesis
+                               </x-responsive-nav-link>
+                               @endif
+                               @php
+                                   $canCreateDissertationsNav = false;
+                                   try {
+                                       $canCreateDissertationsNav = auth()->user()->hasPermissionTo('create dissertations');
+                                   } catch (\Exception $e) {
+                                       $canCreateDissertationsNav = false;
+                                   }
+                               @endphp
+                               @if($canCreateDissertationsNav || auth()->user()->hasRole('admin'))
+                               <x-responsive-nav-link :href="route('dissertations.upload')">
+                                   📋 Dissertation
+                               </x-responsive-nav-link>
+                               @endif
                     </div>
                 </div>
                 @endif

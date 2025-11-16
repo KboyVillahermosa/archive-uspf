@@ -72,6 +72,51 @@
                 </div>
             </div>
 
+            <!-- Department and Course fields -->
+            @php
+                $currentUser = auth()->user();
+                $isCurrentUserFaculty = $currentUser && ($currentUser->hasRole('faculty') || $currentUser->role === 'faculty');
+                $isCurrentUserAdmin = $currentUser && ($currentUser->hasRole('admin') || $currentUser->role === 'admin');
+            @endphp
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="department" class="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                    @if($isCurrentUserFaculty && !$isCurrentUserAdmin)
+                        <!-- Faculty can only create users in their department -->
+                        <input type="text" name="department" id="department" 
+                               value="{{ $currentUser->department }}" 
+                               readonly 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed">
+                        <p class="mt-1 text-xs text-gray-500">You can only create users for your department</p>
+                    @else
+                        <!-- Admin can set any department -->
+                        <input type="text" name="department" id="department" 
+                               placeholder="Enter department" 
+                               value="{{ old('department', isset($user) ? $user->department : '') }}" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    @endif
+                </div>
+
+                <div>
+                    <label for="course" class="block text-sm font-medium text-gray-700 mb-1">Course/Program</label>
+                    @if($isCurrentUserFaculty && !$isCurrentUserAdmin)
+                        <!-- Faculty can only create users in their course -->
+                        <input type="text" name="course" id="course" 
+                               value="{{ $currentUser->course }}" 
+                               readonly 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed">
+                        <p class="mt-1 text-xs text-gray-500">You can only create users for your course/program</p>
+                    @else
+                        <!-- Admin can set any course -->
+                        <input type="text" name="course" id="course" 
+                               placeholder="Enter course/program" 
+                               value="{{ old('course', isset($user) ? $user->course : '') }}" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    @endif
+                </div>
+            </div>
+
             <div class="flex items-center justify-center gap-3 pt-5">
                 <button type="submit" id="submit-btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                     Submit

@@ -11,7 +11,7 @@ class Dissertation extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'author', 'department', 'year_completed', 'keywords',
+        'title', 'author', 'department', 'program', 'year_completed', 'keywords',
         'document_file', 'abstract', 'status', 'admin_notes',
         'user_id', 'approved_by', 'approved_at', 'views_count', 'downloads_count'
     ];

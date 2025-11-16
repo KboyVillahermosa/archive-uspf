@@ -8,18 +8,54 @@
                 <p class="text-sm text-gray-600 mt-1">Track the status of your submitted research projects</p>
             </div>
             <div class="flex space-x-3">
+                @if(auth()->user()->hasPermissionTo('create student-research') || auth()->user()->hasRole('admin'))
                 <a href="{{ route('student.upload') }}" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
                     <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
                     Submit Student Research
                 </a>
+                @endif
+                @if(auth()->user()->hasPermissionTo('create faculty-research') || auth()->user()->hasRole('admin'))
                 <a href="{{ route('faculty.upload') }}" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
                     <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
                     Submit Faculty Research
                 </a>
+                @endif
+                @php
+                    $canCreateThesisHistory = false;
+                    try {
+                        $canCreateThesisHistory = auth()->user()->hasPermissionTo('create thesis');
+                    } catch (\Exception $e) {
+                        $canCreateThesisHistory = false;
+                    }
+                @endphp
+                @if($canCreateThesisHistory || auth()->user()->hasRole('admin'))
+                <a href="{{ route('thesis.upload') }}" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Submit Thesis
+                </a>
+                @endif
+                @php
+                    $canCreateDissertationsHistory = false;
+                    try {
+                        $canCreateDissertationsHistory = auth()->user()->hasPermissionTo('create dissertations');
+                    } catch (\Exception $e) {
+                        $canCreateDissertationsHistory = false;
+                    }
+                @endphp
+                @if($canCreateDissertationsHistory || auth()->user()->hasRole('admin'))
+                <a href="{{ route('dissertations.upload') }}" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Submit Dissertation
+                </a>
+                @endif
             </div>
         </div>
     </x-slot>
@@ -122,6 +158,11 @@
                                             <div class="text-sm font-semibold text-gray-900 max-w-xs truncate group-hover:text-gray-700 transition-colors">
                                                 {{ $research->title }}
                                             </div>
+                                            @if(isset($research->user_id) && $research->user_id !== auth()->id() && isset($research->user))
+                                                <div class="text-xs text-gray-500 mt-1">
+                                                    By: {{ $research->user->name }}
+                                                </div>
+                                            @endif
                                         </td>
                                         <td class="px-6 py-5 whitespace-nowrap">
                                             @if($research->type === 'student')

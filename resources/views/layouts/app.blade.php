@@ -78,5 +78,32 @@
         @flasher_render
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        
+        @if($useSidebar)
+        <script>
+            function sidebar() {
+                return {
+                    expanded: localStorage.getItem('sidebar-expanded') !== 'false',
+                    mobileOpen: false,
+                    
+                    init() {
+                        this.$watch('expanded', (value) => {
+                            localStorage.setItem('sidebar-expanded', value);
+                        });
+                    },
+                    
+                    toggle() {
+                        // On mobile devices, toggle mobile overlay
+                        if (window.innerWidth < 768) {
+                            this.mobileOpen = !this.mobileOpen;
+                        } else {
+                            // On desktop, toggle sidebar expansion
+                            this.expanded = !this.expanded;
+                        }
+                    }
+                }
+            }
+        </script>
+        @endif
     </body>
 </html>

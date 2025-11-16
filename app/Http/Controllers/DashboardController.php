@@ -153,14 +153,23 @@ class DashboardController extends Controller
 
         // Check if student research table exists and get data
         if (Schema::hasTable($studentTable)) {
-            $studentColumns = ['id', 'title', 'department', 'status', 'created_at'];
+            $studentColumns = ['id', 'title', 'department', 'status', 'created_at', 'user_id'];
             if (Schema::hasColumn($studentTable, 'rejection_reason')) {
                 $studentColumns[] = 'rejection_reason';
             }
             
-            $studentResearch = StudentResearch::where('user_id', $user->id)
-                ->select($studentColumns)
-                ->get()
+            // If user has view-any permission, show all student research, otherwise only their own
+            $studentQuery = StudentResearch::select($studentColumns);
+            
+            if ($user->hasPermissionTo('view-any student-research') || $user->hasRole('admin')) {
+                // Show all student research - load user relationship
+                $studentQuery->with('user');
+            } else {
+                // Show only their own research
+                $studentQuery->where('user_id', $user->id);
+            }
+            
+            $studentResearch = $studentQuery->get()
                 ->map(function ($item) {
                     $item->type = 'student';
                     if (!isset($item->rejection_reason)) {
@@ -172,14 +181,23 @@ class DashboardController extends Controller
 
         // Check if faculty research table exists and get data
         if (Schema::hasTable($facultyTable)) {
-            $facultyColumns = ['id', 'title', 'department', 'status', 'created_at'];
+            $facultyColumns = ['id', 'title', 'department', 'status', 'created_at', 'user_id'];
             if (Schema::hasColumn($facultyTable, 'rejection_reason')) {
                 $facultyColumns[] = 'rejection_reason';
             }
             
-            $facultyResearch = FacultyResearch::where('user_id', $user->id)
-                ->select($facultyColumns)
-                ->get()
+            // If user has view-any permission, show all faculty research, otherwise only their own
+            $facultyQuery = FacultyResearch::select($facultyColumns);
+            
+            if ($user->hasPermissionTo('view-any faculty-research') || $user->hasRole('admin')) {
+                // Show all faculty research - load user relationship
+                $facultyQuery->with('user');
+            } else {
+                // Show only their own research
+                $facultyQuery->where('user_id', $user->id);
+            }
+            
+            $facultyResearch = $facultyQuery->get()
                 ->map(function ($item) {
                     $item->type = 'faculty';
                     if (!isset($item->rejection_reason)) {

@@ -64,7 +64,7 @@
                         </div>
 
                         <!-- Department -->
-                        <div class="space-y-4">
+                        <div class="space-y-1">
                             <label for="department" class="flex items-center text-sm font-medium text-gray-700">
                                 <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
@@ -74,13 +74,7 @@
                            <select name="department" id="department" required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]">
                                     <option value="">Select Department</option>
-                                    <option value="College of Engineering and Architecture" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Engineering and Architecture') ? 'selected' : (old('department') == 'College of Engineering and Architecture' ? 'selected' : '') }}>College of Engineering and Architecture</option>
-                                    <option value="College of Computer Studies" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Computer Studies') ? 'selected' : (old('department') == 'College of Computer Studies' ? 'selected' : '') }}>College of Computer Studies</option>
-                                    <option value="College of Health Sciences" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Health Sciences') ? 'selected' : (old('department') == 'College of Health Sciences' ? 'selected' : '') }}>College of Health Sciences</option>
-                                    <option value="College of Social Work" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Social Work') ? 'selected' : (old('department') == 'College of Social Work' ? 'selected' : '') }}>College of Social Work</option>
-                                    <option value="College of Teacher Education, Arts and Sciences" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'College of Teacher Education, Arts and Sciences') ? 'selected' : (old('department') == 'College of Teacher Education, Arts and Sciences' ? 'selected' : '') }}>College of Teacher Education, Arts and Sciences</option>
-                                    <option value="School of Business and Accountancy" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'School of Business and Accountancy') ? 'selected' : (old('department') == 'School of Business and Accountancy' ? 'selected' : '') }}>School of Business and Accountancy</option>
-                                    <option value="Graduate School" {{ (isset($editMode) && $editMode && isset($research) && $research->department == 'Graduate School') ? 'selected' : (old('department') == 'Graduate School' ? 'selected' : '') }}>Graduate School</option>
+                                    <!-- Department options will be loaded dynamically -->
                                 </select>
                             @error('department') 
                                 <p class="text-red-600 text-sm">{{ $message }}</p>
@@ -96,7 +90,7 @@
                                 Abstract *
                             </label>
                             <textarea name="abstract" id="abstract" rows="6" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C] resize-none"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C] resize-none"
                                 placeholder="Provide a comprehensive summary of your faculty research (300-400 words recommended)">{{ isset($editMode) && $editMode && isset($research) ? $research->abstract : old('abstract') }}</textarea>
                             @error('abstract') 
                                 <p class="text-red-600 text-sm">{{ $message }}</p>
@@ -113,7 +107,7 @@
                                 Research Keywords (Optional)
                             </label>
                             <input type="text" name="tags" id="tags"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
                                 placeholder="Enter keywords separated by commas"
                                 value="{{ isset($editMode) && $editMode && isset($research) ? $research->tags : old('tags') }}">
                         </div>
@@ -203,6 +197,39 @@
 
                                        
     <script>
+        // Load departments on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDepartments();
+        });
+
+        // Function to load departments from API
+        async function loadDepartments() {
+            try {
+                const response = await fetch('/api/departments');
+                const departments = await response.json();
+                
+                const departmentSelect = document.getElementById('department');
+                departmentSelect.innerHTML = '<option value="">Select Department</option>';
+                
+                departments.forEach(department => {
+                    const option = document.createElement('option');
+                    option.value = department.id;
+                    option.textContent = department.name;
+                    departmentSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading departments:', error);
+                toastr.error('Failed to load departments');
+            }
+        }
+
+        // Handle department selection change
+        document.getElementById('department').addEventListener('change', function() {
+            const departmentId = this.value;
+            // Note: Faculty research doesn't need program selection
+            // This is kept for consistency with other upload forms
+        });
+
         // Word count for abstract
         document.getElementById('abstract').addEventListener('input', function(e) {
             const words = e.target.value.trim().split(/\s+/).filter(word => word.length > 0).length;

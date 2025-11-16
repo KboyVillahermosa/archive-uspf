@@ -41,6 +41,7 @@
                 </div>
                 <div class="p-8">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        @if(auth()->user()->hasPermissionTo('create student-research') || auth()->user()->hasRole('admin'))
                         <a href="{{ route('student.upload') }}" class="group bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 p-6 rounded-xl border border-blue-200 hover:border-blue-300 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
                             <div class="flex items-center mb-4">
                                 <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
@@ -61,7 +62,9 @@
                                 </svg>
                             </div>
                         </a>
+                        @endif
 
+                        @if(auth()->user()->hasPermissionTo('create faculty-research') || auth()->user()->hasRole('admin'))
                         <a href="{{ route('faculty.upload') }}" class="group bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 p-6 rounded-xl border border-purple-200 hover:border-purple-300 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
                             <div class="flex items-center mb-4">
                                 <div class="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
@@ -82,7 +85,17 @@
                                 </svg>
                             </div>
                         </a>
+                        @endif
 
+                        @php
+                            $canCreateThesis = false;
+                            try {
+                                $canCreateThesis = auth()->user()->hasPermissionTo('create thesis');
+                            } catch (\Exception $e) {
+                                $canCreateThesis = false;
+                            }
+                        @endphp
+                        @if($canCreateThesis || auth()->user()->hasRole('admin'))
                         <a href="{{ route('thesis.upload') }}" class="group bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 p-6 rounded-xl border border-green-200 hover:border-green-300 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
                             <div class="flex items-center mb-4">
                                 <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
@@ -103,7 +116,17 @@
                                 </svg>
                             </div>
                         </a>
+                        @endif
 
+                        @php
+                            $canCreateDissertations = false;
+                            try {
+                                $canCreateDissertations = auth()->user()->hasPermissionTo('create dissertations');
+                            } catch (\Exception $e) {
+                                $canCreateDissertations = false;
+                            }
+                        @endphp
+                        @if($canCreateDissertations || auth()->user()->hasRole('admin'))
                         <a href="{{ route('dissertations.upload') }}" class="group bg-gradient-to-br from-red-50 to-red-100 hover:from-red-100 hover:to-red-200 p-6 rounded-xl border border-red-200 hover:border-red-300 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
                             <div class="flex items-center mb-4">
                                 <div class="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
@@ -124,7 +147,28 @@
                                 </svg>
                             </div>
                         </a>
+                        @endif
                     </div>
+                    
+                    @php
+                        $hasAnyUploadPermission = false;
+                        $uploadPermissions = ['create student-research', 'create faculty-research', 'create thesis', 'create dissertations'];
+                        foreach ($uploadPermissions as $perm) {
+                            try {
+                                if (auth()->user()->hasPermissionTo($perm)) {
+                                    $hasAnyUploadPermission = true;
+                                    break;
+                                }
+                            } catch (\Exception $e) {
+                                // Permission doesn't exist, skip it
+                            }
+                        }
+                    @endphp
+                    @if(!$hasAnyUploadPermission && !auth()->user()->hasRole('admin'))
+                    <div class="text-center py-8">
+                        <p class="text-gray-500 text-sm">No upload permissions assigned. Please contact your administrator.</p>
+                    </div>
+                    @endif
                 </div>
             </div>
 

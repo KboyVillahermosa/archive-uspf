@@ -11,46 +11,95 @@ class StudentResearchController extends Controller
 {
     public function create()
     {
+        $this->authorize('create', StudentResearch::class);
         return view('student.upload');
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'authors' => 'required|string',
-            'department' => 'required|string|max:255',
-            'program' => 'required|string|max:255',
-            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'research_file' => 'required|mimes:pdf|max:10240',
-            'abstract' => 'required|string',
-            'tags' => 'nullable|string',
-        ]);
-
-        $data = $request->all();
-        $data['user_id'] = auth()->id();
-
-        if ($request->hasFile('banner_image')) {
-            $data['banner_image'] = $request->file('banner_image')->store('banners/student', 'public');
+        $this->authorize('create', StudentResearch::class);
+        
+        try {
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'authors' => 'required|string',
+                'department' => 'required|exists:departments,id',
+                'program' => 'required|exists:programs,id',
+                'banner_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'research_file' => 'required|mimes:pdf|max:10240',
+                'abstract' => 'required|string',
+                'tags' => 'nullable|string',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Return JSON error response for AJAX requests
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Validation failed',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+            throw $e;
         }
 
-        if ($request->hasFile('research_file')) {
-            $data['research_file'] = $request->file('research_file')->store('research/student', 'public');
+        try {
+            $data = $request->all();
+            $data['user_id'] = auth()->id();
+            
+            // Convert department and program IDs to names for compatibility
+            $department = \App\Models\Department::find($request->department);
+            $program = \App\Models\Program::find($request->program);
+            
+            $data['department'] = $department->name;
+            $data['program'] = $program->name;
+
+            if ($request->hasFile('banner_image')) {
+                $data['banner_image'] = $request->file('banner_image')->store('banners/student', 'public');
+            }
+
+            if ($request->hasFile('research_file')) {
+                $data['research_file'] = $request->file('research_file')->store('research/student', 'public');
+            }
+
+            $research = StudentResearch::create($data);
+
+            // Always return JSON response for AJAX requests
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Student research submitted successfully! It is now pending approval.',
+                    'research_id' => $research->id
+                ]);
+            }
+            
+            // For non-AJAX requests, redirect with success message
+            return redirect()->route('research.history')->with('success', 'Student research submitted successfully!');
+            
+        } catch (\Exception $e) {
+            \Log::error('Student research submission error: ' . $e->getMessage());
+            
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'An error occurred while submitting your research. Please try again.'
+                ], 500);
+            }
+            
+            return back()->withInput()->with('error', 'An error occurred while submitting your research. Please try again.');
         }
-
-        $research = StudentResearch::create($data);
-
-        // Always return JSON response for success
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Student research submitted successfully! It is now pending approval.',
-            'research_id' => $research->id
-        ]);
     }
 
     public function show($id)
     {
         $research = StudentResearch::with('user')->findOrFail($id);
+        $this->authorize('view', $research);
+        
+        // If not admin and not owner, only show approved research
+        if (!$research->user || (auth()->id() !== $research->user_id && !auth()->user()->hasRole('admin'))) {
+            if ($research->status !== 'approved') {
+                abort(404);
+            }
+        }
         
         // Track view
         ResearchAnalytic::trackView('student', $id, request());
@@ -134,9 +183,7 @@ class StudentResearchController extends Controller
     public function edit($id)
     {
         $research = \App\Models\StudentResearch::findOrFail($id);
-        if (auth()->id() !== $research->user_id) {
-            abort(403, 'Unauthorized');
-        }
+        $this->authorize('update', $research);
         return view('student.upload', [
             'research' => $research,
             'editMode' => true

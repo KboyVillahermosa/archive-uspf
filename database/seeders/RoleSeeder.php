@@ -13,6 +13,53 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
+        // First, create all possible permissions (so they exist even if not assigned to roles)
+        $allPossiblePermissions = [
+            'view-any users',
+            'view users',
+            'create users',
+            'update users',
+            'delete users',
+            'view-any student-research',
+            'view student-research',
+            'create student-research',
+            'update student-research',
+            'delete student-research',
+            'approve student-research',
+            'reject student-research',
+            'view-any faculty-research',
+            'view faculty-research',
+            'create faculty-research',
+            'update faculty-research',
+            'delete faculty-research',
+            'approve faculty-research',
+            'reject faculty-research',
+            'view-any thesis',
+            'view thesis',
+            'create thesis',
+            'update thesis',
+            'delete thesis',
+            'approve thesis',
+            'reject thesis',
+            'view-any dissertations',
+            'view dissertations',
+            'create dissertations',
+            'update dissertations',
+            'delete dissertations',
+            'approve dissertations',
+            'reject dissertations',
+            'view-any roles',
+            'view roles',
+            'create roles',
+            'update roles',
+            'delete roles',
+        ];
+        
+        // Create all permissions first
+        foreach ($allPossiblePermissions as $permissionName) {
+            Permission::firstOrCreate(['name' => $permissionName]);
+        }
+        
         // Define role-specific permissions
         $rolePermissions = [
             'admin' => [
@@ -23,20 +70,37 @@ class RoleSeeder extends Seeder
                 'delete users',
                 'view-any student-research',
                 'view student-research',
+                'create student-research',
+                'update student-research',
+                'delete student-research',
                 'approve student-research',
                 'reject student-research',
                 'view-any faculty-research',
                 'view faculty-research',
+                'create faculty-research',
+                'update faculty-research',
+                'delete faculty-research',
                 'approve faculty-research',
                 'reject faculty-research',
                 'view-any thesis',
                 'view thesis',
+                'create thesis',
+                'update thesis',
+                'delete thesis',
                 'approve thesis',
                 'reject thesis',
                 'view-any dissertations',
                 'view dissertations',
+                'create dissertations',
+                'update dissertations',
+                'delete dissertations',
                 'approve dissertations',
                 'reject dissertations',
+                'view-any roles',
+                'view roles',
+                'create roles',
+                'update roles',
+                'delete roles',
             ],
             'faculty' => [
                 'view-any faculty-research',
@@ -50,6 +114,8 @@ class RoleSeeder extends Seeder
                 'view thesis',
                 'view-any dissertations',
                 'view dissertations',
+                'view-any roles',
+                'view roles',
             ],
             'student' => [
                 'view-any student-research',

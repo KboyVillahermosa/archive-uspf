@@ -1,8 +1,46 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Admin Dashboard') }}
-        </h2>
+        <div class="flex items-center justify-between">
+            <div>
+                @php
+                    $user = auth()->user();
+                    $isFaculty = $user->role === 'faculty' || $user->hasRole('faculty');
+                    $isAdmin = $user->role === 'admin' || $user->hasRole('admin');
+                @endphp
+                <h2 class="font-bold text-2xl text-gray-900 leading-tight">
+                    @if($isFaculty && !$isAdmin)
+                        {{ __('Department Dashboard') }}
+                    @else
+                        {{ __('Admin Dashboard') }}
+                    @endif
+                </h2>
+                <p class="mt-1 text-sm text-gray-600">
+                    @if($isFaculty && !$isAdmin)
+                        Manage research for {{ $user->department ?? 'your department' }}
+                        @if($user->course) - {{ $user->course }} @endif
+                    @else
+                        Monitor and manage the USPF Archive system
+                    @endif
+                </p>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#26225C] text-white">
+                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                    </svg>
+                    @if($isFaculty && !$isAdmin)
+                        Faculty
+                    @else
+                        Administrator
+                    @endif
+                </span>
+                @if($isFaculty && $user->department)
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        {{ $user->department }}
+                    </span>
+                @endif
+            </div>
+        </div>
     </x-slot>
 
     <div class="w-full max-w-full overflow-x-hidden">

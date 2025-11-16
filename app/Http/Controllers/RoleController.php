@@ -14,7 +14,10 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $this->authorize('viewAny', \App\Models\User::class);
+        $user = auth()->user();
+        if (!$user->hasPermissionTo('view-any roles') && !$user->hasRole('admin')) {
+            abort(403, 'Access denied. You do not have permission to view roles.');
+        }
         
         $roles = Role::with('permissions')->withCount('users')->get();
         $allPermissions = Permission::orderBy('name')->get()->groupBy(function ($permission) {

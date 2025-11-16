@@ -62,6 +62,8 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('faculty123'),
             'role' => 'faculty',
             'status' => 'active',
+            'department' => 'College of Computer Studies',
+            'course' => 'BSIT',
         ]);
         
         // Assign faculty role

@@ -1,8 +1,34 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Pending Research Review') }}
-        </h2>
+        @php
+            $user = auth()->user();
+            $isFaculty = $user->role === 'faculty' || $user->hasRole('faculty');
+            $isAdmin = $user->role === 'admin' || $user->hasRole('admin');
+        @endphp
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    @if($isFaculty && !$isAdmin)
+                        {{ __('Department Pending Research') }}
+                    @else
+                        {{ __('Pending Research Review') }}
+                    @endif
+                </h2>
+                @if($isFaculty && !$isAdmin && $user->department)
+                    <p class="mt-1 text-sm text-gray-600">
+                        Showing pending research for {{ $user->department }}
+                        @if($user->course) - {{ $user->course }} course/program @endif
+                    </p>
+                @endif
+            </div>
+            <div class="flex items-center space-x-2">
+                @if($isFaculty && $user->department)
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        {{ $user->department }}
+                    </span>
+                @endif
+            </div>
+        </div>
     </x-slot>
 
     <div>
