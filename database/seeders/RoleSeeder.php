@@ -127,8 +127,14 @@ class RoleSeeder extends Seeder
                 'view faculty-research',
                 'view-any thesis',
                 'view thesis',
+                'create thesis',
+                'update thesis',
+                'delete thesis',
                 'view-any dissertations',
                 'view dissertations',
+                'create dissertations',
+                'update dissertations',
+                'delete dissertations',
             ],
         ];
 
@@ -148,3 +154,4 @@ class RoleSeeder extends Seeder
         }
     }
 }
+

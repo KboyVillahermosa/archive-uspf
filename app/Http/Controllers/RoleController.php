@@ -41,6 +41,11 @@ class RoleController extends Controller
             return $parts[0] ?? 'other';
         });
         
+        // If AJAX request (modal), return just the form modal
+        if (request()->ajax() || request()->wantsJson() || request()->header('X-Requested-With') === 'XMLHttpRequest') {
+            return view('admin.roles.form-modal', compact('allPermissions'));
+        }
+        
         return view('admin.roles.form', compact('allPermissions'));
     }
 

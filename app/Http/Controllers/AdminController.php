@@ -235,6 +235,103 @@ class AdminController extends Controller
         ));
     }
 
+    public function allResearch(Request $request)
+    {
+        $user = auth()->user();
+        $isAdmin = $user->hasRole('admin') || ($user->role === 'admin');
+        $isFaculty = $user->hasRole('faculty') || ($user->role === 'faculty');
+        
+        if (!$isAdmin && !$isFaculty) {
+            abort(403, 'Access denied. Admin or Faculty privileges required.');
+        }
+        
+        $userDepartment = $user->department;
+        $userCourse = $user->course;
+        
+        // Get filter parameters
+        $statusFilter = $request->get('status', 'all'); // all, pending, approved, rejected
+        $typeFilter = $request->get('type', 'all'); // all, student, faculty, thesis, dissertation
+        
+        // Build queries based on filters
+        $studentQuery = StudentResearch::query();
+        $facultyQuery = FacultyResearch::query();
+        $thesisQuery = Thesis::query();
+        $dissertationQuery = Dissertation::query();
+        
+        // Apply department filter for faculty
+        if ($isFaculty && $userDepartment) {
+            $studentQuery->where('department', $userDepartment);
+            $facultyQuery->where('department', $userDepartment);
+            $thesisQuery->where('department', $userDepartment);
+            $dissertationQuery->where('department', $userDepartment);
+            
+            if ($userCourse) {
+                $studentQuery->where('program', 'like', "%{$userCourse}%");
+            }
+        }
+        
+        // Apply status filter
+        if ($statusFilter !== 'all') {
+            $studentQuery->where('status', $statusFilter);
+            $facultyQuery->where('status', $statusFilter);
+            $thesisQuery->where('status', $statusFilter);
+            $dissertationQuery->where('status', $statusFilter);
+        }
+        
+        // Get research based on type filter
+        $studentResearch = collect();
+        $facultyResearch = collect();
+        $thesis = collect();
+        $dissertations = collect();
+        
+        if ($typeFilter === 'all' || $typeFilter === 'student') {
+            $studentResearch = $studentQuery->with('user')->latest('created_at')->get();
+        }
+        if ($typeFilter === 'all' || $typeFilter === 'faculty') {
+            $facultyResearch = $facultyQuery->with('user')->latest('created_at')->get();
+        }
+        if ($typeFilter === 'all' || $typeFilter === 'thesis') {
+            $thesis = $thesisQuery->with('user')->latest('created_at')->get();
+        }
+        if ($typeFilter === 'all' || $typeFilter === 'dissertation') {
+            $dissertations = $dissertationQuery->with('user')->latest('created_at')->get();
+        }
+        
+        // Combine all research for display
+        $allResearch = collect()
+            ->merge($studentResearch->map(fn($r) => (object)['type' => 'student', 'data' => $r]))
+            ->merge($facultyResearch->map(fn($r) => (object)['type' => 'faculty', 'data' => $r]))
+            ->merge($thesis->map(fn($r) => (object)['type' => 'thesis', 'data' => $r]))
+            ->merge($dissertations->map(fn($r) => (object)['type' => 'dissertation', 'data' => $r]))
+            ->sortByDesc(fn($item) => $item->data->created_at);
+        
+        // Get counts for stats
+        $totalCount = $allResearch->count();
+        $pendingCount = $allResearch->where('data.status', 'pending')->count();
+        $approvedCount = $allResearch->where('data.status', 'approved')->count();
+        $rejectedCount = $allResearch->where('data.status', 'rejected')->count();
+        
+        return view('admin.all-research', compact(
+            'allResearch',
+            'statusFilter',
+            'typeFilter',
+            'totalCount',
+            'pendingCount',
+            'approvedCount',
+            'rejectedCount',
+            'isFaculty',
+            'userDepartment'
+        ));
+    }
+
+    public function filterForm(Request $request)
+    {
+        $statusFilter = $request->get('status', 'all');
+        $typeFilter = $request->get('type', 'all');
+        
+        return view('admin.partials.filter-form', compact('statusFilter', 'typeFilter'));
+    }
+
     public function pendingResearch()
     {
         $user = auth()->user();
@@ -292,6 +389,91 @@ class AdminController extends Controller
             'thesis',
             'dissertations'
         ));
+    }
+
+    // Modal form methods
+    public function approveStudentForm($id)
+    {
+        $research = StudentResearch::findOrFail($id);
+        return view('admin.partials.approve-form', [
+            'research' => $research,
+            'type' => 'student',
+            'approveRoute' => route('admin.approve.student', $id),
+            'rejectRoute' => route('admin.reject.student.form', $id)
+        ]);
+    }
+
+    public function rejectStudentForm($id)
+    {
+        $research = StudentResearch::findOrFail($id);
+        return view('admin.partials.reject-form', [
+            'research' => $research,
+            'type' => 'student',
+            'rejectRoute' => route('admin.reject.student', $id)
+        ]);
+    }
+
+    public function approveFacultyForm($id)
+    {
+        $research = FacultyResearch::findOrFail($id);
+        return view('admin.partials.approve-form', [
+            'research' => $research,
+            'type' => 'faculty',
+            'approveRoute' => route('admin.approve.faculty', $id),
+            'rejectRoute' => route('admin.reject.faculty.form', $id)
+        ]);
+    }
+
+    public function rejectFacultyForm($id)
+    {
+        $research = FacultyResearch::findOrFail($id);
+        return view('admin.partials.reject-form', [
+            'research' => $research,
+            'type' => 'faculty',
+            'rejectRoute' => route('admin.reject.faculty', $id)
+        ]);
+    }
+
+    public function approveThesisForm($id)
+    {
+        $research = Thesis::findOrFail($id);
+        return view('admin.partials.approve-form', [
+            'research' => $research,
+            'type' => 'thesis',
+            'approveRoute' => route('admin.approve.thesis', $id),
+            'rejectRoute' => route('admin.reject.thesis.form', $id)
+        ]);
+    }
+
+    public function rejectThesisForm($id)
+    {
+        $research = Thesis::findOrFail($id);
+        return view('admin.partials.reject-form', [
+            'research' => $research,
+            'type' => 'thesis',
+            'rejectRoute' => route('admin.reject.thesis', $id)
+        ]);
+    }
+
+    public function approveDissertationForm($id)
+    {
+        $research = Dissertation::findOrFail($id);
+        return view('admin.partials.approve-form', [
+            'research' => $research,
+            'type' => 'dissertation',
+            'approveRoute' => route('admin.approve.dissertation', $id),
+            'rejectRoute' => route('admin.reject.dissertation.form', $id)
+        ]);
+    }
+
+    public function rejectDissertationForm($id)
+    {
+        $research = Dissertation::findOrFail($id);
+        return view('admin.partials.reject-form', [
+            'research' => $research,
+            'type' => 'dissertation',
+            'rejectRoute' => route('admin.reject.dissertation', $id)
+        ]);
     }
 
     public function approveStudentResearch(Request $request, $id)
@@ -563,6 +745,12 @@ class AdminController extends Controller
         }
         
         $roles = Role::all();
+        
+        // If AJAX request (modal), return just the form
+        if (request()->ajax() || request()->wantsJson() || request()->header('X-Requested-With') === 'XMLHttpRequest') {
+            return view('admin.users.form', compact('roles'));
+        }
+        
         return view('admin.users.create', compact('roles'));
     }
 

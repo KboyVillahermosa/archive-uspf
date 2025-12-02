@@ -134,6 +134,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const ref = el.getAttribute('href');
 
             modal.classList.remove('hidden');
+            modal.style.display = 'flex';
 
             try {
                 if (ref && ref !== '#') {
@@ -146,7 +147,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     const response = await fetch(ref, {
                         method: 'GET',
                         headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'text/html'
                         }
                     });
 
@@ -163,6 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     modal.querySelectorAll('.modal-close').forEach(close => {
                         close.addEventListener('click', () => {
                             modal.classList.add('hidden');
+                            modal.style.display = 'none';
                         });
                     });
                 }
@@ -296,12 +300,38 @@ function formHandler(el) {
 
             submit.disabled = true;
 
+            const method = form.getAttribute('method').toUpperCase();
+            
+            // Handle GET requests differently - build URL with query params and navigate
+            if (method === 'GET') {
+                const formData = new FormData(form);
+                const params = new URLSearchParams();
+                
+                // Convert FormData to URLSearchParams
+                for (const [key, value] of formData.entries()) {
+                    params.append(key, value);
+                }
+                
+                // Build URL with query parameters
+                const actionUrl = form.getAttribute('action');
+                const url = params.toString() ? `${actionUrl}?${params.toString()}` : actionUrl;
+                
+                // Close modal and navigate
+                const modal = document.querySelector('.modal:not(.hidden)');
+                if (modal) {
+                    modal.classList.add('hidden');
+                }
+                
+                window.location.href = url;
+                return;
+            }
+
             try {
                 // Always use FormData for form submissions to handle both regular and file inputs
                 const formData = new FormData(form);
 
                 const response = await fetch(form.getAttribute('action'), {
-                    method: form.getAttribute('method').toUpperCase(),
+                    method: method,
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                         'Accept': 'application/json',

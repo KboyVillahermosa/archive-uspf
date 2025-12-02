@@ -1,280 +1,321 @@
 <x-app-layout>
-    <x-slot name="header">
-        @php
-            $user = auth()->user();
-            $isFaculty = $user->role === 'faculty' || $user->hasRole('faculty');
-            $isAdmin = $user->role === 'admin' || $user->hasRole('admin');
-        @endphp
-        <div class="flex items-center justify-between">
-            <div>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    @if($isFaculty && !$isAdmin)
-                        {{ __('Department Pending Research') }}
-                    @else
-                        {{ __('Pending Research Review') }}
-                    @endif
-                </h2>
-                @if($isFaculty && !$isAdmin && $user->department)
-                    <p class="mt-1 text-sm text-gray-600">
-                        Showing pending research for {{ $user->department }}
-                        @if($user->course) - {{ $user->course }} course/program @endif
+    <div class="min-h-screen bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            @php
+                $user = auth()->user();
+                $isFaculty = $user->role === 'faculty' || $user->hasRole('faculty');
+                $isAdmin = $user->role === 'admin' || $user->hasRole('admin');
+                $totalCount = $studentResearch->count() + $facultyResearch->count() + $thesis->count() + $dissertations->count();
+            @endphp
+
+            <!-- Header -->
+            <div class="mb-8 flex items-center justify-between">
+                <div>
+                    <h1 class="text-4xl font-light text-[#26225C] mb-2">
+                        @if($isFaculty && !$isAdmin)
+                            Department Pending Research
+                        @else
+                            Pending Research Review
+                        @endif
+                    </h1>
+                    <p class="text-gray-600">
+                        @if($isFaculty && !$isAdmin && $user->department)
+                            Showing pending research for {{ $user->department }}
+                            @if($user->course) - {{ $user->course }} course/program @endif
+                        @else
+                            Review and approve pending research submissions
+                        @endif
                     </p>
-                @endif
-            </div>
-            <div class="flex items-center space-x-2">
-                @if($isFaculty && $user->department)
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {{ $user->department }}
-                    </span>
-                @endif
-            </div>
-        </div>
-    </x-slot>
-
-    <div>
-        <div class="max-w-7xl mx-auto space-y-6">
-            <div class="flex items-center justify-between">
-                <div></div>
-                <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded">
-                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857" />
-                    </svg>
-                    Manage Users
-                </a>
-            </div>
-            @if(session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                    {{ session('success') }}
                 </div>
-            @endif
+            </div>
 
-            <!-- Student Research -->
-            @if($studentResearch->count() > 0)
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <h3 class="text-lg font-semibold mb-4 text-blue-800">Student Research ({{ $studentResearch->count() }})</h3>
-                        <div class="space-y-4">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="rounded-2xl shadow-lg bg-gradient-to-r from-[#26225C] to-[#3a3770] text-white relative overflow-hidden">
+                    <div class="p-5">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Total</div>
+                                <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Pending Items</div>
+                                <div class="text-3xl font-semibold mt-2">{{ $totalCount }}</div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="inline-block w-3 h-3 rounded-full bg-[#FFC72C]"></span>
+                                <span class="inline-block w-3 h-3 rounded-full bg-[#FFC72C]/50"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 text-white relative overflow-hidden">
+                    <div class="p-5">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Student</div>
+                                <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Research</div>
+                                <div class="text-3xl font-semibold mt-2">{{ $studentResearch->count() }}</div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="inline-block w-3 h-3 rounded-full bg-white/30"></span>
+                                <span class="inline-block w-3 h-3 rounded-full bg-white/20"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl shadow-lg bg-gradient-to-r from-purple-600 to-purple-800 text-white relative overflow-hidden">
+                    <div class="p-5">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Faculty</div>
+                                <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Research</div>
+                                <div class="text-3xl font-semibold mt-2">{{ $facultyResearch->count() }}</div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="inline-block w-3 h-3 rounded-full bg-white/30"></span>
+                                <span class="inline-block w-3 h-3 rounded-full bg-white/20"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl shadow-lg bg-gradient-to-r from-green-600 to-green-800 text-white relative overflow-hidden">
+                    <div class="p-5">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Thesis &</div>
+                                <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Dissertations</div>
+                                <div class="text-3xl font-semibold mt-2">{{ $thesis->count() + $dissertations->count() }}</div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="inline-block w-3 h-3 rounded-full bg-white/30"></span>
+                                <span class="inline-block w-3 h-3 rounded-full bg-white/20"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Research Table -->
+            <div class="table-container overflow-x-auto">
+                @if($totalCount > 0)
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-[#26225C] to-[#3a3770] border-b border-[#FFC72C]">
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Type</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Title</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Author</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Department</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Submitted</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-white uppercase">Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
                             @foreach($studentResearch as $research)
-                                <div class="border border-gray-200 rounded-lg p-4">
-                                    <div class="flex justify-between items-start">
-                                        <div class="flex-1">
-                                            <h4 class="font-medium text-gray-900">{{ $research->title }}</h4>
-                                            <p class="text-sm text-gray-600">By: {{ $research->authors }}</p>
-                                            <p class="text-sm text-gray-600">Department: {{ $research->department }} | Program: {{ $research->program }}</p>
-                                            <p class="text-sm text-gray-600">Submitted by: {{ $research->user->name }} ({{ $research->user->email }})</p>
-                                            <p class="text-xs text-gray-500">{{ $research->created_at->format('M j, Y g:i A') }}</p>
-                                        </div>
-                                        <div class="flex space-x-2 ml-4">
-                                            <form method="POST" action="{{ route('admin.approve.student', $research->id) }}" class="inline">
-                                                @csrf
-                                                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">
-                                                    Approve
-                                                </button>
-                                            </form>
-                                            <form method="POST" action="{{ route('admin.reject.student', $research->id) }}" class="inline">
-                                                @csrf
-                                                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
-                                                    Reject
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <div class="mt-2">
-                                        <p class="text-sm text-gray-700"><strong>Abstract:</strong> {{ Str::limit($research->abstract, 200) }}</p>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            @endif
-
-            <!-- Faculty Research -->
-            @if($facultyResearch->count() > 0)
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <h3 class="text-lg font-semibold mb-4 text-purple-800">Faculty Research ({{ $facultyResearch->count() }})</h3>
-                        <div class="space-y-4">
-                            @foreach($facultyResearch as $research)
-                                <div class="border border-gray-200 rounded-lg p-4">
-                                    <div class="flex justify-between items-start">
-                                        <div class="flex-1">
-                                            <h4 class="font-medium text-gray-900">{{ $research->title }}</h4>
-                                            @if($research->co_researchers)
-                                                <p class="text-sm text-gray-600">Co-Researchers: {{ $research->co_researchers }}</p>
+                                <tr class="border-b border-gray-100 hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors bg-white">
+                                    <td class="px-4 py-3">
+                                        <span class="text-xs font-semibold text-[#26225C]">Student</span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm font-medium text-[#26225C] max-w-xs truncate">{{ Str::limit($research->title, 60) }}</div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm text-gray-600 max-w-xs truncate">{{ Str::limit($research->authors, 40) }}</div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm text-gray-600 max-w-xs truncate">
+                                            {{ $research->department }}
+                                            @if($research->program)
+                                                <span class="text-gray-400">• {{ Str::limit($research->program, 20) }}</span>
                                             @endif
-                                            <p class="text-sm text-gray-600">Department: {{ $research->department }}</p>
-                                            <p class="text-sm text-gray-600">Submitted by: {{ $research->user->name }} ({{ $research->user->email }})</p>
-                                            <p class="text-xs text-gray-500">{{ $research->created_at->format('M j, Y g:i A') }}</p>
                                         </div>
-                                        <div class="flex space-x-2 ml-4">
-                                            <form method="POST" action="{{ route('admin.approve.faculty', $research->id) }}" class="inline">
-                                                @csrf
-                                                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">
-                                                    Approve
-                                                </button>
-                                            </form>
-                                            <form method="POST" action="{{ route('admin.reject.faculty', $research->id) }}" class="inline">
-                                                @csrf
-                                                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
-                                                    Reject
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <div class="mt-2">
-                                        <p class="text-sm text-gray-700"><strong>Abstract:</strong> {{ Str::limit($research->abstract, 200) }}</p>
-                                    </div>
-                                </div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm text-gray-500">{{ $research->created_at->format('M j, Y') }}</div>
+                                        <div class="text-xs text-gray-400">{{ $research->created_at->diffForHumans() }}</div>
+                                    </td>
+                                    <td class="px-4 py-3 text-right">
+                                        <a href="{{ route('admin.approve.student.form', $research->id) }}" class="mp-form inline-flex items-center text-[#26225C] hover:text-[#FFC72C] transition-colors" data-target="actionModal">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                            </svg>
+                                        </a>
+                                    </td>
+                                </tr>
                             @endforeach
-                        </div>
-                    </div>
-                </div>
-            @endif
 
-            <!-- Thesis -->
-            @if($thesis->count() > 0)
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <h3 class="text-lg font-semibold mb-4 text-green-800">Thesis ({{ $thesis->count() }})</h3>
-                        <div class="space-y-4">
+                            @foreach($facultyResearch as $research)
+                                <tr class="border-b border-gray-100 hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors bg-white">
+                                    <td class="px-4 py-3">
+                                        <span class="text-xs font-semibold text-purple-700">Faculty</span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm font-medium text-[#26225C] max-w-xs truncate">{{ Str::limit($research->title, 60) }}</div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm text-gray-600 max-w-xs truncate">{{ $research->user->name ?? 'N/A' }}</div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm text-gray-600 max-w-xs truncate">{{ $research->department }}</div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm text-gray-500">{{ $research->created_at->format('M j, Y') }}</div>
+                                        <div class="text-xs text-gray-400">{{ $research->created_at->diffForHumans() }}</div>
+                                    </td>
+                                    <td class="px-4 py-3 text-right">
+                                        <a href="{{ route('admin.approve.faculty.form', $research->id) }}" class="mp-form inline-flex items-center text-[#26225C] hover:text-[#FFC72C] transition-colors" data-target="actionModal">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                            </svg>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+
                             @foreach($thesis as $item)
-                                <div class="border border-gray-200 rounded-lg p-4">
-                                    <div class="flex justify-between items-start">
-                                        <div class="flex-1">
-                                            <h4 class="font-medium text-gray-900">{{ $item->title }}</h4>
-                                            <p class="text-sm text-gray-600">Author: {{ $item->author }}</p>
-                                            <p class="text-sm text-gray-600">Department: {{ $item->department }} | Year: {{ $item->year_completed }}</p>
-                                            <p class="text-sm text-gray-600">Keywords: {{ $item->keywords }}</p>
-                                            <p class="text-sm text-gray-600">Submitted by: {{ $item->user->name }} ({{ $item->user->email }})</p>
-                                            <p class="text-xs text-gray-500">{{ $item->created_at->format('M j, Y g:i A') }}</p>
-                                        </div>
-                                        <div class="flex space-x-2 ml-4">
-                                            <form method="POST" action="{{ route('admin.approve.thesis', $item->id) }}" class="inline">
-                                                @csrf
-                                                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">
-                                                    Approve
-                                                </button>
-                                            </form>
-                                            <form method="POST" action="{{ route('admin.reject.thesis', $item->id) }}" class="inline">
-                                                @csrf
-                                                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
-                                                    Reject
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <div class="mt-2">
-                                        <p class="text-sm text-gray-700"><strong>Abstract:</strong> {{ Str::limit($item->abstract, 200) }}</p>
-                                    </div>
-                                </div>
+                                <tr class="border-b border-gray-100 hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors bg-white">
+                                    <td class="px-4 py-3">
+                                        <span class="text-xs font-semibold text-green-700">Thesis</span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm font-medium text-[#26225C] max-w-xs truncate">{{ Str::limit($item->title, 60) }}</div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm text-gray-600 max-w-xs truncate">{{ Str::limit($item->author, 40) }}</div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm text-gray-600 max-w-xs truncate">{{ $item->department }}</div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm text-gray-500">{{ $item->created_at->format('M j, Y') }}</div>
+                                        <div class="text-xs text-gray-400">{{ $item->created_at->diffForHumans() }}</div>
+                                    </td>
+                                    <td class="px-4 py-3 text-right">
+                                        <a href="{{ route('admin.approve.thesis.form', $item->id) }}" class="mp-form inline-flex items-center text-[#26225C] hover:text-[#FFC72C] transition-colors" data-target="actionModal">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                            </svg>
+                                        </a>
+                                    </td>
+                                </tr>
                             @endforeach
-                        </div>
-                    </div>
-                </div>
-            @endif
 
-            <!-- Dissertations -->
-            @if($dissertations->count() > 0)
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <h3 class="text-lg font-semibold mb-4 text-red-800">Dissertations ({{ $dissertations->count() }})</h3>
-                        <div class="space-y-4">
                             @foreach($dissertations as $dissertation)
-                                <div class="border border-gray-200 rounded-lg p-4">
-                                    <div class="flex justify-between items-start">
-                                        <div class="flex-1">
-                                            <h4 class="font-medium text-gray-900">{{ $dissertation->title }}</h4>
-                                            <p class="text-sm text-gray-600">Author: {{ $dissertation->author }}</p>
-                                            <p class="text-sm text-gray-600">Department: {{ $dissertation->department }} | Year: {{ $dissertation->year_completed }}</p>
-                                            <p class="text-sm text-gray-600">Keywords: {{ $dissertation->keywords }}</p>
-                                            <p class="text-sm text-gray-600">Submitted by: {{ $dissertation->user->name }} ({{ $dissertation->user->email }})</p>
-                                            <p class="text-xs text-gray-500">{{ $dissertation->created_at->format('M j, Y g:i A') }}</p>
-                                        </div>
-                                        <div class="flex space-x-2 ml-4">
-                                            <form method="POST" action="{{ route('admin.approve.dissertation', $dissertation->id) }}" class="inline">
-                                                @csrf
-                                                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">
-                                                    Approve
-                                                </button>
-                                            </form>
-                                            <form method="POST" action="{{ route('admin.reject.dissertation', $dissertation->id) }}" class="inline">
-                                                @csrf
-                                                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
-                                                    Reject
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <div class="mt-2">
-                                        <p class="text-sm text-gray-700"><strong>Abstract:</strong> {{ Str::limit($dissertation->abstract, 200) }}</p>
-                                    </div>
-                                </div>
+                                <tr class="border-b border-gray-100 hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors bg-white">
+                                    <td class="px-4 py-3">
+                                        <span class="text-xs font-semibold text-red-700">Dissertation</span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm font-medium text-[#26225C] max-w-xs truncate">{{ Str::limit($dissertation->title, 60) }}</div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm text-gray-600 max-w-xs truncate">{{ Str::limit($dissertation->author, 40) }}</div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm text-gray-600 max-w-xs truncate">{{ $dissertation->department }}</div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="text-sm text-gray-500">{{ $dissertation->created_at->format('M j, Y') }}</div>
+                                        <div class="text-xs text-gray-400">{{ $dissertation->created_at->diffForHumans() }}</div>
+                                    </td>
+                                    <td class="px-4 py-3 text-right">
+                                        <a href="{{ route('admin.approve.dissertation.form', $dissertation->id) }}" class="mp-form inline-flex items-center text-[#26225C] hover:text-[#FFC72C] transition-colors" data-target="actionModal">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                            </svg>
+                                        </a>
+                                    </td>
+                                </tr>
                             @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <div class="text-center py-16 bg-white rounded-xl">
+                        <div class="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <svg class="h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
                         </div>
+                        <h3 class="text-lg font-semibold text-[#26225C] mb-2">No pending research</h3>
+                        <p class="text-sm text-gray-500">All submissions have been reviewed.</p>
                     </div>
-                </div>
-            @endif
-
-            @if($studentResearch->count() == 0 && $facultyResearch->count() == 0 && $thesis->count() == 0 && $dissertations->count() == 0)
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-center">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        <h3 class="mt-2 text-sm font-medium text-gray-900">No pending research</h3>
-                        <p class="mt-1 text-sm text-gray-500">All submissions have been reviewed.</p>
-                    </div>
-                </div>
-            @endif
+                @endif
+            </div>
         </div>
     </div>
 
+    <!-- Action Modal -->
+    <div id="actionModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 transition-opacity duration-300 ease-in-out" style="display: none;">
+        <div class="flex justify-center pt-8 px-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full transform transition-all duration-300 ease-out modal-content-wrapper">
+                <div class="modal-content">
+                    <!-- Content will be loaded here via AJAX -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .table-container {
+            background: white;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+        
+        .table-container table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table-container thead th {
+            font-weight: 600;
+            text-align: left;
+        }
+        
+        .table-container tbody tr {
+            transition: background-color 0.2s;
+        }
+        
+        .table-container tbody tr:hover {
+            background-color: rgba(255, 199, 44, 0.05);
+        }
+    </style>
+
     <script>
-        document.querySelectorAll('form[action*="approve"], form[action*="reject"]').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const submitBtn = form.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = `Loading..`;
-                fetch(form.action, {
-                    method: 'POST',
-                    body: new FormData(form),
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success || data.status === 'success') {
-                        if (typeof window.toastr !== 'undefined') {
-                            window.toastr.success(data.message || 'Action completed successfully!');
-                        } else {
-                            alert(data.message || 'Action completed successfully!');
+        // Ensure modal displays properly with smooth transitions
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('actionModal');
+            const wrapper = modal?.querySelector('.modal-content-wrapper');
+            
+            if (modal && wrapper) {
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                            if (!modal.classList.contains('hidden')) {
+                                modal.style.display = 'block';
+                                setTimeout(() => {
+                                    modal.style.opacity = '1';
+                                    wrapper.style.opacity = '1';
+                                    wrapper.style.transform = 'translateY(0)';
+                                }, 10);
+                            } else {
+                                modal.style.opacity = '0';
+                                wrapper.style.opacity = '0';
+                                wrapper.style.transform = 'translateY(-20px)';
+                                setTimeout(() => {
+                                    modal.style.display = 'none';
+                                }, 300);
+                            }
                         }
-                        setTimeout(() => { window.location.reload(); }, 1200);
-                    } else {
-                        if (typeof window.toastr !== 'undefined') {
-                            window.toastr.error(data.message || 'Something went wrong');
-                        } else {
-                            alert('Error: ' + (data.message || 'Something went wrong'));
-                        }
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = originalText;
-                    }
-                })
-                .catch(error => {
-                    if (typeof window.toastr !== 'undefined') {
-                        window.toastr.error('Failed to process request');
-                    } else {
-                        alert('Failed to process request');
-                    }
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalText;
+                    });
                 });
-            });
+                observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+                
+                wrapper.style.opacity = '0';
+                wrapper.style.transform = 'translateY(-20px)';
+                wrapper.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+            }
         });
     </script>
 </x-app-layout>
