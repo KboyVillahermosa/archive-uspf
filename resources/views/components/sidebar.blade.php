@@ -65,6 +65,25 @@
                 </a>
             @endif
 
+            @if($isAdmin || $isFaculty)
+                <!-- All Research (for both admin and faculty) -->
+                <a href="{{ route('admin.research') }}" 
+                   class="flex items-center text-sm font-medium rounded-lg transition-all duration-200 group {{ request()->routeIs('admin.research') ? 'bg-[#FFC72C] text-[#26225C] shadow-md' : 'text-white hover:bg-[#1a1840] hover:text-[#FFC72C]' }}"
+                   :class="expanded ? 'px-4 py-3 justify-start' : 'px-2 py-3 justify-center'">
+                    <svg class="w-5 h-5 flex-shrink-0" :class="expanded ? 'mr-3' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span x-show="expanded" 
+                          x-transition:enter="transition ease-out duration-200 delay-100" 
+                          x-transition:enter-start="opacity-0" 
+                          x-transition:enter-end="opacity-100" 
+                          x-transition:leave="transition ease-in duration-150" 
+                          x-transition:leave-start="opacity-100" 
+                          x-transition:leave-end="opacity-0"
+                          class="whitespace-nowrap">Research</span>
+                </a>
+            @endif
+
             @if($canViewPendingResearch)
                 <!-- Pending Research (for both admin and faculty) -->
                 <a href="{{ route('admin.pending-research') }}" 
@@ -253,6 +272,18 @@
                             Dashboard
                         @endif
                     </span>
+                </a>
+            @endif
+
+            @if($isAdmin || $isFaculty)
+                <!-- All Research -->
+                <a href="{{ route('admin.research') }}" 
+                   @click="mobileOpen = false"
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.research') ? 'bg-[#FFC72C] text-[#26225C] shadow-md' : 'text-white hover:bg-[#1a1840] hover:text-yellow-300' }}">
+                    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span>Research</span>
                 </a>
             @endif
 

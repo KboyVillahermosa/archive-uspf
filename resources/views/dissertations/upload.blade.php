@@ -1,217 +1,279 @@
 <x-app-layout>
-    <div class="py-8 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
-        <div class="w-full flex justify-center">
-            <div class="w-full max-w-4xl bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200 mx-2">
-                <!-- Header Section -->
-                <div class="bg-gradient-to-r from-[#26225C] to-[#3a3770] px-8 py-6">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <div class="h-12 w-12 bg-white/10 rounded-xl flex items-center justify-center">
-                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <h1 class="text-2xl font-bold text-white">Submit Doctoral Dissertation</h1>
-                                <p class="text-blue-100 text-sm">Complete all fields for proper documentation and classification</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-xs text-blue-200 font-semibold">Academic Year {{ date('Y') }}</span>
-                        </div>
+    <div class="min-h-screen bg-gray-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <!-- Header -->
+            <div class="mb-10">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="w-14 h-14 bg-gradient-to-br from-[#26225C] to-[#3a3770] rounded-xl flex items-center justify-center">
+                        <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-4xl font-light text-[#26225C] mb-1">Submit Doctoral Dissertation</h1>
+                        <p class="text-gray-600">Complete all fields for proper documentation and classification</p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Form Content -->
-                <div class="p-8">
-                    <form id="dissertation-upload-form" method="POST" action="{{ route('dissertations.store') }}" enctype="multipart/form-data" class="space-y-6">
-                        @csrf
-                        
-                        <!-- Section: Research Details -->
-                        <h3 class="text-[#26225C] text-base font-bold mb-2 mt-0 border-l-4 border-[#FFC72C] pl-2 bg-gray-50 py-1 tracking-wide">Research Details</h3>
-                        <div class="space-y-1">
-                            <label for="title" class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                Research Title *
-                            </label>
-                            <input type="text" name="title" id="title" required 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
-                                placeholder="Enter the full title of your research"
-                                value="{{ isset($editMode) && $editMode && isset($dissertation) ? $dissertation->title : old('title') }}">
-                            @error('title') 
-                                <p class="text-red-600 text-sm">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Author and Year -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            <div class="space-y-1">
-                                <label for="author" class="flex items-center text-sm font-medium text-gray-700">
-                                    <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                    </svg>
-                                    Authors *
-                                </label>
-                                <input type="text" name="author" id="author" required
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
-                                    placeholder="Enter your full name"
-                                    value="{{ isset($editMode) && $editMode && isset($dissertation) ? $dissertation->author : old('author') }}">
-                                @error('author') 
-                                    <p class="text-red-600 text-sm">{{ $message }}</p>
-                                @enderror
+            <form id="dissertation-upload-form" method="POST" action="{{ route('dissertations.store') }}" enctype="multipart/form-data">
+                @csrf
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Main Form Content -->
+                    <div class="lg:col-span-2 space-y-8">
+                        <!-- Research Details Section -->
+                        <div>
+                            <div class="mb-6 pb-4 border-b border-[#FFC72C]">
+                                <h2 class="text-2xl font-light text-[#26225C] mb-1">Research Information</h2>
+                                <p class="text-sm text-gray-500">Provide essential details about your dissertation</p>
                             </div>
-
-                            <div class="space-y-1">
-                                <label for="year_completed" class="flex items-center text-sm font-medium text-gray-700">
-                                    <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
-                                    Year Completed *
-                                </label>
-                                <input type="number" name="year_completed" id="year_completed" required
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
-                                    min="1900" max="{{ date('Y') + 5 }}" value="{{ isset($editMode) && $editMode && isset($dissertation) ? $dissertation->year_completed : old('year_completed', date('Y')) }}">
-                                @error('year_completed') 
-                                    <p class="text-red-600 text-sm">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <!-- Department and Program -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="space-y-1">
-                                <label for="department" class="flex items-center text-sm font-medium text-gray-700">
-                                    <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                    </svg>
-                                    Department *
-                                </label>
-                                <select name="department" id="department" required
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]">
-                                        <option value="">Select Department</option>
-                                        <!-- Department options will be loaded dynamically -->
-                                    </select>
-                                @error('department') 
-                                    <p class="text-red-600 text-sm">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div class="space-y-1">
-                                <label for="program" class="flex items-center text-sm font-medium text-gray-700">
-                                    <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z">
-                                        </path>
-                                    </svg>
-                                    Program *
-                                </label>
-                                <select name="program" id="program" required
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]">
-                                        <option value="">Select Program</option>
-                                        <!-- Program options will be loaded dynamically based on department selection -->
-                                    </select>
-                                @error('program') 
-                                    <p class="text-red-600 text-sm">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <!-- Keywords -->
-                        <div class="space-y-1">
-                            <label for="keywords" class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                                </svg>
-                                Keywords *
-                            </label>
-                            <input type="text" name="keywords" id="keywords" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C]"
-                                placeholder="Enter keywords separated by commas"
-                                value="{{ isset($editMode) && $editMode && isset($dissertation) ? $dissertation->keywords : old('keywords') }}">
-                            <p class="text-xs text-gray-500">Example: machine learning, artificial intelligence, education, doctoral research</p>
-                            @error('keywords') 
-                                <p class="text-red-600 text-sm">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Abstract -->
-                        <div class="space-y-1">
-                            <label for="abstract" class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                Abstract *
-                            </label>
-                            <textarea name="abstract" id="abstract" rows="8" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#26225C] resize-none"
-                                placeholder="Provide a comprehensive summary of your doctoral dissertation research (300-500 words recommended)">{{ isset($editMode) && $editMode && isset($dissertation) ? $dissertation->abstract : old('abstract') }}</textarea>
-                            @error('abstract') 
-                                <p class="text-red-600 text-sm">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Section: Upload Files -->
-                        <h3 class="text-[#26225C] text-base font-bold mb-2 mt-6 border-l-4 border-[#FFC72C] pl-2 bg-gray-50 py-1 tracking-wide">Upload Files</h3>
-                        <div class="space-y-1">
-                            <label class="flex items-center text-sm font-medium text-gray-700">
-                                <svg class="w-4 h-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                Research File *
-                            </label>
-                            <div class="border-2 border-dashed border-red-300 rounded-lg p-8 text-center bg-red-50 hover:bg-red-100 transition-colors">
-                                <input type="file" name="document_file" id="document_file" accept=".pdf" required class="hidden">
-                                <label for="document_file" class="cursor-pointer">
-                                    <svg class="mx-auto h-16 w-16 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 48 48">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                    <p class="mt-4 text-lg text-gray-700">
-                                        <span class="font-medium text-red-600 hover:text-red-500">Drag & Drop your file here or click to browse</span>
-                                    </p>
-                                    <p class="text-sm text-gray-500 mt-2">Accepted formats: PDF, DOC, DOCX</p>
-                                </label>
-                            </div>
-                            @error('document_file') 
-                                <p class="text-red-600 text-sm">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Section: Research Citations -->
-                        <h3 class="text-[#26225C] text-base font-bold mb-2 mt-6 border-l-4 border-[#FFC72C] pl-2 bg-gray-50 py-1 tracking-wide">Research Citations (Optional)</h3>
-                        <div class="space-y-3">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-medium text-gray-900">Research Citations (Optional)</h3>
-                                <button type="button" id="add-citation-btn" class="bg-[#FFC72C] text-[#26225C] px-4 py-2 rounded-md hover:bg-[#FFD700] transition-colors text-sm">
-                                    Add Citation
-                                </button>
-                            </div>
-                            <p class="text-sm text-gray-500">Tag research works that you've referenced in your dissertation</p>
                             
-                            <div id="citations-container" class="space-y-3">
+                            <div class="space-y-6">
+                                <!-- Title -->
+                                <div id="field-title">
+                                    <label for="title" class="block text-sm font-semibold text-[#26225C] mb-2">
+                                        Research Title <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" name="title" id="title" required
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#FFC72C] transition-all bg-white"
+                                        placeholder="Enter the full title of your research"
+                                        value="{{ isset($editMode) && $editMode && isset($dissertation) ? $dissertation->title : old('title') }}">
+                                    @error('title') 
+                                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Author and Year -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="author" class="block text-sm font-semibold text-[#26225C] mb-2">
+                                            Authors <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="text" name="author" id="author" required
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#FFC72C] transition-all bg-white"
+                                            placeholder="Enter your full name"
+                                            value="{{ isset($editMode) && $editMode && isset($dissertation) ? $dissertation->author : old('author') }}">
+                                        @error('author') 
+                                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <div>
+                                        <label for="year_completed" class="block text-sm font-semibold text-[#26225C] mb-2">
+                                            Year Completed <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="number" name="year_completed" id="year_completed" required
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#FFC72C] transition-all bg-white"
+                                            min="1900" max="{{ date('Y') + 5 }}" value="{{ isset($editMode) && $editMode && isset($dissertation) ? $dissertation->year_completed : old('year_completed', date('Y')) }}">
+                                        @error('year_completed') 
+                                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Department and Program -->
+                                <div id="field-department" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="department" class="block text-sm font-semibold text-[#26225C] mb-2">
+                                            Department <span class="text-red-500">*</span>
+                                        </label>
+                                        <select name="department" id="department" required
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#FFC72C] transition-all bg-white">
+                                            <option value="">Select Department</option>
+                                        </select>
+                                        @error('department') 
+                                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <div>
+                                        <label for="program" class="block text-sm font-semibold text-[#26225C] mb-2">
+                                            Program <span class="text-red-500">*</span>
+                                        </label>
+                                        <select name="program" id="program" required
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#FFC72C] transition-all bg-white">
+                                            <option value="">Select Program</option>
+                                        </select>
+                                        @error('program') 
+                                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Keywords -->
+                                <div>
+                                    <label for="keywords" class="block text-sm font-semibold text-[#26225C] mb-2">
+                                        Keywords <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" name="keywords" id="keywords" required
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#FFC72C] transition-all bg-white"
+                                        placeholder="keyword1, keyword2, keyword3"
+                                        value="{{ isset($editMode) && $editMode && isset($dissertation) ? $dissertation->keywords : old('keywords') }}">
+                                    <p class="text-xs text-gray-500 mt-1.5">Separate keywords with commas</p>
+                                    @error('keywords') 
+                                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Abstract -->
+                                <div id="field-abstract">
+                                    <label for="abstract" class="block text-sm font-semibold text-[#26225C] mb-2">
+                                        Abstract <span class="text-red-500">*</span>
+                                    </label>
+                                    <textarea name="abstract" id="abstract" rows="8" required
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#FFC72C] transition-all resize-none bg-white"
+                                        placeholder="Provide a comprehensive summary of your doctoral dissertation research (300-500 words recommended)">{{ isset($editMode) && $editMode && isset($dissertation) ? $dissertation->abstract : old('abstract') }}</textarea>
+                                    <p class="text-xs text-gray-500 mt-1.5">Recommended: 300-500 words</p>
+                                    @error('abstract') 
+                                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- File Upload Section -->
+                        <div>
+                            <div class="mb-6 pb-4 border-b border-[#FFC72C]">
+                                <h2 class="text-2xl font-light text-[#26225C] mb-1">Upload Files</h2>
+                                <p class="text-sm text-gray-500">Upload your dissertation document</p>
+                            </div>
+                            
+                            <div class="space-y-6">
+                                <!-- Research File Upload -->
+                                <div id="field-document_file">
+                                    <label class="block text-sm font-semibold text-[#26225C] mb-2">
+                                        Research File <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="border-2 border-dashed border-[#FFC72C] rounded-xl p-10 text-center bg-[#FFC72C] bg-opacity-5 hover:bg-opacity-10 transition-all cursor-pointer group">
+                                        <input type="file" name="document_file" id="document_file" accept=".pdf" required class="hidden">
+                                        <label for="document_file" class="cursor-pointer">
+                                            <div class="w-20 h-20 bg-[#26225C] rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                                                <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                </svg>
+                                            </div>
+                                            <p class="text-base text-[#26225C] font-semibold mb-1">
+                                                Click to upload or drag and drop
+                                            </p>
+                                            <p class="text-sm text-gray-600">PDF (Max 10MB)</p>
+                                        </label>
+                                    </div>
+                                    @error('document_file') 
+                                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Research Citations Section -->
+                        <div>
+                            <div class="mb-6 pb-4 border-b border-[#FFC72C]">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h2 class="text-2xl font-light text-[#26225C] mb-1">Research Citations</h2>
+                                        <p class="text-sm text-gray-500">Tag research works that you've referenced</p>
+                                    </div>
+                                    <button type="button" id="add-citation-btn" class="px-5 py-2.5 bg-[#26225C] hover:bg-[#3a3770] text-white rounded-xl transition-colors text-sm font-semibold flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                        </svg>
+                                        Add Citation
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="citations-container" class="space-y-4">
                                 <!-- Citations will be added here dynamically -->
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Submit Button -->
-                        <div class="pt-4">
-                            <button type="submit" class="w-full bg-[#FFC72C] text-[#26225C] py-3 px-4 rounded-lg shadow hover:bg-[#FFD700] transition-colors font-semibold flex items-center justify-center gap-2 text-base uppercase tracking-wide">
+                    <!-- Sidebar -->
+                    <div class="lg:col-span-1">
+                        <div class="sticky top-8 space-y-6">
+                            <!-- Progress/Info Card -->
+                            <div class="bg-white border border-gray-200 rounded-xl p-6">
+                                <h3 class="text-lg font-semibold text-[#26225C] mb-4">Submission Checklist</h3>
+                                <div class="space-y-3">
+                                    <button type="button" onclick="scrollToField('title')" class="w-full flex items-center space-x-3 hover:bg-gray-50 p-2 rounded-lg transition-colors text-left group">
+                                        <div class="w-6 h-6 rounded-full border-2 border-[#FFC72C] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                            <div class="w-3 h-3 bg-[#FFC72C] rounded-full"></div>
+                                        </div>
+                                        <span class="text-sm text-gray-700 group-hover:text-[#26225C] transition-colors">Research title and author</span>
+                                    </button>
+                                    <button type="button" onclick="scrollToField('department')" class="w-full flex items-center space-x-3 hover:bg-gray-50 p-2 rounded-lg transition-colors text-left group">
+                                        <div class="w-6 h-6 rounded-full border-2 border-[#FFC72C] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                            <div class="w-3 h-3 bg-[#FFC72C] rounded-full"></div>
+                                        </div>
+                                        <span class="text-sm text-gray-700 group-hover:text-[#26225C] transition-colors">Department and program</span>
+                                    </button>
+                                    <button type="button" onclick="scrollToField('abstract')" class="w-full flex items-center space-x-3 hover:bg-gray-50 p-2 rounded-lg transition-colors text-left group">
+                                        <div class="w-6 h-6 rounded-full border-2 border-[#FFC72C] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                            <div class="w-3 h-3 bg-[#FFC72C] rounded-full"></div>
+                                        </div>
+                                        <span class="text-sm text-gray-700 group-hover:text-[#26225C] transition-colors">Abstract (300-500 words)</span>
+                                    </button>
+                                    <button type="button" onclick="scrollToField('document_file')" class="w-full flex items-center space-x-3 hover:bg-gray-50 p-2 rounded-lg transition-colors text-left group">
+                                        <div class="w-6 h-6 rounded-full border-2 border-[#FFC72C] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                            <div class="w-3 h-3 bg-[#FFC72C] rounded-full"></div>
+                                        </div>
+                                        <span class="text-sm text-gray-700 group-hover:text-[#26225C] transition-colors">Dissertation file (PDF)</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Help Card -->
+                            <div class="bg-gradient-to-br from-[#26225C] to-[#3a3770] rounded-xl p-6 text-white">
+                                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center mb-4">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-semibold mb-2">Need Help?</h3>
+                                <p class="text-sm text-white text-opacity-90 mb-4">Make sure all required fields are filled and your dissertation file is properly formatted.</p>
+                                <p class="text-xs text-white text-opacity-75">Your submission will be reviewed by administrators before being published.</p>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="w-full bg-[#26225C] hover:bg-[#3a3770] text-white py-4 px-6 rounded-xl transition-all font-semibold flex items-center justify-center gap-2 text-base shadow-lg hover:shadow-xl">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                                 </svg>
                                 Submit Dissertation
                             </button>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 
     <script>
+        // Scroll to field function
+        function scrollToField(fieldId) {
+            const fieldElement = document.getElementById(`field-${fieldId}`);
+            if (fieldElement) {
+                fieldElement.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                // Add a highlight effect
+                fieldElement.classList.add('ring-2', 'ring-[#FFC72C]', 'ring-opacity-50');
+                setTimeout(() => {
+                    fieldElement.classList.remove('ring-2', 'ring-[#FFC72C]', 'ring-opacity-50');
+                }, 2000);
+                // Focus on the input if it exists
+                const inputElement = document.getElementById(fieldId);
+                if (inputElement) {
+                    setTimeout(() => {
+                        inputElement.focus();
+                    }, 500);
+                }
+            }
+        }
+
         // Load departments on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadDepartments();
@@ -220,7 +282,11 @@
         // Function to load departments from API
         async function loadDepartments() {
             try {
-                const response = await fetch('/api/departments');
+                const response = await fetch('/api/departments', {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
                 const departments = await response.json();
                 
                 const departmentSelect = document.getElementById('department');
@@ -234,14 +300,20 @@
                 });
             } catch (error) {
                 console.error('Error loading departments:', error);
-                toastr.error('Failed to load departments');
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('Failed to load departments');
+                }
             }
         }
 
         // Function to load programs based on selected department
         async function loadPrograms(departmentId) {
             try {
-                const response = await fetch(`/api/departments/${departmentId}/programs`);
+                const response = await fetch(`/api/departments/${departmentId}/programs`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
                 const programs = await response.json();
                 
                 const programSelect = document.getElementById('program');
@@ -255,7 +327,9 @@
                 });
             } catch (error) {
                 console.error('Error loading programs:', error);
-                toastr.error('Failed to load programs');
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('Failed to load programs');
+                }
             }
         }
 
@@ -269,12 +343,6 @@
                 const programSelect = document.getElementById('program');
                 programSelect.innerHTML = '<option value="">Select Program</option>';
             }
-        });
-
-        // Word count for abstract
-        document.getElementById('abstract').addEventListener('input', function(e) {
-            const words = e.target.value.trim().split(/\s+/).filter(word => word.length > 0).length;
-            document.getElementById('abstract-count').textContent = words + ' words';
         });
 
         // File upload preview
@@ -296,7 +364,6 @@
                         </button>
                     </div>
                 `;
-                label.className = label.className.replace('border-red-300 bg-red-50 hover:bg-red-100', 'border-green-300 bg-green-50 hover:bg-green-100');
             }
         });
 
@@ -531,69 +598,4 @@
             });
         }
     </script>
-    <style>
-        @keyframes fade-in-up {
-            0% { opacity: 0; transform: translateY(40px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in-up {
-            animation: fade-in-up 0.7s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-        body {
-            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-        }
-        .bg-pattern {
-            background-image: url('/images/pattern-light.svg');
-            background-repeat: repeat-x;
-            background-position: top;
-        }
-        /* Custom scrollbar for citations */
-        #citations-container::-webkit-scrollbar {
-            width: 6px;
-            background: #f1f1f1;
-        }
-        #citations-container::-webkit-scrollbar-thumb {
-            background: #FFC72C;
-            border-radius: 3px;
-        }
-        /* Consistent icon style */
-        svg {
-            stroke-width: 2 !important;
-            stroke-linecap: round !important;
-            stroke-linejoin: round !important;
-        }
-        /* Consistent card and button style */
-        .rounded-2xl {
-            border-radius: 1.25rem !important;
-        }
-        .rounded-3xl {
-            border-radius: 1.5rem !important;
-        }
-        button, .btn {
-            font-family: inherit;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-            transition: box-shadow 0.2s, background 0.2s, color 0.2s, transform 0.2s;
-        }
-        button:hover, .btn:hover {
-            box-shadow: 0 4px 24px 0 #FFC72C33;
-            transform: translateY(-2px) scale(1.01);
-        }
-        /* Consistent spacing */
-        .space-y-1 > :not([hidden]) ~ :not([hidden]) {
-            --tw-space-y-reverse: 0;
-            margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
-            margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
-        }
-        .space-y-4 > :not([hidden]) ~ :not([hidden]) {
-            --tw-space-y-reverse: 0;
-            margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
-            margin-bottom: calc(1rem * var(--tw-space-y-reverse));
-        }
-        /* Card hover shadow */
-        .hover\:shadow-3xl:hover {
-            box-shadow: 0 10px 40px 0 #26225C22, 0 2px 8px 0 #FFC72C22;
-        }
-    </style>
 </x-app-layout>

@@ -1,179 +1,138 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <div>
-                @php
-                    $user = auth()->user();
-                    $isFaculty = $user->role === 'faculty' || $user->hasRole('faculty');
-                    $isAdmin = $user->role === 'admin' || $user->hasRole('admin');
-                @endphp
-                <h2 class="font-bold text-2xl text-gray-900 leading-tight">
-                    @if($isFaculty && !$isAdmin)
-                        {{ __('Department Dashboard') }}
-                    @else
-                        {{ __('Admin Dashboard') }}
-                    @endif
-                </h2>
-                <p class="mt-1 text-sm text-gray-600">
-                    @if($isFaculty && !$isAdmin)
-                        Manage research for {{ $user->department ?? 'your department' }}
-                        @if($user->course) - {{ $user->course }} @endif
-                    @else
-                        Monitor and manage the USPF Archive system
-                    @endif
-                </p>
-            </div>
-            <div class="flex items-center space-x-2">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#26225C] text-white">
-                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-                    </svg>
-                    @if($isFaculty && !$isAdmin)
-                        Faculty
-                    @else
-                        Administrator
-                    @endif
-                </span>
-                @if($isFaculty && $user->department)
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {{ $user->department }}
-                    </span>
-                @endif
-            </div>
-        </div>
-    </x-slot>
-
-    <div class="w-full max-w-full overflow-x-hidden">
-        <div class="max-w-7xl mx-auto w-full">
-            @include('admin.partials.charts')
+    <div class="min-h-screen bg-gray-50">
+        <div class="w-full max-w-full mx-auto px-2 sm:px-4 lg:px-6 py-8">
+            
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                <div class="bg-blue-50 overflow-hidden shadow-sm sm:rounded-lg border border-blue-200">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <svg class="h-8 w-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                </svg>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="rounded-2xl shadow-lg bg-gradient-to-r from-[#26225C] to-[#3a3770] text-white relative overflow-hidden">
+                    <div class="p-5">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Pending</div>
+                                <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Student Research</div>
+                                <div class="text-3xl font-semibold mt-2">{{ $pendingStudentResearch }}</div>
                             </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-blue-800 truncate">Pending Student Research</dt>
-                                    <dd class="text-lg font-medium text-blue-900">{{ $pendingStudentResearch }}</dd>
-                                </dl>
+                            <div class="flex items-center gap-2">
+                                <span class="inline-block w-3 h-3 rounded-full bg-[#FFC72C]"></span>
+                                <span class="inline-block w-3 h-3 rounded-full bg-[#FFC72C]/50"></span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-purple-50 overflow-hidden shadow-sm sm:rounded-lg border border-purple-200">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <svg class="h-8 w-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                                </svg>
+                <div class="rounded-2xl shadow-lg bg-gradient-to-r from-purple-600 to-purple-800 text-white relative overflow-hidden">
+                    <div class="p-5">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Pending</div>
+                                <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Faculty Research</div>
+                                <div class="text-3xl font-semibold mt-2">{{ $pendingFacultyResearch }}</div>
                             </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-purple-800 truncate">Pending Faculty Research</dt>
-                                    <dd class="text-lg font-medium text-purple-900">{{ $pendingFacultyResearch }}</dd>
-                                </dl>
+                            <div class="flex items-center gap-2">
+                                <span class="inline-block w-3 h-3 rounded-full bg-white/30"></span>
+                                <span class="inline-block w-3 h-3 rounded-full bg-white/20"></span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-green-50 overflow-hidden shadow-sm sm:rounded-lg border border-green-200">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <svg class="h-8 w-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
+                <div class="rounded-2xl shadow-lg bg-gradient-to-r from-green-600 to-green-800 text-white relative overflow-hidden">
+                    <div class="p-5">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Pending</div>
+                                <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Thesis</div>
+                                <div class="text-3xl font-semibold mt-2">{{ $pendingThesis }}</div>
                             </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-green-800 truncate">Pending Thesis</dt>
-                                    <dd class="text-lg font-medium text-green-900">{{ $pendingThesis }}</dd>
-                                </dl>
+                            <div class="flex items-center gap-2">
+                                <span class="inline-block w-3 h-3 rounded-full bg-white/30"></span>
+                                <span class="inline-block w-3 h-3 rounded-full bg-white/20"></span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-red-50 overflow-hidden shadow-sm sm:rounded-lg border border-red-200">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <svg class="h-8 w-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
+                <div class="rounded-2xl shadow-lg bg-gradient-to-r from-red-600 to-red-800 text-white relative overflow-hidden">
+                    <div class="p-5">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Pending</div>
+                                <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Dissertations</div>
+                                <div class="text-3xl font-semibold mt-2">{{ $pendingDissertations }}</div>
                             </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-red-800 truncate">Pending Dissertations</dt>
-                                    <dd class="text-lg font-medium text-red-900">{{ $pendingDissertations }}</dd>
-                                </dl>
+                            <div class="flex items-center gap-2">
+                                <span class="inline-block w-3 h-3 rounded-full bg-white/30"></span>
+                                <span class="inline-block w-3 h-3 rounded-full bg-white/20"></span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            @include('admin.partials.charts')
 
             <!-- Quick Actions -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold mb-4 text-gray-800">Quick Actions</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <a href="{{ route('admin.pending-research') }}" class="bg-yellow-50 hover:bg-yellow-100 p-4 rounded-lg border border-yellow-200 transition duration-200">
-                            <div class="flex items-center">
-                                <svg class="h-6 w-6 text-yellow-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="mt-8">
+                <div class="mb-6 pb-4 border-b-2 border-[#FFC72C]">
+                    <h2 class="text-3xl font-bold text-[#26225C] mb-1">Quick Actions</h2>
+                    <p class="text-sm text-gray-600">Manage your research repository</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <a href="{{ route('admin.pending-research') }}" class="group bg-gradient-to-br from-[#FFC72C] to-yellow-500 hover:from-yellow-500 hover:to-[#FFC72C] p-5 rounded-xl border border-yellow-300 transition-all duration-200 shadow-md hover:shadow-lg">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
-                                <div>
-                                    <h4 class="font-medium text-yellow-800">Review Pending Research</h4>
-                                    <p class="text-sm text-yellow-600">{{ $pendingStudentResearch + $pendingFacultyResearch + $pendingThesis + $pendingDissertations }} items waiting</p>
-                                </div>
                             </div>
-                        </a>
+                            <div>
+                                <h4 class="font-semibold text-white text-sm mb-1">Review Pending</h4>
+                                <p class="text-xs text-white/90">{{ $pendingStudentResearch + $pendingFacultyResearch + $pendingThesis + $pendingDissertations }} items waiting</p>
+                            </div>
+                        </div>
+                    </a>
 
-                        <a href="{{ route('admin.users.index') }}" class="bg-blue-50 hover:bg-blue-100 p-4 rounded-lg border border-blue-200 transition duration-200">
-                            <div class="flex items-center">
-                                <svg class="h-6 w-6 text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('admin.users.index') }}" class="group bg-gradient-to-br from-[#26225C] to-[#3a3770] hover:from-[#3a3770] hover:to-[#26225C] p-5 rounded-xl border border-[#26225C]/30 transition-all duration-200 shadow-md hover:shadow-lg">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" />
                                 </svg>
-                                <div>
-                                    <h4 class="font-medium text-blue-800">Manage Users</h4>
-                                    <p class="text-sm text-blue-600">List and import users via CSV</p>
-                                </div>
                             </div>
-                        </a>
+                            <div>
+                                <h4 class="font-semibold text-white text-sm mb-1">Manage Users</h4>
+                                <p class="text-xs text-white/80">List and import users via CSV</p>
+                            </div>
+                        </div>
+                    </a>
 
-                        <a href="#" class="bg-gray-50 hover:bg-gray-100 p-4 rounded-lg border border-gray-200 transition duration-200">
-                            <div class="flex items-center">
-                                <svg class="h-6 w-6 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('admin.research') }}" class="group bg-gradient-to-br from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 p-5 rounded-xl border border-blue-500/30 transition-all duration-200 shadow-md hover:shadow-lg">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                 </svg>
-                                <div>
-                                    <h4 class="font-medium text-gray-800">View Reports</h4>
-                                    <p class="text-sm text-gray-600">Research statistics and analytics</p>
-                                </div>
                             </div>
-                        </a>
+                            <div>
+                                <h4 class="font-semibold text-white text-sm mb-1">View Reports</h4>
+                                <p class="text-xs text-white/80">Research statistics and analytics</p>
+                            </div>
+                        </div>
+                    </a>
 
-                        <a href="#" class="bg-gray-50 hover:bg-gray-100 p-4 rounded-lg border border-gray-200 transition duration-200">
-                            <div class="flex items-center">
-                                <svg class="h-6 w-6 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('admin.research') }}" class="group bg-gradient-to-br from-gray-600 to-gray-800 hover:from-gray-700 hover:to-gray-900 p-5 rounded-xl border border-gray-500/30 transition-all duration-200 shadow-md hover:shadow-lg">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
                                 </svg>
-                                <div>
-                                    <h4 class="font-medium text-gray-800">System Settings</h4>
-                                    <p class="text-sm text-gray-600">Configure system preferences</p>
-                                </div>
                             </div>
-                        </a>
-                    </div>
+                            <div>
+                                <h4 class="font-semibold text-white text-sm mb-1">System Settings</h4>
+                                <p class="text-xs text-white/80">Configure system preferences</p>
+                            </div>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>

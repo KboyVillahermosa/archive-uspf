@@ -87,24 +87,34 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 });
 
-// Pending Research - accessible to admin and faculty with approve permissions
+// Research Management - accessible to admin and faculty
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/research', [AdminController::class, 'allResearch'])->name('research');
+    Route::get('/research/filter-form', [AdminController::class, 'filterForm'])->name('research.filter-form');
     Route::get('/pending-research', [AdminController::class, 'pendingResearch'])->name('pending-research');
     
     // Student research approval
+    Route::get('/approve/student/{id}', [AdminController::class, 'approveStudentForm'])->name('approve.student.form');
     Route::post('/approve/student/{id}', [AdminController::class, 'approveStudentResearch'])->name('approve.student');
+    Route::get('/reject/student/{id}', [AdminController::class, 'rejectStudentForm'])->name('reject.student.form');
     Route::post('/reject/student/{id}', [AdminController::class, 'rejectStudentResearch'])->name('reject.student');
     
     // Faculty research approval
+    Route::get('/approve/faculty/{id}', [AdminController::class, 'approveFacultyForm'])->name('approve.faculty.form');
     Route::post('/approve/faculty/{id}', [AdminController::class, 'approveFacultyResearch'])->name('approve.faculty');
+    Route::get('/reject/faculty/{id}', [AdminController::class, 'rejectFacultyForm'])->name('reject.faculty.form');
     Route::post('/reject/faculty/{id}', [AdminController::class, 'rejectFacultyResearch'])->name('reject.faculty');
     
     // Thesis approval
+    Route::get('/approve/thesis/{id}', [AdminController::class, 'approveThesisForm'])->name('approve.thesis.form');
     Route::post('/approve/thesis/{id}', [AdminController::class, 'approveThesis'])->name('approve.thesis');
+    Route::get('/reject/thesis/{id}', [AdminController::class, 'rejectThesisForm'])->name('reject.thesis.form');
     Route::post('/reject/thesis/{id}', [AdminController::class, 'rejectThesis'])->name('reject.thesis');
     
     // Dissertation approval
+    Route::get('/approve/dissertation/{id}', [AdminController::class, 'approveDissertationForm'])->name('approve.dissertation.form');
     Route::post('/approve/dissertation/{id}', [AdminController::class, 'approveDissertation'])->name('approve.dissertation');
+    Route::get('/reject/dissertation/{id}', [AdminController::class, 'rejectDissertationForm'])->name('reject.dissertation.form');
     Route::post('/reject/dissertation/{id}', [AdminController::class, 'rejectDissertation'])->name('reject.dissertation');
 });
 
