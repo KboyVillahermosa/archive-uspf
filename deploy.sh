@@ -5,15 +5,12 @@
 
 echo "🚀 Starting post-deployment script..."
 
-# Ensure the database directory exists
-mkdir -p /var/www/html/database
+# Force MySQL as the database connection for production
+echo "🔧 Setting database connection to MySQL..."
+export DB_CONNECTION=mysql
 
-# If using SQLite and the database doesn't exist, create it
-if [ "$DB_CONNECTION" = "sqlite" ] && [ ! -f "/var/www/html/database/database.sqlite" ]; then
-    echo "📁 Creating SQLite database file..."
-    touch /var/www/html/database/database.sqlite
-    chmod 664 /var/www/html/database/database.sqlite
-fi
+# Ensure the database directory exists (for logs and cache)
+mkdir -p /var/www/html/database
 
 # Run migrations
 echo "🔄 Running migrations..."
@@ -21,6 +18,7 @@ php artisan migrate --force
 
 # Clear and cache configurations
 echo "🧹 Clearing and caching configurations..."
+php artisan config:clear
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
