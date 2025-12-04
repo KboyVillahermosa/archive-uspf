@@ -39,6 +39,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Force MySQL in production
+        if ($this->app->environment('production')) {
+            config(['database.default' => 'mysql']);
+        }
     }
 }
