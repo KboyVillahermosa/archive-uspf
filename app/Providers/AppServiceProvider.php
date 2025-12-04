@@ -39,9 +39,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Force MySQL in production
+        // Configure database for production environment
         if ($this->app->environment('production')) {
+            // Force MySQL as the database connection
             config(['database.default' => 'mysql']);
+            
+            // If DATABASE_URL is available (common in cloud environments), use it
+            if ($databaseUrl = env('DATABASE_URL')) {
+                $parsed = parse_url($databaseUrl);
+                config([
+                    'database.connections.mysql.host' => $parsed['host'] ?? 'localhost',
+                    'database.connections.mysql.port' => $parsed['port'] ?? 3306,
+                    'database.connections.mysql.database' => ltrim($parsed['path'] ?? '', '/'),
+                    'database.connections.mysql.username' => $parsed['user'] ?? '',
+                    'database.connections.mysql.password' => $parsed['pass'] ?? '',
+                ]);
+            }
         }
     }
 }
