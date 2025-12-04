@@ -149,5 +149,35 @@ Route::prefix('api')->group(function () {
     Route::get('/programs', [\App\Http\Controllers\Api\DepartmentController::class, 'allPrograms']);
 });
 
+// Health check route for deployment debugging
+Route::get('/health', function () {
+    try {
+        $dbConfig = config('database.default');
+        $connection = config("database.connections.{$dbConfig}");
+        
+        // Try to connect to database
+        \DB::connection()->getPdo();
+        
+        return response()->json([
+            'status' => 'healthy',
+            'database' => $dbConfig,
+            'connection' => [
+                'driver' => $connection['driver'] ?? 'unknown',
+                'host' => $connection['host'] ?? 'N/A',
+                'database' => $connection['database'] ?? 'N/A'
+            ],
+            'timestamp' => now()
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'database' => config('database.default'),
+            'error' => $e->getMessage(),
+            'timestamp' => now()
+        ], 500);
+    }
+});
+
 require __DIR__.'/auth.php';
 
