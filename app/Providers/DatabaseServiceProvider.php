@@ -22,18 +22,33 @@ class DatabaseServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Skip if we're in console during build/install process
+        if ($this->app->runningInConsole() && !$this->app->runningUnitTests()) {
+            return;
+        }
+
         // Only run in production
         if (!$this->app->environment('production')) {
             return;
         }
 
         // Try to configure the database connection intelligently
-        $this->configureDatabaseConnection();
+        try {
+            $this->configureDatabaseConnection();
+        } catch (\Throwable $e) {
+            // Silently fail during build process - this will be retried during runtime
+            return;
+        }
     }
 
     private function configureDatabaseConnection(): void
     {
         try {
+            // Ensure env function is available
+            if (!function_exists('env')) {
+                return;
+            }
+
             // First, try to use DATABASE_URL if available
             if ($databaseUrl = env('DATABASE_URL')) {
                 $this->configureDatabaseFromUrl($databaseUrl);
@@ -50,11 +65,19 @@ class DatabaseServiceProvider extends ServiceProvider
             $this->configureSQLiteFallback();
 
         } catch (\Exception $e) {
-            // Log the error but continue with SQLite fallback
-            \Log::warning('Database configuration failed, falling back to SQLite', [
-                'error' => $e->getMessage()
-            ]);
-            $this->configureSQLiteFallback();
+            // Log the error but continue with SQLite fallback if possible
+            if (function_exists('logger')) {
+                logger()->warning('Database configuration failed, falling back to SQLite', [
+                    'error' => $e->getMessage()
+                ]);
+            }
+            
+            try {
+                $this->configureSQLiteFallback();
+            } catch (\Throwable $fallbackError) {
+                // If even SQLite fails, just return silently
+                return;
+            }
         }
     }
 

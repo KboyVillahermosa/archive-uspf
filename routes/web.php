@@ -152,6 +152,15 @@ Route::prefix('api')->group(function () {
 // Health check route for deployment debugging
 Route::get('/health', function () {
     try {
+        // Basic health check without database connection during build
+        if (app()->runningInConsole()) {
+            return response()->json([
+                'status' => 'build-mode',
+                'message' => 'Application is in build mode',
+                'timestamp' => now()
+            ]);
+        }
+
         $dbConfig = config('database.default');
         $connection = config("database.connections.{$dbConfig}");
         
@@ -172,7 +181,7 @@ Route::get('/health', function () {
     } catch (\Exception $e) {
         return response()->json([
             'status' => 'error',
-            'database' => config('database.default'),
+            'database' => config('database.default', 'unknown'),
             'error' => $e->getMessage(),
             'timestamp' => now()
         ], 500);

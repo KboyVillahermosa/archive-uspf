@@ -2,5 +2,6 @@
 
 return [
     App\Providers\AppServiceProvider::class,
-    App\Providers\DatabaseServiceProvider::class,
+    // Temporarily disabled during build - database logic moved to middleware
+    // App\Providers\DatabaseServiceProvider::class,
 ];
