@@ -36,6 +36,10 @@ php artisan config:clear || echo "Config clear failed, continuing..."
 php artisan route:clear || echo "Route clear failed, continuing..."
 php artisan view:clear || echo "View clear failed, continuing..."
 
+# Run package discovery now that environment is ready
+echo "📦 Discovering packages..."
+php artisan package:discover --ansi || echo "Package discovery failed, continuing..."
+
 # Wait for database to be ready (for cloud environments)
 echo "⏳ Waiting for database to be ready..."
 sleep 3
