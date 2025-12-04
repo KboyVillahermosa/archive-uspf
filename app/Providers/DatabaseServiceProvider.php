@@ -36,8 +36,8 @@ class DatabaseServiceProvider extends ServiceProvider
         try {
             $this->configureDatabaseConnection();
         } catch (\Throwable $e) {
-            // Silently fail during build process - this will be retried during runtime
-            return;
+            // If anything fails, just use SQLite
+            $this->configureSQLiteFallback();
         }
     }
 
@@ -51,17 +51,21 @@ class DatabaseServiceProvider extends ServiceProvider
 
             // First, try to use DATABASE_URL if available
             if ($databaseUrl = env('DATABASE_URL')) {
-                $this->configureDatabaseFromUrl($databaseUrl);
-                return;
+                if ($this->testMySQLConnection($databaseUrl)) {
+                    $this->configureDatabaseFromUrl($databaseUrl);
+                    return;
+                }
             }
 
-            // Check if MySQL environment variables are available
+            // Check if MySQL environment variables are available and working
             if (env('DB_HOST') && env('DB_DATABASE')) {
-                Config::set('database.default', 'mysql');
-                return;
+                if ($this->testMySQLConnection()) {
+                    Config::set('database.default', 'mysql');
+                    return;
+                }
             }
 
-            // If no MySQL config is available, fall back to SQLite
+            // If MySQL doesn't work, fall back to SQLite
             $this->configureSQLiteFallback();
 
         } catch (\Exception $e) {
@@ -78,6 +82,40 @@ class DatabaseServiceProvider extends ServiceProvider
                 // If even SQLite fails, just return silently
                 return;
             }
+        }
+    }
+
+    private function testMySQLConnection($databaseUrl = null): bool
+    {
+        try {
+            if ($databaseUrl) {
+                $parsed = parse_url($databaseUrl);
+                $host = $parsed['host'] ?? 'localhost';
+                $port = $parsed['port'] ?? 3306;
+                $database = ltrim($parsed['path'] ?? '', '/');
+                $username = $parsed['user'] ?? '';
+                $password = $parsed['pass'] ?? '';
+            } else {
+                $host = env('DB_HOST', '127.0.0.1');
+                $port = env('DB_PORT', '3306');
+                $database = env('DB_DATABASE', '');
+                $username = env('DB_USERNAME', '');
+                $password = env('DB_PASSWORD', '');
+            }
+
+            // Try to create a PDO connection to test
+            $dsn = "mysql:host={$host};port={$port};dbname={$database}";
+            $pdo = new \PDO($dsn, $username, $password, [
+                \PDO::ATTR_TIMEOUT => 3,
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+            ]);
+            
+            // Test with a simple query
+            $pdo->query('SELECT 1');
+            return true;
+            
+        } catch (\Exception $e) {
+            return false;
         }
     }
 

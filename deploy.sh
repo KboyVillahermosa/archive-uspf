@@ -21,21 +21,25 @@ fi
 # Check database configuration
 echo "🔍 Checking database configuration..."
 
+# Always ensure SQLite database exists as fallback
+echo "📁 Setting up SQLite fallback database..."
+if [ ! -f "/var/www/html/database/database.sqlite" ]; then
+    echo "📁 Creating SQLite database..."
+    touch /var/www/html/database/database.sqlite
+    chmod 664 /var/www/html/database/database.sqlite
+    echo "✅ SQLite database created"
+else
+    echo "✅ SQLite database already exists"
+fi
+
 if [ -n "$DATABASE_URL" ]; then
-    echo "✅ DATABASE_URL found: Using MySQL with URL"
+    echo "✅ DATABASE_URL found: Will attempt MySQL with URL"
     export DB_CONNECTION=mysql
 elif [ -n "$DB_HOST" ] && [ -n "$DB_DATABASE" ]; then
-    echo "✅ Individual DB variables found: Using MySQL"
+    echo "✅ Individual DB variables found: Will attempt MySQL"
     export DB_CONNECTION=mysql
 else
-    echo "⚠️  No MySQL configuration found, setting up SQLite..."
-    # Create SQLite database if it doesn't exist
-    if [ ! -f "/var/www/html/database/database.sqlite" ]; then
-        echo "📁 Creating SQLite database..."
-        touch /var/www/html/database/database.sqlite
-        chmod 664 /var/www/html/database/database.sqlite
-        echo "✅ SQLite database created"
-    fi
+    echo "⚠️  No MySQL configuration found, using SQLite"
     export DB_CONNECTION=sqlite
     export DB_DATABASE="/var/www/html/database/database.sqlite"
 fi
