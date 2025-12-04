@@ -1,2 +1,1 @@
-# Uncomment the line below if you want to ignore SQLite files
-# *.sqlite*
+*.sqlite*

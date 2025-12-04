@@ -149,26 +149,5 @@ Route::prefix('api')->group(function () {
     Route::get('/programs', [\App\Http\Controllers\Api\DepartmentController::class, 'allPrograms']);
 });
 
-// Simple diagnostic route for debugging 500 errors
-Route::get('/debug', function () {
-    try {
-        return response()->json([
-            'status' => 'ok',
-            'app_env' => app()->environment(),
-            'app_debug' => config('app.debug'),
-            'app_key' => config('app.key') ? 'SET' : 'NOT SET',
-            'db_default' => config('database.default'),
-            'php_version' => PHP_VERSION,
-            'laravel_version' => app()->version(),
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'error' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine()
-        ], 500);
-    }
-});
-
 require __DIR__.'/auth.php';
 
