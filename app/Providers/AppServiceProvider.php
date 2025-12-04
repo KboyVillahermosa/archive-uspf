@@ -39,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Basic database configuration is now handled by DatabaseServiceProvider
+        // This keeps AppServiceProvider clean and focused
     }
 }
