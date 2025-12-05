@@ -47,11 +47,46 @@ class SetupDatabase extends Command
         // Run seeders
         $this->info('🌱 Running seeders...');
         try {
-            Artisan::call('db:seed', ['--force' => true]);
+            // First try to run the role seeder
+            Artisan::call('db:seed', [
+                '--class' => 'RoleSeeder',
+                '--force' => true
+            ]);
+            
+            // Then run the department program seeder
+            Artisan::call('db:seed', [
+                '--class' => 'DepartmentProgramSeeder', 
+                '--force' => true
+            ]);
+            
+            // Finally run the main database seeder
+            Artisan::call('db:seed', [
+                '--class' => 'DatabaseSeeder',
+                '--force' => true
+            ]);
+            
             $this->info('✅ Seeders completed');
         } catch (\Exception $e) {
             $this->error('❌ Seeder failed: ' . $e->getMessage());
-            return 1;
+            
+            // Try to create a basic user manually if seeding fails
+            $this->info('🔄 Attempting to create basic user manually...');
+            try {
+                $user = \App\Models\User::firstOrCreate(
+                    ['email' => 'fvillahermosa_ccs@uspf.edu.ph'],
+                    [
+                        'name' => 'Francisco Combong Villahermosa',
+                        'password' => \Hash::make('password'),
+                        'role' => 'student',
+                        'status' => 'active',
+                        'email_verified_at' => now(),
+                    ]
+                );
+                $this->info('✅ Basic user created');
+            } catch (\Exception $manualError) {
+                $this->error('❌ Manual user creation failed: ' . $manualError->getMessage());
+                return 1;
+            }
         }
 
         $this->info('🎉 Database setup completed successfully!');

@@ -21,12 +21,13 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create student user
-        $user = User::factory()->create([
+        $user = User::create([
             'name' => 'Francisco Combong Villahermosa',
             'email' => 'fvillahermosa_ccs@uspf.edu.ph',
             'password' => Hash::make('password'),
             'role' => 'student',
             'status' => 'active',
+            'email_verified_at' => now(),
         ]);
         
         // Assign student role
@@ -44,19 +45,20 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create admin user
-        $admin = User::factory()->create([
+        $admin = User::create([
             'name' => 'Admin User',
             'email' => 'admin@uspf.edu.ph',
             'password' => Hash::make('admin123'),
             'role' => 'admin',
             'status' => 'active',
+            'email_verified_at' => now(),
         ]);
         
         // Assign admin role
         $admin->assignRole('admin');
 
         // Create faculty user
-        $faculty = User::factory()->create([
+        $faculty = User::create([
             'name' => 'Dr. Jane Smith',
             'email' => 'faculty@uspf.edu.ph',
             'password' => Hash::make('faculty123'),
@@ -64,6 +66,7 @@ class DatabaseSeeder extends Seeder
             'status' => 'active',
             'department' => 'College of Computer Studies',
             'course' => 'BSIT',
+            'email_verified_at' => now(),
         ]);
         
         // Assign faculty role
