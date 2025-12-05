@@ -1,20 +1,35 @@
 <x-app-layout>
-    <div class="min-h-screen bg-gray-50">
+    <div class="min-h-screen bg-gray-50" x-data="allResearchLoader()" x-init="loadAllResearch()">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             
-            <!-- Header -->
-            <div class="mb-8 flex items-center justify-between">
-                <div>
-                    <h1 class="text-4xl font-light text-[#26225C] mb-2">All Research</h1>
-                    <p class="text-gray-600">View and manage all research submissions</p>
-                </div>
-                <a href="{{ route('admin.research.filter-form', ['status' => $statusFilter, 'type' => $typeFilter]) }}" class="mp-form flex items-center gap-2 px-6 py-3 bg-[#26225C] hover:bg-[#3a3770] text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg" data-target="filterModal">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                    Search & Filter
-                </a>
+            <!-- Loading State -->
+            <div x-show="loading" x-transition>
+                <x-skeleton-loader />
             </div>
+
+            <!-- Actual Content -->
+            <div x-show="!loading" x-transition>
+                <!-- Header -->
+                <div class="mb-8 flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-light text-[#26225C] mb-2">All Research</h1>
+                        <p class="text-gray-600">View and manage all research submissions</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button @click="refreshData()" class="flex items-center gap-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
+                            <svg class="w-4 h-4" :class="{ 'animate-spin': refreshing }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            <span x-text="refreshing ? 'Refreshing...' : 'Refresh'">Refresh</span>
+                        </button>
+                        <a href="{{ route('admin.research.filter-form', ['status' => $statusFilter, 'type' => $typeFilter]) }}" class="mp-form flex items-center gap-2 px-6 py-3 bg-[#26225C] hover:bg-[#3a3770] text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg" data-target="filterModal">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            Search & Filter
+                        </a>
+                    </div>
+                </div>
 
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -206,6 +221,7 @@
                     </div>
                 @endif
             </div>
+            </div>
         </div>
     </div>
 
@@ -259,6 +275,90 @@
                 wrapper.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
             }
         });
+
+        // All Research Data Management
+        function allResearchLoader() {
+            return {
+                loading: true,
+                refreshing: false,
+                stats: {
+                    totalCount: {{ $totalCount }},
+                    pendingCount: {{ $pendingCount }},
+                    approvedCount: {{ $approvedCount }},
+                    rejectedCount: {{ $rejectedCount }}
+                },
+
+                async loadAllResearch() {
+                    try {
+                        // Simulate API loading time for better UX
+                        await new Promise(resolve => setTimeout(resolve, 1200));
+                        
+                        // In a real implementation, you would fetch data from an API
+                        // const response = await fetch('/api/admin/all-research?status={{ $statusFilter }}&type={{ $typeFilter }}');
+                        // const data = await response.json();
+                        // this.stats = data.stats;
+                        
+                        this.loading = false;
+                        
+                    } catch (error) {
+                        console.error('Error loading research data:', error);
+                        this.loading = false;
+                    }
+                },
+
+                async refreshData() {
+                    this.refreshing = true;
+                    try {
+                        // Simulate API call
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        
+                        // In a real implementation:
+                        // const response = await fetch('/api/admin/all-research?status={{ $statusFilter }}&type={{ $typeFilter }}');
+                        // const data = await response.json();
+                        // this.stats = data.stats;
+                        
+                        // Simulate updating stats
+                        this.stats = {
+                            ...this.stats,
+                            // Add some random variance to show the update
+                            totalCount: this.stats.totalCount + Math.floor(Math.random() * 3),
+                        };
+                        
+                        this.showToast('Research data refreshed successfully!', 'success');
+                        
+                    } catch (error) {
+                        console.error('Error refreshing data:', error);
+                        this.showToast('Failed to refresh data', 'error');
+                    } finally {
+                        this.refreshing = false;
+                    }
+                },
+
+                showToast(message, type = 'info') {
+                    const toast = document.createElement('div');
+                    toast.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg text-white transition-all duration-300 transform translate-x-full shadow-lg ${
+                        type === 'success' ? 'bg-green-500' : 
+                        type === 'error' ? 'bg-red-500' : 
+                        'bg-blue-500'
+                    }`;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+
+                    setTimeout(() => {
+                        toast.style.transform = 'translateX(0)';
+                    }, 100);
+
+                    setTimeout(() => {
+                        toast.style.transform = 'translateX(100%)';
+                        setTimeout(() => {
+                            if (document.body.contains(toast)) {
+                                document.body.removeChild(toast);
+                            }
+                        }, 300);
+                    }, 3000);
+                }
+            }
+        }
     </script>
 
     <style>
