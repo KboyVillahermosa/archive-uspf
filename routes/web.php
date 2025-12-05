@@ -170,5 +170,40 @@ Route::get('/debug', function () {
     }
 });
 
+// Debug route for database connection testing
+Route::get('/debug-db', function () {
+    try {
+        $config = [
+            'DB_CONNECTION' => config('database.default'),
+            'DB_HOST' => config('database.connections.mysql.host'),
+            'DB_DATABASE' => config('database.connections.mysql.database'),
+            'DB_USERNAME' => config('database.connections.mysql.username'),
+            'APP_KEY' => config('app.key') ? 'SET' : 'NOT SET',
+        ];
+        
+        // Test database connection
+        \DB::connection()->getPdo();
+        $config['database_status'] = 'CONNECTED';
+        
+        // Check if tables exist
+        try {
+            $userCount = \DB::table('users')->count();
+            $config['users_table'] = "EXISTS ({$userCount} users)";
+        } catch (\Exception $e) {
+            $config['users_table'] = 'NOT EXISTS - need migration';
+        }
+        
+        return response()->json($config);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage(),
+            'DB_CONNECTION' => config('database.default'),
+            'DB_HOST' => config('database.connections.mysql.host'),
+            'APP_KEY' => config('app.key') ? 'SET' : 'NOT SET',
+        ], 500);
+    }
+});
+
 require __DIR__.'/auth.php';
 
