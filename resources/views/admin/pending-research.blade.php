@@ -27,6 +27,11 @@
                         @endif
                     </p>
                 </div>
+                <div>
+                    <button onclick="testTableSkeletonLoader()" class="bg-[#FFC72C] hover:bg-[#e6b326] text-[#26225C] font-semibold py-2 px-4 rounded-lg transition-colors duration-200 mr-3">
+                        Test Table Loader
+                    </button>
+                </div>
             </div>
 
             <!-- Stats Cards -->
@@ -97,7 +102,7 @@
             </div>
 
             <!-- Research Table -->
-            <div class="table-container overflow-x-auto">
+            <div id="research-table-container" class="table-container overflow-x-auto">
                 @if($totalCount > 0)
                     <table class="w-full">
                         <thead>
@@ -280,6 +285,42 @@
         .table-container tbody tr:hover {
             background-color: rgba(255, 199, 44, 0.05);
         }
+
+        /* Skeleton loading styles */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .skeleton-row {
+            @apply border-b border-gray-100 bg-white;
+        }
+
+        .skeleton-cell {
+            @apply px-4 py-3;
+        }
+
+        .skeleton-text {
+            @apply bg-gray-300 rounded h-4;
+        }
+
+        .skeleton-text-sm {
+            @apply bg-gray-200 rounded h-3 mt-1;
+        }
+
+        .loader {
+            @apply skeleton;
+        }
     </style>
 
     <script>
@@ -316,6 +357,86 @@
                 wrapper.style.transform = 'translateY(-20px)';
                 wrapper.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
             }
+
+            // Function to show table skeleton loader
+            function showTableSkeleton() {
+                const tableContainer = document.getElementById('research-table-container');
+                if (tableContainer) {
+                    tableContainer.innerHTML = `
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gradient-to-r from-[#26225C] to-[#3a3770] border-b border-[#FFC72C]">
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Type</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Title</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Author</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Department</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Submitted</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-white uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${Array.from({length: 8}, () => `
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell">
+                                            <div class="skeleton-text w-16"></div>
+                                        </td>
+                                        <td class="skeleton-cell">
+                                            <div class="skeleton-text w-48"></div>
+                                        </td>
+                                        <td class="skeleton-cell">
+                                            <div class="skeleton-text w-32"></div>
+                                        </td>
+                                        <td class="skeleton-cell">
+                                            <div class="skeleton-text w-40"></div>
+                                            <div class="skeleton-text-sm w-24"></div>
+                                        </td>
+                                        <td class="skeleton-cell">
+                                            <div class="skeleton-text w-20"></div>
+                                            <div class="skeleton-text-sm w-16"></div>
+                                        </td>
+                                        <td class="skeleton-cell text-right">
+                                            <div class="skeleton-text w-6 h-6 rounded ml-auto"></div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            }
+
+            // Function to load research data (example for future API implementation)
+            async function loadResearchData() {
+                try {
+                    showTableSkeleton();
+                    
+                    // Simulate API call delay
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    // In a real implementation, fetch from API
+                    // const response = await fetch('/api/admin/pending-research');
+                    // const data = await response.json();
+                    
+                    // For now, reload the page
+                    location.reload();
+                    
+                } catch (error) {
+                    console.error('Error loading research data:', error);
+                }
+            }
+
+            // Add refresh functionality for testing skeleton
+            window.loadResearchData = loadResearchData;
+            
+            // Test function to demonstrate table skeleton loader
+            window.testTableSkeletonLoader = function() {
+                showTableSkeletonLoader();
+                
+                // Simulate loading time, then restore content
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
+            };
         });
     </script>
 </x-app-layout>

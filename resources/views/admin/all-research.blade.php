@@ -114,7 +114,7 @@
             @endif
 
             <!-- Research List -->
-            <div class="table-container overflow-x-auto">
+            <div id="all-research-container" class="table-container overflow-x-auto">
                 @if($allResearch->count() > 0)
                     <table class="w-full">
                         <thead>
@@ -258,6 +258,74 @@
                 wrapper.style.transform = 'translateY(-20px)';
                 wrapper.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
             }
+
+            // Function to show table skeleton loader
+            function showAllResearchSkeleton() {
+                const container = document.getElementById('all-research-container');
+                if (container) {
+                    container.innerHTML = `
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gradient-to-r from-[#26225C] to-[#3a3770] border-b border-[#FFC72C]">
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Type</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Title</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Author</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Department</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Status</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${Array.from({length: 10}, () => `
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell">
+                                            <div class="skeleton-badge skeleton"></div>
+                                        </td>
+                                        <td class="skeleton-cell">
+                                            <div class="skeleton-text skeleton w-52"></div>
+                                        </td>
+                                        <td class="skeleton-cell">
+                                            <div class="skeleton-text skeleton w-32"></div>
+                                        </td>
+                                        <td class="skeleton-cell">
+                                            <div class="skeleton-text skeleton w-36"></div>
+                                        </td>
+                                        <td class="skeleton-cell">
+                                            <div class="skeleton-badge skeleton"></div>
+                                        </td>
+                                        <td class="skeleton-cell">
+                                            <div class="skeleton-text skeleton w-20"></div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            }
+
+            // Function to load all research data (for future API implementation)
+            async function loadAllResearchData() {
+                try {
+                    showAllResearchSkeleton();
+                    
+                    // Simulate API call delay
+                    await new Promise(resolve => setTimeout(resolve, 1200));
+                    
+                    // In a real implementation:
+                    // const response = await fetch('/api/admin/all-research');
+                    // const data = await response.json();
+                    
+                    // For now, reload the page
+                    location.reload();
+                    
+                } catch (error) {
+                    console.error('Error loading research data:', error);
+                }
+            }
+
+            // Add refresh functionality for testing skeleton
+            window.loadAllResearchData = loadAllResearchData;
         });
     </script>
 
@@ -284,6 +352,42 @@
         
         .table-container tbody tr:hover {
             background-color: rgba(255, 199, 44, 0.05);
+        }
+
+        /* Skeleton loading styles */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .skeleton-row {
+            @apply border-b border-gray-100 bg-white;
+        }
+
+        .skeleton-cell {
+            @apply px-4 py-3;
+        }
+
+        .skeleton-text {
+            @apply bg-gray-300 rounded h-3;
+        }
+
+        .skeleton-badge {
+            @apply bg-gray-300 rounded h-4 w-16;
+        }
+
+        .loader {
+            @apply skeleton;
         }
     </style>
 </x-app-layout>

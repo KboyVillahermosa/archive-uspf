@@ -2,8 +2,15 @@
     <div class="min-h-screen bg-gray-50">
         <div class="w-full max-w-full mx-auto px-2 sm:px-4 lg:px-6 py-8">
             
+            <!-- Test Button -->
+            <div class="mb-6 text-right">
+                <button onclick="testSkeletonLoader()" class="bg-[#FFC72C] hover:bg-[#e6b326] text-[#26225C] font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
+                    Test Skeleton Loader
+                </button>
+            </div>
+
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div id="stats-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 <div class="rounded-2xl shadow-lg bg-gradient-to-r from-[#26225C] to-[#3a3770] text-white relative overflow-hidden">
                     <div class="p-5">
                         <div class="flex items-start justify-between">
@@ -69,7 +76,9 @@
                 </div>
             </div>
 
-            @include('admin.partials.charts')
+            <div id="charts-container" class="mb-8">
+                @include('admin.partials.charts')
+            </div>
 
             <!-- Quick Actions -->
             <div class="mt-8">
@@ -77,7 +86,7 @@
                     <h2 class="text-3xl font-bold text-[#26225C] mb-1">Quick Actions</h2>
                     <p class="text-sm text-gray-600">Manage your research repository</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div id="quick-actions-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <a href="{{ route('admin.pending-research') }}" class="group bg-gradient-to-br from-[#FFC72C] to-yellow-500 hover:from-yellow-500 hover:to-[#FFC72C] p-5 rounded-xl border border-yellow-300 transition-all duration-200 shadow-md hover:shadow-lg">
                         <div class="flex items-center">
                             <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
@@ -137,4 +146,145 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .skeleton-card {
+            @apply rounded-2xl shadow-lg bg-gray-200 relative overflow-hidden;
+        }
+
+        .skeleton-text {
+            @apply bg-gray-300 rounded;
+        }
+
+        .skeleton-title {
+            @apply h-4 bg-gray-300 rounded mb-2;
+        }
+
+        .skeleton-number {
+            @apply h-8 bg-gray-300 rounded;
+        }
+
+        .skeleton-action {
+            @apply h-20 bg-gray-200 rounded-xl;
+        }
+
+        .loader {
+            @apply skeleton;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to show skeleton loaders
+            function showSkeletonLoaders() {
+                const statsContainer = document.getElementById('stats-container');
+                const chartsContainer = document.getElementById('charts-container');
+                const actionsContainer = document.getElementById('quick-actions-container');
+
+                // Stats cards skeleton
+                if (statsContainer) {
+                    statsContainer.innerHTML = `
+                        <div class="skeleton-card">
+                            <div class="p-5">
+                                <div class="skeleton-title w-1/3"></div>
+                                <div class="skeleton-title w-1/2"></div>
+                                <div class="skeleton-number w-1/4 mt-2"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-card">
+                            <div class="p-5">
+                                <div class="skeleton-title w-1/3"></div>
+                                <div class="skeleton-title w-1/2"></div>
+                                <div class="skeleton-number w-1/4 mt-2"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-card">
+                            <div class="p-5">
+                                <div class="skeleton-title w-1/3"></div>
+                                <div class="skeleton-title w-1/2"></div>
+                                <div class="skeleton-number w-1/4 mt-2"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-card">
+                            <div class="p-5">
+                                <div class="skeleton-title w-1/3"></div>
+                                <div class="skeleton-title w-1/2"></div>
+                                <div class="skeleton-number w-1/4 mt-2"></div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Charts skeleton
+                if (chartsContainer) {
+                    chartsContainer.innerHTML = `
+                        <div class="skeleton bg-white rounded-xl p-6 h-64"></div>
+                    `;
+                }
+
+                // Quick actions skeleton
+                if (actionsContainer) {
+                    actionsContainer.innerHTML = `
+                        <div class="skeleton-action skeleton"></div>
+                        <div class="skeleton-action skeleton"></div>
+                        <div class="skeleton-action skeleton"></div>
+                        <div class="skeleton-action skeleton"></div>
+                    `;
+                }
+            }
+
+            // Function to load dashboard data via API (example for future implementation)
+            async function loadDashboardData() {
+                try {
+                    // Show skeleton loaders first
+                    showSkeletonLoaders();
+                    
+                    // Simulate API call delay
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // In a real implementation, you would fetch data from an API
+                    // const response = await fetch('/api/admin/dashboard');
+                    // const data = await response.json();
+                    
+                    // For now, just restore the original content
+                    location.reload();
+                    
+                } catch (error) {
+                    console.error('Error loading dashboard data:', error);
+                }
+            }
+
+            // Add refresh functionality
+            const refreshButton = document.createElement('button');
+            refreshButton.innerHTML = '🔄 Refresh';
+            refreshButton.className = 'fixed bottom-4 right-4 bg-[#26225C] text-white px-4 py-2 rounded-lg hover:bg-[#3a3770] transition-colors';
+            refreshButton.onclick = loadDashboardData;
+            // document.body.appendChild(refreshButton); // Uncomment to add refresh button
+            
+            // Test function to demonstrate skeleton loader
+            window.testSkeletonLoader = function() {
+                showSkeletonLoaders();
+                
+                // Simulate loading time, then restore content
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
+            };
+        });
+    </script>
 </x-app-layout>
