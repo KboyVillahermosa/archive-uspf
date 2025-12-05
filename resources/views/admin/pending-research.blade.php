@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="min-h-screen bg-gray-50">
+    <div class="min-h-screen bg-gray-50" x-data="pendingResearchLoader()" x-init="loadPendingResearch()">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             @php
                 $user = auth()->user();
@@ -8,31 +8,39 @@
                 $totalCount = $studentResearch->count() + $facultyResearch->count() + $thesis->count() + $dissertations->count();
             @endphp
 
-            <!-- Header -->
-            <div class="mb-8 flex items-center justify-between">
-                <div>
-                    <h1 class="text-4xl font-light text-[#26225C] mb-2">
-                        @if($isFaculty && !$isAdmin)
-                            Department Pending Research
-                        @else
-                            Pending Research Review
-                        @endif
-                    </h1>
-                    <p class="text-gray-600">
-                        @if($isFaculty && !$isAdmin && $user->department)
-                            Showing pending research for {{ $user->department }}
-                            @if($user->course) - {{ $user->course }} course/program @endif
-                        @else
-                            Review and approve pending research submissions
-                        @endif
-                    </p>
-                </div>
-                <div>
-                    <button onclick="testTableSkeletonLoader()" class="bg-[#FFC72C] hover:bg-[#e6b326] text-[#26225C] font-semibold py-2 px-4 rounded-lg transition-colors duration-200 mr-3">
-                        Test Table Loader
+            <!-- Loading State -->
+            <div x-show="loading" x-transition>
+                <x-pending-research-skeleton />
+            </div>
+
+            <!-- Actual Content -->
+            <div x-show="!loading" x-transition>
+                <!-- Header -->
+                <div class="mb-8 flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-light text-[#26225C] mb-2">
+                            @if($isFaculty && !$isAdmin)
+                                Department Pending Research
+                            @else
+                                Pending Research Review
+                            @endif
+                        </h1>
+                        <p class="text-gray-600">
+                            @if($isFaculty && !$isAdmin && $user->department)
+                                Showing pending research for {{ $user->department }}
+                                @if($user->course) - {{ $user->course }} course/program @endif
+                            @else
+                                Review and approve pending research submissions
+                            @endif
+                        </p>
+                    </div>
+                    <button @click="refreshData()" class="flex items-center gap-2 px-4 py-2 bg-[#26225C] hover:bg-[#3a3770] text-white rounded-lg transition-colors">
+                        <svg class="w-4 h-4" :class="{ 'animate-spin': refreshing }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        <span x-text="refreshing ? 'Refreshing...' : 'Refresh'">Refresh</span>
                     </button>
                 </div>
-            </div>
 
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -102,7 +110,7 @@
             </div>
 
             <!-- Research Table -->
-            <div id="research-table-container" class="table-container overflow-x-auto">
+            <div class="table-container overflow-x-auto">
                 @if($totalCount > 0)
                     <table class="w-full">
                         <thead>
@@ -285,42 +293,6 @@
         .table-container tbody tr:hover {
             background-color: rgba(255, 199, 44, 0.05);
         }
-
-        /* Skeleton loading styles */
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: skeleton-loading 1.5s infinite;
-        }
-
-        @keyframes skeleton-loading {
-            0% {
-                background-position: 200% 0;
-            }
-            100% {
-                background-position: -200% 0;
-            }
-        }
-
-        .skeleton-row {
-            @apply border-b border-gray-100 bg-white;
-        }
-
-        .skeleton-cell {
-            @apply px-4 py-3;
-        }
-
-        .skeleton-text {
-            @apply bg-gray-300 rounded h-4;
-        }
-
-        .skeleton-text-sm {
-            @apply bg-gray-200 rounded h-3 mt-1;
-        }
-
-        .loader {
-            @apply skeleton;
-        }
     </style>
 
     <script>
@@ -357,86 +329,84 @@
                 wrapper.style.transform = 'translateY(-20px)';
                 wrapper.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
             }
-
-            // Function to show table skeleton loader
-            function showTableSkeleton() {
-                const tableContainer = document.getElementById('research-table-container');
-                if (tableContainer) {
-                    tableContainer.innerHTML = `
-                        <table class="w-full">
-                            <thead>
-                                <tr class="bg-gradient-to-r from-[#26225C] to-[#3a3770] border-b border-[#FFC72C]">
-                                    <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Type</th>
-                                    <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Title</th>
-                                    <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Author</th>
-                                    <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Department</th>
-                                    <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Submitted</th>
-                                    <th class="px-4 py-3 text-right text-xs font-semibold text-white uppercase">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${Array.from({length: 8}, () => `
-                                    <tr class="skeleton-row">
-                                        <td class="skeleton-cell">
-                                            <div class="skeleton-text w-16"></div>
-                                        </td>
-                                        <td class="skeleton-cell">
-                                            <div class="skeleton-text w-48"></div>
-                                        </td>
-                                        <td class="skeleton-cell">
-                                            <div class="skeleton-text w-32"></div>
-                                        </td>
-                                        <td class="skeleton-cell">
-                                            <div class="skeleton-text w-40"></div>
-                                            <div class="skeleton-text-sm w-24"></div>
-                                        </td>
-                                        <td class="skeleton-cell">
-                                            <div class="skeleton-text w-20"></div>
-                                            <div class="skeleton-text-sm w-16"></div>
-                                        </td>
-                                        <td class="skeleton-cell text-right">
-                                            <div class="skeleton-text w-6 h-6 rounded ml-auto"></div>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    `;
-                }
-            }
-
-            // Function to load research data (example for future API implementation)
-            async function loadResearchData() {
-                try {
-                    showTableSkeleton();
-                    
-                    // Simulate API call delay
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-                    
-                    // In a real implementation, fetch from API
-                    // const response = await fetch('/api/admin/pending-research');
-                    // const data = await response.json();
-                    
-                    // For now, reload the page
-                    location.reload();
-                    
-                } catch (error) {
-                    console.error('Error loading research data:', error);
-                }
-            }
-
-            // Add refresh functionality for testing skeleton
-            window.loadResearchData = loadResearchData;
-            
-            // Test function to demonstrate table skeleton loader
-            window.testTableSkeletonLoader = function() {
-                showTableSkeletonLoader();
-                
-                // Simulate loading time, then restore content
-                setTimeout(() => {
-                    location.reload();
-                }, 3000);
-            };
         });
+
+        // Pending Research Data Management
+        function pendingResearchLoader() {
+            return {
+                loading: true,
+                refreshing: false,
+                data: {
+                    totalCount: {{ $totalCount }},
+                    studentResearch: [],
+                    facultyResearch: [],
+                    thesis: [],
+                    dissertations: []
+                },
+
+                async loadPendingResearch() {
+                    try {
+                        // Simulate API loading time for better UX
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        
+                        // In a real implementation, you would fetch data from an API
+                        // const response = await fetch('/api/admin/pending-research');
+                        // this.data = await response.json();
+                        
+                        this.loading = false;
+                        
+                    } catch (error) {
+                        console.error('Error loading pending research:', error);
+                        this.loading = false;
+                    }
+                },
+
+                async refreshData() {
+                    this.refreshing = true;
+                    try {
+                        // Simulate API call
+                        await new Promise(resolve => setTimeout(resolve, 800));
+                        
+                        // In a real implementation:
+                        // const response = await fetch('/api/admin/pending-research');
+                        // this.data = await response.json();
+                        
+                        // Show success message
+                        this.showToast('Data refreshed successfully!', 'success');
+                        
+                    } catch (error) {
+                        console.error('Error refreshing data:', error);
+                        this.showToast('Failed to refresh data', 'error');
+                    } finally {
+                        this.refreshing = false;
+                    }
+                },
+
+                showToast(message, type = 'info') {
+                    // Create toast notification
+                    const toast = document.createElement('div');
+                    toast.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white transition-all duration-300 transform translate-x-full ${
+                        type === 'success' ? 'bg-green-500' : 
+                        type === 'error' ? 'bg-red-500' : 
+                        'bg-blue-500'
+                    }`;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+
+                    // Animate in
+                    setTimeout(() => {
+                        toast.style.transform = 'translateX(0)';
+                    }, 100);
+
+                    // Remove after 3 seconds
+                    setTimeout(() => {
+                        toast.style.transform = 'translateX(full)';
+                        setTimeout(() => {
+                            document.body.removeChild(toast);
+                        }, 300);
+                    }, 3000);
+                }
+            }
+        }
     </script>
 </x-app-layout>

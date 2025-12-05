@@ -1,40 +1,40 @@
 <x-app-layout>
-    <div class="min-h-screen bg-gray-50">
+    <div class="min-h-screen bg-gray-50" x-data="dashboardLoader()" x-init="loadDashboardData()">
         <div class="w-full max-w-full mx-auto px-2 sm:px-4 lg:px-6 py-8">
             
-            <!-- Test Button -->
-            <div class="mb-6 text-right">
-                <button onclick="testSkeletonLoader()" class="bg-[#FFC72C] hover:bg-[#e6b326] text-[#26225C] font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
-                    Test Skeleton Loader
-                </button>
+            <!-- Loading State -->
+            <div x-show="loading" x-transition>
+                <x-skeleton-loader />
             </div>
 
-            <!-- Stats Cards -->
-            <div id="stats-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                <div class="rounded-2xl shadow-lg bg-gradient-to-r from-[#26225C] to-[#3a3770] text-white relative overflow-hidden">
-                    <div class="p-5">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Pending</div>
-                                <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Student Research</div>
-                                <div class="text-3xl font-semibold mt-2">{{ $pendingStudentResearch }}</div>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="inline-block w-3 h-3 rounded-full bg-[#FFC72C]"></span>
-                                <span class="inline-block w-3 h-3 rounded-full bg-[#FFC72C]/50"></span>
+            <!-- Actual Content -->
+            <div x-show="!loading" x-transition>
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="rounded-2xl shadow-lg bg-gradient-to-r from-[#26225C] to-[#3a3770] text-white relative overflow-hidden">
+                        <div class="p-5">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Pending</div>
+                                    <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Student Research</div>
+                                    <div class="text-3xl font-semibold mt-2" x-text="stats.pendingStudentResearch || '{{ $pendingStudentResearch }}' ">{{ $pendingStudentResearch }}</div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="inline-block w-3 h-3 rounded-full bg-[#FFC72C]"></span>
+                                    <span class="inline-block w-3 h-3 rounded-full bg-[#FFC72C]/50"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="rounded-2xl shadow-lg bg-gradient-to-r from-purple-600 to-purple-800 text-white relative overflow-hidden">
-                    <div class="p-5">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Pending</div>
-                                <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Faculty Research</div>
-                                <div class="text-3xl font-semibold mt-2">{{ $pendingFacultyResearch }}</div>
-                            </div>
+                    <div class="rounded-2xl shadow-lg bg-gradient-to-r from-purple-600 to-purple-800 text-white relative overflow-hidden">
+                        <div class="p-5">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Pending</div>
+                                    <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Faculty Research</div>
+                                    <div class="text-3xl font-semibold mt-2" x-text="stats.pendingFacultyResearch || '{{ $pendingFacultyResearch }}'">{{ $pendingFacultyResearch }}</div>
+                                </div>
                             <div class="flex items-center gap-2">
                                 <span class="inline-block w-3 h-3 rounded-full bg-white/30"></span>
                                 <span class="inline-block w-3 h-3 rounded-full bg-white/20"></span>
@@ -49,7 +49,7 @@
                             <div>
                                 <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Pending</div>
                                 <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Thesis</div>
-                                <div class="text-3xl font-semibold mt-2">{{ $pendingThesis }}</div>
+                                <div class="text-3xl font-semibold mt-2" x-text="stats.pendingThesis || '{{ $pendingThesis }}'">{{ $pendingThesis }}</div>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="inline-block w-3 h-3 rounded-full bg-white/30"></span>
@@ -65,7 +65,7 @@
                             <div>
                                 <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Pending</div>
                                 <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Dissertations</div>
-                                <div class="text-3xl font-semibold mt-2">{{ $pendingDissertations }}</div>
+                                <div class="text-3xl font-semibold mt-2" x-text="stats.pendingDissertations || '{{ $pendingDissertations }}'">{{ $pendingDissertations }}</div>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="inline-block w-3 h-3 rounded-full bg-white/30"></span>
@@ -76,9 +76,7 @@
                 </div>
             </div>
 
-            <div id="charts-container" class="mb-8">
-                @include('admin.partials.charts')
-            </div>
+            @include('admin.partials.charts')
 
             <!-- Quick Actions -->
             <div class="mt-8">
@@ -86,7 +84,7 @@
                     <h2 class="text-3xl font-bold text-[#26225C] mb-1">Quick Actions</h2>
                     <p class="text-sm text-gray-600">Manage your research repository</p>
                 </div>
-                <div id="quick-actions-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <a href="{{ route('admin.pending-research') }}" class="group bg-gradient-to-br from-[#FFC72C] to-yellow-500 hover:from-yellow-500 hover:to-[#FFC72C] p-5 rounded-xl border border-yellow-300 transition-all duration-200 shadow-md hover:shadow-lg">
                         <div class="flex items-center">
                             <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
@@ -96,7 +94,7 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold text-white text-sm mb-1">Review Pending</h4>
-                                <p class="text-xs text-white/90">{{ $pendingStudentResearch + $pendingFacultyResearch + $pendingThesis + $pendingDissertations }} items waiting</p>
+                                <p class="text-xs text-white/90" x-text="(stats.pendingStudentResearch || 0) + (stats.pendingFacultyResearch || 0) + (stats.pendingThesis || 0) + (stats.pendingDissertations || 0) + ' items waiting'">{{ $pendingStudentResearch + $pendingFacultyResearch + $pendingThesis + $pendingDissertations }} items waiting</p>
                             </div>
                         </div>
                     </a>
@@ -144,147 +142,63 @@
                     </a>
                 </div>
             </div>
+            </div>
         </div>
     </div>
 
-    <style>
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: skeleton-loading 1.5s infinite;
-        }
-
-        @keyframes skeleton-loading {
-            0% {
-                background-position: 200% 0;
-            }
-            100% {
-                background-position: -200% 0;
-            }
-        }
-
-        .skeleton-card {
-            @apply rounded-2xl shadow-lg bg-gray-200 relative overflow-hidden;
-        }
-
-        .skeleton-text {
-            @apply bg-gray-300 rounded;
-        }
-
-        .skeleton-title {
-            @apply h-4 bg-gray-300 rounded mb-2;
-        }
-
-        .skeleton-number {
-            @apply h-8 bg-gray-300 rounded;
-        }
-
-        .skeleton-action {
-            @apply h-20 bg-gray-200 rounded-xl;
-        }
-
-        .loader {
-            @apply skeleton;
-        }
-    </style>
-
     <script>
+        function dashboardLoader() {
+            return {
+                loading: true,
+                stats: {
+                    pendingStudentResearch: 0,
+                    pendingFacultyResearch: 0,
+                    pendingThesis: 0,
+                    pendingDissertations: 0
+                },
+
+                async loadDashboardData() {
+                    try {
+                        // Simulate API loading time for better UX
+                        await new Promise(resolve => setTimeout(resolve, 800));
+                        
+                        // In a real implementation, you would fetch data from an API
+                        // const response = await fetch('/api/admin/dashboard-stats');
+                        // this.stats = await response.json();
+                        
+                        // For now, we'll use the server-side data
+                        this.loading = false;
+                        
+                    } catch (error) {
+                        console.error('Error loading dashboard data:', error);
+                        this.loading = false;
+                    }
+                },
+
+                async refreshStats() {
+                    this.loading = true;
+                    await this.loadDashboardData();
+                }
+            }
+        }
+
+        // Add refresh functionality
         document.addEventListener('DOMContentLoaded', function() {
-            // Function to show skeleton loaders
-            function showSkeletonLoaders() {
-                const statsContainer = document.getElementById('stats-container');
-                const chartsContainer = document.getElementById('charts-container');
-                const actionsContainer = document.getElementById('quick-actions-container');
-
-                // Stats cards skeleton
-                if (statsContainer) {
-                    statsContainer.innerHTML = `
-                        <div class="skeleton-card">
-                            <div class="p-5">
-                                <div class="skeleton-title w-1/3"></div>
-                                <div class="skeleton-title w-1/2"></div>
-                                <div class="skeleton-number w-1/4 mt-2"></div>
-                            </div>
-                        </div>
-                        <div class="skeleton-card">
-                            <div class="p-5">
-                                <div class="skeleton-title w-1/3"></div>
-                                <div class="skeleton-title w-1/2"></div>
-                                <div class="skeleton-number w-1/4 mt-2"></div>
-                            </div>
-                        </div>
-                        <div class="skeleton-card">
-                            <div class="p-5">
-                                <div class="skeleton-title w-1/3"></div>
-                                <div class="skeleton-title w-1/2"></div>
-                                <div class="skeleton-number w-1/4 mt-2"></div>
-                            </div>
-                        </div>
-                        <div class="skeleton-card">
-                            <div class="p-5">
-                                <div class="skeleton-title w-1/3"></div>
-                                <div class="skeleton-title w-1/2"></div>
-                                <div class="skeleton-number w-1/4 mt-2"></div>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                // Charts skeleton
-                if (chartsContainer) {
-                    chartsContainer.innerHTML = `
-                        <div class="skeleton bg-white rounded-xl p-6 h-64"></div>
-                    `;
-                }
-
-                // Quick actions skeleton
-                if (actionsContainer) {
-                    actionsContainer.innerHTML = `
-                        <div class="skeleton-action skeleton"></div>
-                        <div class="skeleton-action skeleton"></div>
-                        <div class="skeleton-action skeleton"></div>
-                        <div class="skeleton-action skeleton"></div>
-                    `;
-                }
+            // Add refresh button to the page
+            const header = document.querySelector('.min-h-screen > div > div:first-child');
+            if (header) {
+                const refreshButton = document.createElement('button');
+                refreshButton.className = 'fixed bottom-6 right-6 bg-[#26225C] hover:bg-[#3a3770] text-white p-3 rounded-full shadow-lg transition-all duration-200 hover:shadow-xl z-50';
+                refreshButton.innerHTML = `
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                `;
+                refreshButton.setAttribute('x-data', '{}');
+                refreshButton.setAttribute('x-on:click', 'refreshStats()');
+                refreshButton.title = 'Refresh Dashboard Data';
+                document.body.appendChild(refreshButton);
             }
-
-            // Function to load dashboard data via API (example for future implementation)
-            async function loadDashboardData() {
-                try {
-                    // Show skeleton loaders first
-                    showSkeletonLoaders();
-                    
-                    // Simulate API call delay
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    
-                    // In a real implementation, you would fetch data from an API
-                    // const response = await fetch('/api/admin/dashboard');
-                    // const data = await response.json();
-                    
-                    // For now, just restore the original content
-                    location.reload();
-                    
-                } catch (error) {
-                    console.error('Error loading dashboard data:', error);
-                }
-            }
-
-            // Add refresh functionality
-            const refreshButton = document.createElement('button');
-            refreshButton.innerHTML = '🔄 Refresh';
-            refreshButton.className = 'fixed bottom-4 right-4 bg-[#26225C] text-white px-4 py-2 rounded-lg hover:bg-[#3a3770] transition-colors';
-            refreshButton.onclick = loadDashboardData;
-            // document.body.appendChild(refreshButton); // Uncomment to add refresh button
-            
-            // Test function to demonstrate skeleton loader
-            window.testSkeletonLoader = function() {
-                showSkeletonLoaders();
-                
-                // Simulate loading time, then restore content
-                setTimeout(() => {
-                    location.reload();
-                }, 3000);
-            };
         });
     </script>
 </x-app-layout>
