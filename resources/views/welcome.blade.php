@@ -22,6 +22,7 @@
     <style>
         body {
             font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
         }
         
         /* Custom scrollbar */
@@ -44,7 +45,7 @@
         
         /* Smooth animations */
         .animate-fade-in {
-            animation: fadeIn 0.6s ease-out;
+            animation: fadeIn 0.6s ease-out forwards;
         }
         
         @keyframes fadeIn {
@@ -59,7 +60,8 @@
         }
         
         .animate-slide-up {
-            animation: slideUp 0.8s ease-out;
+            animation: slideUp 0.8s ease-out forwards;
+            opacity: 0;
         }
         
         @keyframes slideUp {
@@ -84,7 +86,12 @@
         /* Custom button styles */
         .btn-primary {
             background: linear-gradient(135deg, #26225C 0%, #3a3770 100%);
+            color: white;
             transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
         }
         
         .btn-primary:hover {
@@ -97,6 +104,11 @@
             background: linear-gradient(135deg, #FFC72C 0%, #FFD700 100%);
             color: #26225C;
             transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            font-weight: 600;
         }
         
         .btn-secondary:hover {
@@ -108,11 +120,13 @@
         /* Card hover effects */
         .card-hover {
             transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
         }
         
         .card-hover:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            border-color: #cbd5e1;
         }
         
         /* Icon animations */
@@ -143,19 +157,23 @@
         
         /* Section headers */
         .section-header {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background: white;
             border-left: 4px solid #FFC72C;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
         
         /* Stats cards */
         .stats-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            background: white;
             transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
         
         .stats-card:hover {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             transform: translateY(-4px);
+            border-color: #FFC72C;
         }
         
         /* Responsive grid */
@@ -170,10 +188,15 @@
                 grid-template-columns: 1fr;
             }
         }
+        
+        /* CTA Section */
+        .cta-section {
+            box-shadow: 0 10px 40px rgba(38, 34, 92, 0.15);
+        }
     </style>
     </head>
 
-<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
+<body class="min-h-screen">
     <!-- Navigation Bar -->
     <nav class="bg-gradient-to-r from-[#26225C] to-[#3a3770] shadow-xl sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -274,7 +297,7 @@
 </section>
 
     <!-- Main Content -->
-    <main class="py-16">
+    <main class="py-12 lg:py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Statistics Overview -->
             <div class="mb-16 animate-slide-up">
@@ -289,7 +312,7 @@
                         @endphp
                     
                     <div class="stats-card rounded-2xl p-6 text-center">
-                        <div class="h-16 w-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <div class="h-16 w-16 bg-gradient-to-br from-[#26225C] to-[#3a3770] rounded-xl flex items-center justify-center mx-auto mb-4">
                             <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
@@ -299,7 +322,7 @@
                     </div>
                     
                     <div class="stats-card rounded-2xl p-6 text-center">
-                        <div class="h-16 w-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <div class="h-16 w-16 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center mx-auto mb-4">
                             <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
                             </svg>
@@ -309,7 +332,7 @@
                     </div>
                     
                     <div class="stats-card rounded-2xl p-6 text-center">
-                        <div class="h-16 w-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <div class="h-16 w-16 bg-gradient-to-br from-green-600 to-green-800 rounded-xl flex items-center justify-center mx-auto mb-4">
                             <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
                             </svg>
@@ -319,7 +342,7 @@
                     </div>
                     
                     <div class="stats-card rounded-2xl p-6 text-center">
-                        <div class="h-16 w-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <div class="h-16 w-16 bg-gradient-to-br from-orange-600 to-orange-800 rounded-xl flex items-center justify-center mx-auto mb-4">
                             <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                             </svg>
@@ -515,9 +538,9 @@
 
                 <!-- Call to Action -->
                 <div class="text-center animate-slide-up">
-                    <div class="bg-gradient-to-r from-[#26225C] to-[#3a3770] rounded-3xl p-12 text-white">
+                    <div class="cta-section bg-gradient-to-r from-[#26225C] to-[#3a3770] rounded-3xl p-12 text-white">
                         <h3 class="text-3xl font-bold mb-4">Ready to Explore More?</h3>
-                        <p class="text-xl mb-8 opacity-90">Discover our complete collection of research papers</p>
+                        <p class="text-lg mb-8 opacity-90">Discover our complete collection of research papers and academic excellence</p>
                         <a href="{{ route('research.by-department') }}" class="btn-secondary px-8 py-3 rounded-xl text-lg font-semibold">Browse All Research</a>
                     </div>
                     </div>
@@ -540,42 +563,42 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gradient-to-r from-[#26225C] to-[#3a3770] text-white py-12">
+    <footer class="bg-gradient-to-r from-[#26225C] to-[#3a3770] text-white py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
                 <div>
                     <div class="flex items-center mb-4">
-                        <div class="h-10 w-10 bg-white/10 rounded-xl flex items-center justify-center mr-3">
+                        <div class="h-10 w-10 bg-white/20 rounded-xl flex items-center justify-center mr-3">
                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                             </svg>
                         </div>
                         <h3 class="text-xl font-bold">USPF Research Archive</h3>
                     </div>
-                    <p class="text-gray-300">Promoting academic excellence through research collaboration and knowledge sharing.</p>
+                    <p class="text-white/70 leading-relaxed">Promoting academic excellence through research collaboration and knowledge sharing.</p>
                 </div>
                 
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
                     <ul class="space-y-2">
-                        <li><a href="{{ route('research.by-department') }}" class="text-gray-300 hover:text-yellow-300 transition-colors">Browse Research</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-yellow-300 transition-colors">Departments</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-yellow-300 transition-colors">About Us</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-yellow-300 transition-colors">Contact</a></li>
+                        <li><a href="{{ route('research.by-department') }}" class="text-white/70 hover:text-[#FFC72C] transition-colors duration-200">Browse Research</a></li>
+                        <li><a href="#" class="text-white/70 hover:text-[#FFC72C] transition-colors duration-200">Departments</a></li>
+                        <li><a href="#" class="text-white/70 hover:text-[#FFC72C] transition-colors duration-200">About Us</a></li>
+                        <li><a href="#" class="text-white/70 hover:text-[#FFC72C] transition-colors duration-200">Contact</a></li>
                     </ul>
                 </div>
                 
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Connect With Us</h4>
-                    <p class="text-gray-300 mb-4">Stay updated with the latest research and academic news.</p>
+                    <p class="text-white/70 mb-4">Stay updated with the latest research and academic news.</p>
                     @if (Route::has('login') && !auth()->check())
                         <a href="{{ route('register') }}" class="btn-secondary px-6 py-2 rounded-lg text-sm font-semibold">Join Our Community</a>
-                @endif
+                    @endif
                 </div>
             </div>
             
-            <div class="border-t border-white/20 mt-8 pt-8 text-center">
-                <p class="text-gray-300">&copy; {{ date('Y') }} USPF Research Archive. All rights reserved.</p>
+            <div class="border-t border-white/20 pt-8 text-center">
+                <p class="text-white/60">&copy; {{ date('Y') }} USPF Research Archive. All rights reserved.</p>
             </div>
         </div>
     </footer>
