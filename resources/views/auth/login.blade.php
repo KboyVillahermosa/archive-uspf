@@ -2,7 +2,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center py-2 px-2 sm:px-4 lg:px-4">
+    <div class="min-h-screen flex items-center justify-center py-2 px-2 sm:px-4 lg:px-4">
         <div class="max-w-6xl w-full">
             <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
                 <div class="flex flex-col lg:flex-row min-h-[600px]">

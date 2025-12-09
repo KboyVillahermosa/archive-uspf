@@ -54,11 +54,11 @@
                             <button type="submit" class="px-6 py-2.5 bg-[#26225C] hover:bg-[#3a3770] text-white font-semibold rounded-xl transition-all shadow-md">
                                 Import CSV
                             </button>
-                        </div>
-                    </form>
+                    </div>
+                        </form>
                     <p class="text-xs text-gray-500 mt-3">Format: name,email,password,role,id_number,first_name,middle_name,last_name,birthday,course_and_year</p>
                 </div>
-            </div>
+                    </div>
 
             <!-- Users Table -->
             <div class="table-container overflow-x-auto">
@@ -72,15 +72,15 @@
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Department</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Created</th>
                                 <th class="px-4 py-3 text-right text-xs font-semibold text-white uppercase">Actions</th>
-                            </tr>
-                        </thead>
+                                </tr>
+                            </thead>
 
                         <tbody>
                             @foreach($users as $user)
-                                @php
-                                    $userRole = $user->roles->first();
-                                    $roleName = $userRole ? $userRole->name : ($user->role ?? 'student');
-                                @endphp
+                                            @php
+                                                $userRole = $user->roles->first();
+                                                $roleName = $userRole ? $userRole->name : ($user->role ?? 'student');
+                                            @endphp
                                 <tr class="border-b border-gray-100 hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors bg-white cursor-pointer" onclick="window.location.href='{{ route('admin.users.show', $user->id) }}'">
                                     <td class="px-4 py-3">
                                         <div class="flex items-center gap-3">
@@ -103,9 +103,9 @@
                                             @if($roleName==='admin') bg-red-100 text-red-700 border border-red-200
                                             @elseif($roleName==='faculty') bg-purple-100 text-purple-700 border border-purple-200
                                             @else bg-blue-100 text-blue-700 border border-blue-200 @endif">
-                                            {{ ucfirst(str_replace('_', ' ', $roleName)) }}
-                                        </span>
-                                    </td>
+                                                {{ ucfirst(str_replace('_', ' ', $roleName)) }}
+                                            </span>
+                                        </td>
                                     <td class="px-4 py-3">
                                         <div class="text-sm text-gray-600">{{ $user->department ?? 'N/A' }}</div>
                                         @if($user->course)
@@ -122,11 +122,11 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                             </svg>
                                         </a>
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
                             @endforeach
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
 
                     <!-- Pagination -->
                     <div class="px-6 py-4 border-t border-gray-200">

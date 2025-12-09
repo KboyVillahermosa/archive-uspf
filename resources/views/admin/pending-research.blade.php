@@ -1,46 +1,33 @@
 <x-app-layout>
-    <div class="min-h-screen bg-gray-50" x-data="pendingResearchLoader()" x-init="loadPendingResearch()">
+    <div class="min-h-screen bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            @php
-                $user = auth()->user();
-                $isFaculty = $user->role === 'faculty' || $user->hasRole('faculty');
-                $isAdmin = $user->role === 'admin' || $user->hasRole('admin');
+        @php
+            $user = auth()->user();
+            $isFaculty = $user->role === 'faculty' || $user->hasRole('faculty');
+            $isAdmin = $user->role === 'admin' || $user->hasRole('admin');
                 $totalCount = $studentResearch->count() + $facultyResearch->count() + $thesis->count() + $dissertations->count();
-            @endphp
+        @endphp
 
-            <!-- Loading State -->
-            <div x-show="loading" x-transition>
-                <x-pending-research-skeleton />
-            </div>
-
-            <!-- Actual Content -->
-            <div x-show="!loading" x-transition>
-                <!-- Header -->
-                <div class="mb-8 flex items-center justify-between">
-                    <div>
-                        <h1 class="text-4xl font-light text-[#26225C] mb-2">
-                            @if($isFaculty && !$isAdmin)
-                                Department Pending Research
-                            @else
-                                Pending Research Review
-                            @endif
-                        </h1>
-                        <p class="text-gray-600">
-                            @if($isFaculty && !$isAdmin && $user->department)
-                                Showing pending research for {{ $user->department }}
-                                @if($user->course) - {{ $user->course }} course/program @endif
-                            @else
-                                Review and approve pending research submissions
-                            @endif
-                        </p>
-                    </div>
-                    <button @click="refreshData()" class="flex items-center gap-2 px-4 py-2 bg-[#26225C] hover:bg-[#3a3770] text-white rounded-lg transition-colors">
-                        <svg class="w-4 h-4" :class="{ 'animate-spin': refreshing }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                        </svg>
-                        <span x-text="refreshing ? 'Refreshing...' : 'Refresh'">Refresh</span>
-                    </button>
+            <!-- Header -->
+            <div class="mb-8 flex items-center justify-between">
+            <div>
+                    <h1 class="text-4xl font-light text-[#26225C] mb-2">
+                    @if($isFaculty && !$isAdmin)
+                            Department Pending Research
+                    @else
+                            Pending Research Review
+                    @endif
+                    </h1>
+                    <p class="text-gray-600">
+                @if($isFaculty && !$isAdmin && $user->department)
+                        Showing pending research for {{ $user->department }}
+                        @if($user->course) - {{ $user->course }} course/program @endif
+                        @else
+                            Review and approve pending research submissions
+                        @endif
+                    </p>
                 </div>
+            </div>
 
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -55,9 +42,9 @@
                             <div class="flex items-center gap-2">
                                 <span class="inline-block w-3 h-3 rounded-full bg-[#FFC72C]"></span>
                                 <span class="inline-block w-3 h-3 rounded-full bg-[#FFC72C]/50"></span>
-                            </div>
-                        </div>
-                    </div>
+            </div>
+        </div>
+            </div>
                 </div>
 
                 <div class="rounded-2xl shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 text-white relative overflow-hidden">
@@ -67,11 +54,11 @@
                                 <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Student</div>
                                 <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Research</div>
                                 <div class="text-3xl font-semibold mt-2">{{ $studentResearch->count() }}</div>
-                            </div>
+                                        </div>
                             <div class="flex items-center gap-2">
                                 <span class="inline-block w-3 h-3 rounded-full bg-white/30"></span>
                                 <span class="inline-block w-3 h-3 rounded-full bg-white/20"></span>
-                            </div>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -83,11 +70,11 @@
                                 <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Faculty</div>
                                 <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Research</div>
                                 <div class="text-3xl font-semibold mt-2">{{ $facultyResearch->count() }}</div>
-                            </div>
+                                        </div>
                             <div class="flex items-center gap-2">
                                 <span class="inline-block w-3 h-3 rounded-full bg-white/30"></span>
                                 <span class="inline-block w-3 h-3 rounded-full bg-white/20"></span>
-                            </div>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -99,11 +86,11 @@
                                 <div class="text-xs uppercase tracking-widest text-white/70 mb-1">Thesis &</div>
                                 <div class="text-sm text-white/80 uppercase tracking-[0.15em] mb-2">Dissertations</div>
                                 <div class="text-3xl font-semibold mt-2">{{ $thesis->count() + $dissertations->count() }}</div>
-                            </div>
+                                        </div>
                             <div class="flex items-center gap-2">
                                 <span class="inline-block w-3 h-3 rounded-full bg-white/30"></span>
                                 <span class="inline-block w-3 h-3 rounded-full bg-white/20"></span>
-                            </div>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -141,7 +128,7 @@
                                             {{ $research->department }}
                                             @if($research->program)
                                                 <span class="text-gray-400">• {{ Str::limit($research->program, 20) }}</span>
-                                            @endif
+            @endif
                                         </div>
                                     </td>
                                     <td class="px-4 py-3">
@@ -254,9 +241,9 @@
                         <p class="text-sm text-gray-500">All submissions have been reviewed.</p>
                     </div>
                 @endif
-            </div>
-        </div>
-    </div>
+                    </div>
+                </div>
+                    </div>
 
     <!-- Action Modal -->
     <div id="actionModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 transition-opacity duration-300 ease-in-out" style="display: none;">
@@ -312,7 +299,7 @@
                                     wrapper.style.opacity = '1';
                                     wrapper.style.transform = 'translateY(0)';
                                 }, 10);
-                            } else {
+                        } else {
                                 modal.style.opacity = '0';
                                 wrapper.style.opacity = '0';
                                 wrapper.style.transform = 'translateY(-20px)';
@@ -330,83 +317,5 @@
                 wrapper.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
             }
         });
-
-        // Pending Research Data Management
-        function pendingResearchLoader() {
-            return {
-                loading: true,
-                refreshing: false,
-                data: {
-                    totalCount: {{ $totalCount }},
-                    studentResearch: [],
-                    facultyResearch: [],
-                    thesis: [],
-                    dissertations: []
-                },
-
-                async loadPendingResearch() {
-                    try {
-                        // Simulate API loading time for better UX
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                        
-                        // In a real implementation, you would fetch data from an API
-                        // const response = await fetch('/api/admin/pending-research');
-                        // this.data = await response.json();
-                        
-                        this.loading = false;
-                        
-                    } catch (error) {
-                        console.error('Error loading pending research:', error);
-                        this.loading = false;
-                    }
-                },
-
-                async refreshData() {
-                    this.refreshing = true;
-                    try {
-                        // Simulate API call
-                        await new Promise(resolve => setTimeout(resolve, 800));
-                        
-                        // In a real implementation:
-                        // const response = await fetch('/api/admin/pending-research');
-                        // this.data = await response.json();
-                        
-                        // Show success message
-                        this.showToast('Data refreshed successfully!', 'success');
-                        
-                    } catch (error) {
-                        console.error('Error refreshing data:', error);
-                        this.showToast('Failed to refresh data', 'error');
-                    } finally {
-                        this.refreshing = false;
-                    }
-                },
-
-                showToast(message, type = 'info') {
-                    // Create toast notification
-                    const toast = document.createElement('div');
-                    toast.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-white transition-all duration-300 transform translate-x-full ${
-                        type === 'success' ? 'bg-green-500' : 
-                        type === 'error' ? 'bg-red-500' : 
-                        'bg-blue-500'
-                    }`;
-                    toast.textContent = message;
-                    document.body.appendChild(toast);
-
-                    // Animate in
-                    setTimeout(() => {
-                        toast.style.transform = 'translateX(0)';
-                    }, 100);
-
-                    // Remove after 3 seconds
-                    setTimeout(() => {
-                        toast.style.transform = 'translateX(full)';
-                        setTimeout(() => {
-                            document.body.removeChild(toast);
-                        }, 300);
-                    }, 3000);
-                }
-            }
-        }
     </script>
 </x-app-layout>

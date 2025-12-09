@@ -106,7 +106,7 @@
                                 <!-- Keywords -->
                                 <div>
                                     <label for="tags" class="block text-sm font-semibold text-[#26225C] mb-2">
-                                        Keywords <span class="text-gray-400 text-xs font-normal">Optional</span>
+                                        Keywords <span class="text-gray-400 text-xs font-normal">(Optional)</span>
                                     </label>
                                     <input type="text" name="tags" id="tags"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#FFC72C] transition-all bg-white"

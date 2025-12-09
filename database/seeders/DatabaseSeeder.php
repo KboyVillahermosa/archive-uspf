@@ -19,6 +19,18 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
         ]);
+        
+        // Seed departments and programs if they don't exist
+        if (\App\Models\Department::count() === 0) {
+            $this->call([
+                DepartmentProgramSeeder::class,
+            ]);
+        }
+        
+        // Seed research data (uncomment to seed research)
+        // $this->call([
+        //     ResearchSeeder::class,
+        // ]);
 
         // Create student user
         $user = User::create([

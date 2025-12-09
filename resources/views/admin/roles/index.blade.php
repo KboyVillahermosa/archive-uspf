@@ -4,7 +4,7 @@
             <div class="space-y-6">
     <!-- Header -->
     <div class="flex items-center justify-between">
-        <div>
+    <div>
             <h1 class="text-3xl font-bold text-[#26225C]">Roles & Permissions</h1>
             <p class="text-gray-600 mt-1">Manage user roles and their permissions</p>
         </div>
@@ -15,27 +15,27 @@
                 </svg>
                 Back to Users
             </a>
-            @can('create', App\Models\User::class)
+                    @can('create', App\Models\User::class)
             <a href="{{ route('admin.roles.create') }}" class="mp-form flex items-center gap-2 px-6 py-3 bg-[#26225C] hover:bg-[#3a3770] text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg" data-target="roleModal">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                New Role
-            </a>
-            @endcan
-        </div>
-    </div>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        New Role
+                    </a>
+                    @endcan
+                </div>
+            </div>
 
-    @if(session('success'))
+            @if(session('success'))
         <div class="bg-green-50 border-l-4 border-green-400 text-green-700 p-4 rounded">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if(session('error'))
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('error'))
         <div class="bg-red-50 border-l-4 border-red-400 text-red-700 p-4 rounded">
-            {{ session('error') }}
-        </div>
-    @endif
+                    {{ session('error') }}
+                </div>
+            @endif
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -92,7 +92,7 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                @forelse($roles as $role)
+                        @forelse($roles as $role)
                 <tr class="hover:bg-yellow-50 transition-colors cursor-pointer" onclick="window.location.href='{{ route('admin.roles.edit', $role) }}'">
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center">
@@ -127,38 +127,38 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div class="flex items-center gap-2" onclick="event.stopPropagation()">
                             <a href="{{ route('admin.roles.edit', $role) }}" class="text-[#26225C] hover:text-[#FFC72C] transition-colors">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                </svg>
-                            </a>
-                            @can('viewAny', App\Models\User::class)
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                            </svg>
+                                        </a>
+                                        @can('viewAny', App\Models\User::class)
                             <form method="POST" action="{{ route('admin.roles.destroy', $role) }}" class="inline delete-role-form" data-role-name="{{ ucfirst(str_replace('_', ' ', $role->name)) }}" onsubmit="event.stopPropagation(); return confirm('Are you sure you want to delete this role?');">
-                                @csrf
-                                @method('DELETE')
+                                            @csrf
+                                            @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:text-red-800 transition-colors">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                    </svg>
-                                </button>
-                            </form>
-                            @endcan
-                        </div>
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                        @endcan
+                                    </div>
                     </td>
                 </tr>
-                @empty
+                        @empty
                 <tr>
                     <td colspan="4" class="px-6 py-12 text-center">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
-                        </svg>
-                        <h3 class="mt-2 text-sm font-medium text-gray-900">No roles</h3>
-                        <p class="mt-1 text-sm text-gray-500">Get started by creating a new role.</p>
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+                                </svg>
+                                <h3 class="mt-2 text-sm font-medium text-gray-900">No roles</h3>
+                                <p class="mt-1 text-sm text-gray-500">Get started by creating a new role.</p>
                     </td>
                 </tr>
-                @endforelse
+                        @endforelse
             </tbody>
         </table>
-    </div>
+                    </div>
 
     <!-- Role Modal -->
     <div id="roleModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 transition-opacity duration-300 ease-in-out" style="display: none;">
@@ -171,7 +171,7 @@
         </div>
     </div>
 
-    <script>
+<script>
         // Handle modal click outside to close
         document.getElementById('roleModal')?.addEventListener('click', function(e) {
             if (e.target === this) {
@@ -180,66 +180,66 @@
             }
         });
 
-        // Handle delete role forms
-        document.querySelectorAll('.delete-role-form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const form = this;
-                const roleName = form.getAttribute('data-role-name');
-                
-                if (!confirm(`Are you sure you want to delete role "${roleName}"? This action cannot be undone.`)) {
-                    return;
+    // Handle delete role forms
+    document.querySelectorAll('.delete-role-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            const roleName = form.getAttribute('data-role-name');
+            
+            if (!confirm(`Are you sure you want to delete role "${roleName}"? This action cannot be undone.`)) {
+                return;
+            }
+            
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalHTML = submitBtn.innerHTML;
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
                 }
-                
-                const submitBtn = form.querySelector('button[type="submit"]');
-                const originalHTML = submitBtn.innerHTML;
-                
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
-                
-                fetch(form.action, {
-                    method: 'POST',
-                    body: new FormData(form),
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        if (typeof window.toastr !== 'undefined') {
-                            window.toastr.success(data.message || 'Role deleted successfully!');
-                        } else {
-                            alert(data.message || 'Role deleted successfully!');
-                        }
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1500);
-                    } else {
-                        if (typeof window.toastr !== 'undefined') {
-                            window.toastr.error(data.message || 'Failed to delete role');
-                        } else {
-                            alert('Error: ' + (data.message || 'Failed to delete role'));
-                        }
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = originalHTML;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
                     if (typeof window.toastr !== 'undefined') {
-                        window.toastr.error('Failed to delete role. Please try again.');
+                        window.toastr.success(data.message || 'Role deleted successfully!');
                     } else {
-                        alert('Failed to delete role. Please try again.');
+                        alert(data.message || 'Role deleted successfully!');
+                    }
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    if (typeof window.toastr !== 'undefined') {
+                        window.toastr.error(data.message || 'Failed to delete role');
+                    } else {
+                        alert('Error: ' + (data.message || 'Failed to delete role'));
                     }
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalHTML;
-                });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                if (typeof window.toastr !== 'undefined') {
+                    window.toastr.error('Failed to delete role. Please try again.');
+                } else {
+                    alert('Failed to delete role. Please try again.');
+                }
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalHTML;
             });
         });
-    </script>
+    });
+</script>
             </div>
         </div>
     </div>
