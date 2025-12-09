@@ -32,56 +32,70 @@ class DatabaseSeeder extends Seeder
         //     ResearchSeeder::class,
         // ]);
 
-        // Create student user
-        $user = User::create([
-            'name' => 'Francisco Combong Villahermosa',
-            'email' => 'fvillahermosa_ccs@uspf.edu.ph',
-            'password' => Hash::make('password'),
-            'role' => 'student',
-            'status' => 'active',
-            'email_verified_at' => now(),
-        ]);
+        // Create student user (only if doesn't exist)
+        $user = User::firstOrCreate(
+            ['email' => 'fvillahermosa_ccs@uspf.edu.ph'],
+            [
+                'name' => 'Francisco Combong Villahermosa',
+                'password' => Hash::make('password'),
+                'role' => 'student',
+                'status' => 'active',
+                'email_verified_at' => now(),
+            ]
+        );
         
-        // Assign student role
-        $user->assignRole('student');
+        // Assign student role if not already assigned
+        if (!$user->hasRole('student')) {
+            $user->assignRole('student');
+        }
 
-        // Create student record
-        Student::create([
-            'id_number' => '202200672',
-            'first_name' => 'Francisco',
-            'middle_name' => 'Combong',
-            'last_name' => 'Villahermosa',
-            'birthday' => '2003-03-25',
-            'course_and_year' => 'BSIT 4',
-            'user_id' => $user->id,
-        ]);
+        // Create student record (only if doesn't exist)
+        Student::firstOrCreate(
+            ['user_id' => $user->id],
+            [
+                'id_number' => '202200672',
+                'first_name' => 'Francisco',
+                'middle_name' => 'Combong',
+                'last_name' => 'Villahermosa',
+                'birthday' => '2003-03-25',
+                'course_and_year' => 'BSIT 4',
+            ]
+        );
 
-        // Create admin user
-        $admin = User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@uspf.edu.ph',
-            'password' => Hash::make('admin123'),
-            'role' => 'admin',
-            'status' => 'active',
-            'email_verified_at' => now(),
-        ]);
+        // Create admin user (only if doesn't exist)
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@uspf.edu.ph'],
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make('admin123'),
+                'role' => 'admin',
+                'status' => 'active',
+                'email_verified_at' => now(),
+            ]
+        );
         
-        // Assign admin role
-        $admin->assignRole('admin');
+        // Assign admin role if not already assigned
+        if (!$admin->hasRole('admin')) {
+            $admin->assignRole('admin');
+        }
 
-        // Create faculty user
-        $faculty = User::create([
-            'name' => 'Dr. Jane Smith',
-            'email' => 'faculty@uspf.edu.ph',
-            'password' => Hash::make('faculty123'),
-            'role' => 'faculty',
-            'status' => 'active',
-            'department' => 'College of Computer Studies',
-            'course' => 'BSIT',
-            'email_verified_at' => now(),
-        ]);
+        // Create faculty user (only if doesn't exist)
+        $faculty = User::firstOrCreate(
+            ['email' => 'faculty@uspf.edu.ph'],
+            [
+                'name' => 'Dr. Jane Smith',
+                'password' => Hash::make('faculty123'),
+                'role' => 'faculty',
+                'status' => 'active',
+                'department' => 'College of Computer Studies',
+                'course' => 'BSIT',
+                'email_verified_at' => now(),
+            ]
+        );
         
-        // Assign faculty role
-        $faculty->assignRole('faculty');
+        // Assign faculty role if not already assigned
+        if (!$faculty->hasRole('faculty')) {
+            $faculty->assignRole('faculty');
+        }
     }
 }
