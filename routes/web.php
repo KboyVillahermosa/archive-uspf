@@ -14,10 +14,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
 // Public research view routes (no auth required for viewing)
-Route::get('/research/student/{id}', [StudentResearchController::class, 'show'])->name('student.show.public');
-Route::get('/research/faculty/{id}', [FacultyResearchController::class, 'show'])->name('faculty.show.public');
-Route::get('/research/thesis/{id}', [ThesisController::class, 'show'])->name('thesis.show.public');
-Route::get('/research/dissertation/{id}', [DissertationController::class, 'show'])->name('dissertation.show.public');
+Route::get('/research/student/{id}', [StudentResearchController::class, 'showPublic'])->name('student.show.public');
+Route::get('/research/faculty/{id}', [FacultyResearchController::class, 'showPublic'])->name('faculty.show.public');
+Route::get('/research/thesis/{id}', [ThesisController::class, 'showPublic'])->name('thesis.show.public');
+Route::get('/research/dissertation/{id}', [DissertationController::class, 'showPublic'])->name('dissertation.show.public');
 
 // Download survey modal routes (public)
 Route::get('/download-survey/student/{id}', [StudentResearchController::class, 'downloadSurvey'])->name('student.download-survey');

@@ -22,7 +22,7 @@
     <style>
         body {
             font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            background: #f9fafb;
         }
         
         /* Custom scrollbar */
@@ -59,35 +59,11 @@
             }
         }
         
-        .animate-slide-up {
-            animation: slideUp 0.8s ease-out forwards;
-            opacity: 0;
-        }
-        
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* Gradient text */
-        .gradient-text {
-            background: linear-gradient(135deg, #26225C 0%, #3a3770 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
         /* Custom button styles */
         .btn-primary {
-            background: linear-gradient(135deg, #26225C 0%, #3a3770 100%);
+            background: #26225C;
             color: white;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             border: none;
             text-decoration: none;
             display: inline-block;
@@ -95,15 +71,13 @@
         }
         
         .btn-primary:hover {
-            background: linear-gradient(135deg, #1a1840 0%, #2a2550 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(38, 34, 92, 0.3);
+            background: #1a1840;
         }
         
         .btn-secondary {
-            background: linear-gradient(135deg, #FFC72C 0%, #FFD700 100%);
+            background: #FFC72C;
             color: #26225C;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             border: none;
             text-decoration: none;
             display: inline-block;
@@ -112,67 +86,47 @@
         }
         
         .btn-secondary:hover {
-            background: linear-gradient(135deg, #FFD700 0%, #FFE55C 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 199, 44, 0.3);
+            background: #FFD700;
         }
         
         /* Card hover effects */
         .card-hover {
-            transition: all 0.3s ease;
-            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
         }
         
         .card-hover:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-            border-color: #cbd5e1;
-        }
-        
-        /* Icon animations */
-        .icon-bounce {
-            transition: transform 0.3s ease;
-        }
-        
-        .card-hover:hover .icon-bounce {
-            transform: scale(1.1) rotate(5deg);
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #d1d5db;
         }
         
         /* Research type badges */
         .badge-student {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            background: #3b82f6;
         }
         
         .badge-faculty {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            background: #8b5cf6;
         }
         
         .badge-thesis {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: #10b981;
         }
         
         .badge-dissertation {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        }
-        
-        /* Section headers */
-        .section-header {
-            background: white;
-            border-left: 4px solid #FFC72C;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            background: #ef4444;
         }
         
         /* Stats cards */
         .stats-card {
             background: white;
-            transition: all 0.3s ease;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
         }
         
         .stats-card:hover {
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             border-color: #FFC72C;
         }
         
@@ -189,26 +143,85 @@
             }
         }
         
-        /* CTA Section */
-        .cta-section {
-            box-shadow: 0 10px 40px rgba(38, 34, 92, 0.15);
+        /* Skeleton Loader Styles */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s ease-in-out infinite;
+            border-radius: 4px;
+        }
+        
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+        
+        .skeleton-circle {
+            border-radius: 50%;
+        }
+        
+        .skeleton-text {
+            height: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .skeleton-text:last-child {
+            margin-bottom: 0;
+        }
+        
+        .skeleton-title {
+            height: 1.5rem;
+            width: 60%;
+            margin-bottom: 0.75rem;
+        }
+        
+        .skeleton-subtitle {
+            height: 1rem;
+            width: 80%;
+        }
+        
+        .skeleton-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+        
+        .content-loaded {
+            display: block;
+        }
+        
+        .skeleton-container {
+            display: block;
+        }
+        
+        .content-container {
+            display: none;
+        }
+        
+        .content-container.loaded {
+            display: block;
+        }
+        
+        .skeleton-container.loaded {
+            display: none;
         }
     </style>
     </head>
 
 <body class="min-h-screen">
     <!-- Navigation Bar -->
-    <nav class="bg-gradient-to-r from-[#26225C] to-[#3a3770] shadow-xl sticky top-0 z-50">
+    <nav class="bg-[#26225C] shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex items-center">
                     <div class="flex-shrink-0 flex items-center">
-                        <div class="h-10 w-10 bg-white/10 rounded-xl flex items-center justify-center mr-3">
-                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                            </svg>
-                        </div>
+                        <img src="{{ asset('images/logo.png') }}" alt="USPF Logo" class="h-10 w-auto mr-3" />
                         <h1 class="text-xl font-bold text-white">USPF Research Archive</h1>
                     </div>
                 </div>
@@ -231,9 +244,6 @@
                                 <a href="{{ url('/dashboard') }}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">Dashboard</a>
                             @else
                                 <a href="{{ route('login') }}" class="text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">Log in</a>
-                                @if (Route::has('register'))
-                                    <a href="{{ route('register') }}" class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold">Register</a>
-                                @endif
                             @endauth
                         @endif
                     </div>
@@ -254,7 +264,7 @@
     </nav>
 
     <!-- Mobile menu -->
-    <div id="mobile-menu" class="md:hidden hidden bg-gradient-to-r from-[#26225C] to-[#3a3770] shadow-lg">
+    <div id="mobile-menu" class="md:hidden hidden bg-[#26225C] shadow-lg">
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <a href="{{ route('research.by-department') }}" class="text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Browse Research</a>
             <a href="{{ route('research.by-department') }}" class="text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Departments</a>
@@ -300,20 +310,35 @@
     <main class="py-12 lg:py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Statistics Overview -->
-            <div class="mb-16 animate-slide-up">
-                <div class="text-center mb-12">
-                    <h2 class="text-4xl font-bold gradient-text mb-4">Research Statistics</h2>
-                    <p class="text-xl text-gray-600">Explore our comprehensive collection of academic research</p>
+            <div class="mb-16">
+                <div class="mb-6 pb-4 border-b-2 border-[#FFC72C]">
+                    <h2 class="text-3xl font-bold text-[#26225C] mb-1">Research Statistics</h2>
+                    <p class="text-sm text-gray-600">Explore our comprehensive collection of academic research</p>
+                </div>
+                
+                <!-- Skeleton Loaders for Stats -->
+                <div class="skeleton-container stats-skeleton">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        @for($i = 0; $i < 4; $i++)
+                            <div class="skeleton-card rounded-lg p-6 text-center">
+                                <div class="skeleton skeleton-circle h-14 w-14 mx-auto mb-4"></div>
+                                <div class="skeleton skeleton-text w-16 h-8 mx-auto mb-2"></div>
+                                <div class="skeleton skeleton-text w-24 h-4 mx-auto"></div>
+                            </div>
+                        @endfor
+                    </div>
                     </div>
                 
+                <!-- Actual Stats Content -->
+                <div class="content-container stats-content">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                         @php
                             $totalResearch = $approvedStudentResearch->count() + $approvedFacultyResearch->count() + $approvedThesis->count() + $approvedDissertations->count();
                         @endphp
                     
-                    <div class="stats-card rounded-2xl p-6 text-center">
-                        <div class="h-16 w-16 bg-gradient-to-br from-[#26225C] to-[#3a3770] rounded-xl flex items-center justify-center mx-auto mb-4">
-                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="stats-card rounded-lg p-6 text-center">
+                            <div class="h-14 w-14 bg-[#26225C] rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
                         </div>
@@ -321,9 +346,9 @@
                         <div class="text-sm text-gray-600 font-medium">Total Research Papers</div>
                     </div>
                     
-                    <div class="stats-card rounded-2xl p-6 text-center">
-                        <div class="h-16 w-16 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center mx-auto mb-4">
-                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="stats-card rounded-lg p-6 text-center">
+                            <div class="h-14 w-14 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
                             </svg>
                         </div>
@@ -331,9 +356,9 @@
                         <div class="text-sm text-gray-600 font-medium">Faculty Research</div>
                     </div>
                     
-                    <div class="stats-card rounded-2xl p-6 text-center">
-                        <div class="h-16 w-16 bg-gradient-to-br from-green-600 to-green-800 rounded-xl flex items-center justify-center mx-auto mb-4">
-                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="stats-card rounded-lg p-6 text-center">
+                            <div class="h-14 w-14 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
                             </svg>
                         </div>
@@ -341,45 +366,59 @@
                         <div class="text-sm text-gray-600 font-medium">Graduate Studies</div>
                     </div>
                     
-                    <div class="stats-card rounded-2xl p-6 text-center">
-                        <div class="h-16 w-16 bg-gradient-to-br from-orange-600 to-orange-800 rounded-xl flex items-center justify-center mx-auto mb-4">
-                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="stats-card rounded-lg p-6 text-center">
+                            <div class="h-14 w-14 bg-orange-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                             </svg>
                         </div>
                         <div class="text-3xl font-bold text-[#26225C] mb-2">{{ $approvedStudentResearch->count() }}</div>
                         <div class="text-sm text-gray-600 font-medium">Student Research</div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Research Sections -->
+            @php
+                $totalResearch = $approvedStudentResearch->count() + $approvedFacultyResearch->count() + $approvedThesis->count() + $approvedDissertations->count();
+            @endphp
             @if($totalResearch > 0)
                 <!-- Recent Research -->
-                <div class="mb-16 animate-slide-up">
-                    <div class="section-header rounded-2xl p-6 mb-8">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="h-12 w-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4">
-                                    <svg class="h-6 w-6 text-white icon-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
+                <div class="mb-16">
+                    <div class="mb-6 pb-4 border-b-2 border-[#FFC72C] flex items-center justify-between">
                                 <div>
-                                    <h3 class="text-2xl font-bold text-[#26225C]">Recent Research</h3>
-                                    <p class="text-gray-600">Latest approved research publications</p>
-                                </div>
+                            <h3 class="text-3xl font-bold text-[#26225C] mb-1">Recent Research</h3>
+                            <p class="text-sm text-gray-600">Latest approved research publications</p>
                             </div>
                             <a href="{{ route('research.by-department') }}" class="btn-primary text-white px-6 py-2 rounded-lg text-sm font-semibold">View All</a>
                     </div>
+
+                    <!-- Skeleton Loaders for Recent Research -->
+                    <div class="skeleton-container recent-research-skeleton">
+                        <div class="research-grid">
+                            @for($i = 0; $i < 6; $i++)
+                                <div class="skeleton-card rounded-lg p-6">
+                                    <div class="flex items-center mb-4">
+                                        <div class="skeleton skeleton-circle h-10 w-10 mr-3"></div>
+                                        <div class="skeleton skeleton-text w-24 h-5"></div>
+                                    </div>
+                                    <div class="skeleton skeleton-title mb-2"></div>
+                                    <div class="skeleton skeleton-text w-3/4 mb-2"></div>
+                                    <div class="skeleton skeleton-text w-1/2"></div>
+                                </div>
+                            @endfor
+                    </div>
                 </div>
 
+                    <!-- Actual Recent Research Content -->
+                    <div class="content-container recent-research-content">
                     <div class="research-grid">
                         @foreach($approvedStudentResearch->take(3) as $research)
                             @if($research->is_approved ?? true)
-                                <a href="{{ route('student.show.public', $research->id) }}" class="card-hover bg-white border border-blue-100 rounded-2xl shadow-lg p-6 group">
+                                <a href="{{ route('student.show.public', $research->id) }}" class="card-hover bg-white border border-gray-200 rounded-lg shadow-sm p-6 group">
                                     <div class="flex items-center mb-4">
-                                        <div class="h-10 w-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-3">
+                                        <div class="h-10 w-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
                                             <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                         </svg>
@@ -395,9 +434,9 @@
                         
                         @foreach($approvedFacultyResearch->take(3) as $research)
                             @if($research->is_approved ?? true)
-                                <a href="{{ route('faculty.show.public', $research->id) }}" class="card-hover bg-white border border-purple-100 rounded-2xl shadow-lg p-6 group">
+                                <a href="{{ route('faculty.show.public', $research->id) }}" class="card-hover bg-white border border-gray-200 rounded-lg shadow-sm p-6 group">
                                     <div class="flex items-center mb-4">
-                                        <div class="h-10 w-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mr-3">
+                                        <div class="h-10 w-10 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
                                             <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
                                         </svg>
@@ -413,34 +452,45 @@
                                 </a>
                             @endif
                         @endforeach
+                        </div>
                     </div>
                 </div>
 
                 <!-- Most Popular Research -->
-                <div class="mb-16 animate-slide-up">
-                    <div class="section-header rounded-2xl p-6 mb-8">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="h-12 w-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mr-4">
-                                    <svg class="h-6 w-6 text-white icon-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                    </svg>
+                <div class="mb-16">
+                    <div class="mb-6 pb-4 border-b-2 border-[#FFC72C] flex items-center justify-between">
+                        <div>
+                            <h3 class="text-3xl font-bold text-[#26225C] mb-1">Most Popular</h3>
+                            <p class="text-sm text-gray-600">Highly cited and referenced research</p>
+                        </div>
+                        <a href="{{ route('research.by-department') }}" class="btn-primary text-white px-6 py-2 rounded-lg text-sm font-semibold">View All</a>
+                    </div>
+                    
+                    <!-- Skeleton Loaders for Most Popular -->
+                    <div class="skeleton-container popular-research-skeleton">
+                        <div class="research-grid">
+                            @for($i = 0; $i < 6; $i++)
+                                <div class="skeleton-card rounded-lg p-6">
+                                    <div class="flex items-center mb-4">
+                                        <div class="skeleton skeleton-circle h-10 w-10 mr-3"></div>
+                                        <div class="skeleton skeleton-text w-24 h-5"></div>
                                 </div>
-                                <div>
-                                    <h3 class="text-2xl font-bold text-[#26225C]">Most Popular</h3>
-                                    <p class="text-gray-600">Highly cited and referenced research</p>
+                                    <div class="skeleton skeleton-title mb-2"></div>
+                                    <div class="skeleton skeleton-text w-3/4 mb-2"></div>
+                                    <div class="skeleton skeleton-text w-1/2"></div>
                                 </div>
-                            </div>
-                            <a href="{{ route('research.by-department') }}" class="btn-primary text-white px-6 py-2 rounded-lg text-sm font-semibold">View All</a>
+                            @endfor
                         </div>
                     </div>
                     
+                    <!-- Actual Most Popular Content -->
+                    <div class="content-container popular-research-content">
                     <div class="research-grid">
                         @foreach($approvedThesis->take(3) as $thesis)
                             @if($thesis->is_approved ?? true)
-                                <a href="{{ route('thesis.show.public', $thesis->id) }}" class="card-hover bg-white border border-green-100 rounded-2xl shadow-lg p-6 group">
+                                <a href="{{ route('thesis.show.public', $thesis->id) }}" class="card-hover bg-white border border-gray-200 rounded-lg shadow-sm p-6 group">
                                     <div class="flex items-center mb-4">
-                                        <div class="h-10 w-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mr-3">
+                                        <div class="h-10 w-10 bg-green-500 rounded-lg flex items-center justify-center mr-3">
                                             <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
@@ -456,9 +506,9 @@
                         
                         @foreach($approvedDissertations->take(3) as $dissertation)
                             @if($dissertation->is_approved ?? true)
-                                <a href="{{ route('dissertation.show.public', $dissertation->id) }}" class="card-hover bg-white border border-red-100 rounded-2xl shadow-lg p-6 group">
+                                <a href="{{ route('dissertation.show.public', $dissertation->id) }}" class="card-hover bg-white border border-gray-200 rounded-lg shadow-sm p-6 group">
                                     <div class="flex items-center mb-4">
-                                        <div class="h-10 w-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center mr-3">
+                                        <div class="h-10 w-10 bg-red-500 rounded-lg flex items-center justify-center mr-3">
                                             <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
@@ -471,35 +521,45 @@
                                 </a>
                             @endif
                         @endforeach
+                        </div>
                     </div>
                 </div>
 
                 <!-- Most Viewed Research -->
-                <div class="mb-16 animate-slide-up">
-                    <div class="section-header rounded-2xl p-6 mb-8">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="h-12 w-12 bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl flex items-center justify-center mr-4">
-                                    <svg class="h-6 w-6 text-white icon-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                    </svg>
+                <div class="mb-16">
+                    <div class="mb-6 pb-4 border-b-2 border-[#FFC72C] flex items-center justify-between">
+                        <div>
+                            <h3 class="text-3xl font-bold text-[#26225C] mb-1">Most Viewed</h3>
+                            <p class="text-sm text-gray-600">Research with highest engagement</p>
+                        </div>
+                        <a href="{{ route('research.by-department') }}" class="btn-primary text-white px-6 py-2 rounded-lg text-sm font-semibold">View All</a>
+                    </div>
+                    
+                    <!-- Skeleton Loaders for Most Viewed -->
+                    <div class="skeleton-container viewed-research-skeleton">
+                        <div class="research-grid">
+                            @for($i = 0; $i < 4; $i++)
+                                <div class="skeleton-card rounded-lg p-6">
+                                    <div class="flex items-center mb-4">
+                                        <div class="skeleton skeleton-circle h-10 w-10 mr-3"></div>
+                                        <div class="skeleton skeleton-text w-24 h-5"></div>
                                 </div>
-                                <div>
-                                    <h3 class="text-2xl font-bold text-[#26225C]">Most Viewed</h3>
-                                    <p class="text-gray-600">Research with highest engagement</p>
+                                    <div class="skeleton skeleton-title mb-2"></div>
+                                    <div class="skeleton skeleton-text w-3/4 mb-2"></div>
+                                    <div class="skeleton skeleton-text w-1/2"></div>
                                 </div>
-                            </div>
-                            <a href="{{ route('research.by-department') }}" class="btn-primary text-white px-6 py-2 rounded-lg text-sm font-semibold">View All</a>
+                            @endfor
                         </div>
                     </div>
                     
+                    <!-- Actual Most Viewed Content -->
+                    <div class="content-container viewed-research-content">
                     <div class="research-grid">
                         @foreach($approvedStudentResearch->take(2) as $research)
                             @if($research->is_approved ?? true)
-                                <a href="{{ route('student.show.public', $research->id) }}" class="card-hover bg-white border border-blue-100 rounded-2xl shadow-lg p-6 group">
+                                <a href="{{ route('student.show.public', $research->id) }}" class="card-hover bg-white border border-gray-200 rounded-lg shadow-sm p-6 group">
                                     <div class="flex items-center mb-4">
-                                        <div class="h-10 w-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-3">
+                                        <div class="h-10 w-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
                                             <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                             </svg>
@@ -515,9 +575,9 @@
                         
                         @foreach($approvedFacultyResearch->take(2) as $research)
                             @if($research->is_approved ?? true)
-                                <a href="{{ route('faculty.show.public', $research->id) }}" class="card-hover bg-white border border-purple-100 rounded-2xl shadow-lg p-6 group">
+                                <a href="{{ route('faculty.show.public', $research->id) }}" class="card-hover bg-white border border-gray-200 rounded-lg shadow-sm p-6 group">
                                     <div class="flex items-center mb-4">
-                                        <div class="h-10 w-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mr-3">
+                                        <div class="h-10 w-10 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
                                             <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
                             </svg>
@@ -533,21 +593,22 @@
                                 </a>
                             @endif
                         @endforeach
+                        </div>
                     </div>
                 </div>
 
                 <!-- Call to Action -->
-                <div class="text-center animate-slide-up">
-                    <div class="cta-section bg-gradient-to-r from-[#26225C] to-[#3a3770] rounded-3xl p-12 text-white">
+                <div class="text-center">
+                    <div class="bg-[#26225C] rounded-lg p-12 text-white">
                         <h3 class="text-3xl font-bold mb-4">Ready to Explore More?</h3>
                         <p class="text-lg mb-8 opacity-90">Discover our complete collection of research papers and academic excellence</p>
-                        <a href="{{ route('research.by-department') }}" class="btn-secondary px-8 py-3 rounded-xl text-lg font-semibold">Browse All Research</a>
+                        <a href="{{ route('research.by-department') }}" class="btn-secondary px-8 py-3 rounded-lg text-lg font-semibold">Browse All Research</a>
                     </div>
                     </div>
                 @else
                 <!-- Empty State -->
-                <div class="text-center py-16 animate-slide-up">
-                    <div class="h-24 w-24 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div class="text-center py-16">
+                    <div class="h-24 w-24 bg-gray-400 rounded-full flex items-center justify-center mx-auto mb-6">
                         <svg class="h-12 w-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
@@ -555,7 +616,7 @@
                     <h3 class="text-2xl font-bold text-[#26225C] mb-4">No Research Available Yet</h3>
                     <p class="text-gray-600 mb-8">Check back later for new research publications</p>
                     @if (Route::has('login') && !auth()->check())
-                        <a href="{{ route('register') }}" class="btn-primary text-white px-8 py-3 rounded-xl text-lg font-semibold">Join Our Community</a>
+                        <a href="{{ route('register') }}" class="btn-primary text-white px-8 py-3 rounded-lg text-lg font-semibold">Join Our Community</a>
                     @endif
                 </div>
             @endif
@@ -563,7 +624,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gradient-to-r from-[#26225C] to-[#3a3770] text-white py-16">
+    <footer class="bg-[#26225C] text-white py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
                 <div>
@@ -654,6 +715,35 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     `;
                 }
+            });
+            
+            // Skeleton Loader Management
+            function hideSkeletons() {
+                // Hide all skeleton containers
+                document.querySelectorAll('.skeleton-container').forEach(skeleton => {
+                    skeleton.classList.add('loaded');
+                });
+                
+                // Show all content containers
+                document.querySelectorAll('.content-container').forEach(content => {
+                    content.classList.add('loaded');
+                });
+            }
+            
+            // Hide skeletons when page is fully loaded
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Simulate loading delay for better UX (optional)
+                    setTimeout(hideSkeletons, 500);
+                });
+            } else {
+                // DOM is already loaded
+                setTimeout(hideSkeletons, 500);
+            }
+            
+            // Also hide skeletons when window is fully loaded (images, etc.)
+            window.addEventListener('load', function() {
+                hideSkeletons();
             });
         });
     </script>

@@ -119,19 +119,67 @@ class FacultyResearchController extends Controller
 
     public function download(Request $request, $id)
     {
-        if (auth()->guest()) {
-            return response()->json(['error' => 'You must be logged in to download. Please log in first.'], 401);
-        }
         $research = FacultyResearch::findOrFail($id);
         
+        // Only allow download of approved research
         if ($research->status !== 'approved') {
-            abort(404);
+            return response()->json(['error' => 'This research is not available for download'], 404);
+        }
+        
+        if (!$research->research_file) {
+            return response()->json(['error' => 'File not found'], 404);
+        }
+        
+        // Validate survey data if provided
+        if ($request->has('purpose')) {
+            $request->validate([
+                'purpose' => 'required|string',
+                'notes' => 'nullable|string|max:500'
+            ]);
+            
+            // Track download with survey data
+            \App\Models\ResearchAnalytic::trackDownload(
+                'faculty', 
+                $id, 
+                $request, 
+                $request->purpose, 
+                $request->notes
+            );
+        } else {
+            // Track download without survey data
+            \App\Models\ResearchAnalytic::trackDownload('faculty', $id, $request);
         }
         
         $filePath = storage_path('app/public/' . $research->research_file);
         
         if (!file_exists($filePath)) {
-            abort(404);
+            return response()->json(['error' => 'File not found on server'], 404);
+        }
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Download will start shortly',
+            'download_url' => route('faculty.download.file', $id)
+        ]);
+        }
+    
+    public function downloadFile($id)
+    {
+        $research = FacultyResearch::findOrFail($id);
+        
+        // Only allow download of approved research
+        if ($research->status !== 'approved') {
+            abort(404, 'Research not found or not available');
+        }
+        
+        if (!$research->research_file) {
+            abort(404, 'File not found');
+        }
+        
+        $filePath = storage_path('app/public/' . $research->research_file);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'File not found on server');
         }
         
         return response()->download($filePath, 'Faculty_Research_' . $research->id . '.pdf');

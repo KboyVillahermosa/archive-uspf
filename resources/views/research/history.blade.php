@@ -1,4 +1,56 @@
 <x-app-layout>
+    <style>
+        /* Skeleton Loader Styles */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s ease-in-out infinite;
+            border-radius: 4px;
+        }
+        
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+        
+        .skeleton-text {
+            height: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .skeleton-title {
+            height: 1.5rem;
+            width: 60%;
+            margin-bottom: 0.75rem;
+        }
+        
+        .skeleton-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+        
+        .skeleton-container {
+            display: block;
+        }
+        
+        .content-container {
+            display: none;
+        }
+        
+        .content-container.loaded {
+            display: block;
+        }
+        
+        .skeleton-container.loaded {
+            display: none;
+        }
+    </style>
     <div class="min-h-screen bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             
@@ -10,6 +62,25 @@
 
             <!-- Status Summary -->
             <section class="mb-10">
+                <!-- Skeleton Loader for Status Summary -->
+                <div class="skeleton-container status-summary-skeleton">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        @for($i = 0; $i < 4; $i++)
+                        <div class="skeleton-card">
+                            <div class="flex items-center">
+                                <div class="skeleton w-12 h-12 rounded-xl mr-4"></div>
+                                <div class="flex-1">
+                                    <div class="skeleton skeleton-text w-20 mb-2"></div>
+                                    <div class="skeleton skeleton-text w-16"></div>
+                                </div>
+                            </div>
+                        </div>
+                        @endfor
+                    </div>
+                </div>
+                
+                <!-- Actual Status Summary -->
+                <div class="content-container status-summary-content">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bg-white rounded-xl p-6 border border-gray-200">
                     <div class="flex items-center">
@@ -67,10 +138,58 @@
                         </div>
                     </div>
                 </div>
+                </div>
             </section>
 
             <!-- Research List -->
             <section>
+                <!-- Skeleton Loader for Table -->
+                <div class="skeleton-container table-skeleton">
+                    <div class="mb-6">
+                        <div class="skeleton skeleton-title w-48 mb-2"></div>
+                        <div class="skeleton skeleton-text w-32"></div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gradient-to-r from-[#26225C] to-[#3a3770]">
+                                    <tr>
+                                        <th class="px-6 py-4"><div class="skeleton h-4 w-24"></div></th>
+                                        <th class="px-6 py-4"><div class="skeleton h-4 w-16"></div></th>
+                                        <th class="px-6 py-4"><div class="skeleton h-4 w-20"></div></th>
+                                        <th class="px-6 py-4"><div class="skeleton h-4 w-16"></div></th>
+                                        <th class="px-6 py-4"><div class="skeleton h-4 w-20"></div></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-100">
+                                    @for($i = 0; $i < 5; $i++)
+                                    <tr>
+                                        <td class="px-6 py-5">
+                                            <div class="skeleton skeleton-text w-64 mb-2"></div>
+                                            <div class="skeleton skeleton-text w-32"></div>
+                                        </td>
+                                        <td class="px-6 py-5">
+                                            <div class="skeleton h-6 w-20 rounded-full"></div>
+                                        </td>
+                                        <td class="px-6 py-5">
+                                            <div class="skeleton skeleton-text w-24"></div>
+                                        </td>
+                                        <td class="px-6 py-5">
+                                            <div class="skeleton h-6 w-16 rounded-full"></div>
+                                        </td>
+                                        <td class="px-6 py-5">
+                                            <div class="skeleton skeleton-text w-20"></div>
+                                        </td>
+                                    </tr>
+                                    @endfor
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Actual Research List -->
+                <div class="content-container table-content">
                 <div class="mb-6">
                     <h2 class="text-2xl font-light text-[#26225C] mb-1">Research Submissions</h2>
                     <p class="text-sm text-gray-500">{{ $allResearch->count() }} research items</p>
@@ -204,6 +323,7 @@
                         </div>
                     </div>
                 @endif
+                </div>
             </section>
 
         </div>
@@ -281,5 +401,30 @@
         function closeRejectionModal() {
             document.getElementById('rejectionModal').classList.add('hidden');
         }
+        
+        // Skeleton Loader Management
+        document.addEventListener('DOMContentLoaded', function() {
+            function hideSkeletons() {
+                document.querySelectorAll('.skeleton-container').forEach(skeleton => {
+                    skeleton.classList.add('loaded');
+                });
+                document.querySelectorAll('.content-container').forEach(content => {
+                    content.classList.add('loaded');
+                });
+            }
+            
+            // Hide skeletons when page is fully loaded
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(hideSkeletons, 500);
+                });
+            } else {
+                setTimeout(hideSkeletons, 500);
+            }
+            
+            window.addEventListener('load', function() {
+                hideSkeletons();
+            });
+        });
     </script>
 </x-app-layout>
