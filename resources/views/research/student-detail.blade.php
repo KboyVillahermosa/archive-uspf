@@ -168,6 +168,7 @@
                                 </div>
                             </div>
                             
+                            @if($research->approved_at)
                             <div class="flex items-center">
                                 <div class="w-10 h-10 bg-[#26225C] bg-opacity-10 rounded-lg flex items-center justify-center mr-3">
                                     <svg class="h-5 w-5 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -179,6 +180,7 @@
                                     <p class="font-semibold text-[#26225C]">{{ $research->approved_at->format('F j, Y') }}</p>
                                 </div>
                             </div>
+                            @endif
                         </div>
                     </section>
                     @endif
@@ -190,7 +192,7 @@
                             <p class="text-sm text-gray-500">Comprehensive research information</p>
                         </div>
                         <div>
-                            @if($research->banner_image)
+                            @if($research->banner_image && $research->approved_at)
                             <div class="flex flex-wrap items-center gap-4 mb-6 text-sm text-gray-600">
                                 <div class="flex items-center">
                                     <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -260,7 +262,7 @@
                         </div>
                         <div class="bg-gray-50 p-6 rounded-lg border-l-4 border-[#FFC72C]">
                             <p class="text-sm text-gray-700 font-mono mb-4 leading-relaxed">
-                                {{ $research->authors }} ({{ $research->approved_at->format('Y') }}). <em>{{ $research->title }}</em>. 
+                                {{ $research->authors }} ({{ $research->approved_at ? $research->approved_at->format('Y') : date('Y') }}). <em>{{ $research->title }}</em>. 
                                 {{ $research->department }}, University of Southern Philippines Foundation. 
                                 Retrieved from {{ url()->current() }}
                             </p>
@@ -386,6 +388,7 @@
                                 </span>
                                 <span class="font-semibold text-[#26225C] text-xl">{{ $downloadCount }}</span>
                             </div>
+                            @if($research->approved_at)
                             <div class="flex justify-between items-center py-3">
                                 <span class="text-gray-600 font-medium flex items-center">
                                     <svg class="h-4 w-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -395,6 +398,7 @@
                                 </span>
                                 <span class="font-semibold text-[#26225C] text-xl">{{ $research->approved_at->diffForHumans() }}</span>
                             </div>
+                            @endif
                         </div>
                     </section>
 

@@ -97,17 +97,18 @@
             </div>
 
             <!-- Research Table -->
-            <div class="table-container overflow-x-auto">
+            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
                 @if($totalCount > 0)
-                    <table class="w-full">
+                    <table class="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr class="bg-gradient-to-r from-[#26225C] to-[#3a3770] border-b border-[#FFC72C]">
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Type</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Title</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Author</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Department</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Submitted</th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold text-white uppercase">Actions</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Type</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Title</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Author</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Department</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Submitted</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-white uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
 
@@ -136,11 +137,30 @@
                                         <div class="text-xs text-gray-400">{{ $research->created_at->diffForHumans() }}</div>
                                     </td>
                                     <td class="px-4 py-3 text-right">
-                                        <a href="{{ route('admin.approve.student.form', $research->id) }}" class="mp-form inline-flex items-center text-[#26225C] hover:text-[#FFC72C] transition-colors" data-target="actionModal">
-                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-                                        </a>
+                                        <div class="flex items-center justify-end space-x-2">
+                                            <a href="{{ route('admin.approve.student.form', $research->id) }}" class="mp-form inline-flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors" data-target="actionModal" title="Approve">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                                <span class="hidden sm:inline">Approve</span>
+                                            </a>
+                                            <a href="{{ route('admin.reject.student.form', $research->id) }}" class="mp-form inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors" data-target="actionModal" title="Reject">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
+                                                <span class="hidden sm:inline">Reject</span>
+                                            </a>
+                                            <form action="{{ route('admin.research.delete', ['type' => 'student', 'id' => $research->id]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this research? This action cannot be undone.')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-lg transition-colors" title="Delete">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                    </svg>
+                                                    <span class="hidden sm:inline ml-1">Delete</span>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -164,11 +184,30 @@
                                         <div class="text-xs text-gray-400">{{ $research->created_at->diffForHumans() }}</div>
                                     </td>
                                     <td class="px-4 py-3 text-right">
-                                        <a href="{{ route('admin.approve.faculty.form', $research->id) }}" class="mp-form inline-flex items-center text-[#26225C] hover:text-[#FFC72C] transition-colors" data-target="actionModal">
-                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-                                        </a>
+                                        <div class="flex items-center justify-end space-x-2">
+                                            <a href="{{ route('admin.approve.faculty.form', $research->id) }}" class="mp-form inline-flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors" data-target="actionModal" title="Approve">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                                <span class="hidden sm:inline">Approve</span>
+                                            </a>
+                                            <a href="{{ route('admin.reject.faculty.form', $research->id) }}" class="mp-form inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors" data-target="actionModal" title="Reject">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
+                                                <span class="hidden sm:inline">Reject</span>
+                                            </a>
+                                            <form action="{{ route('admin.research.delete', ['type' => 'faculty', 'id' => $research->id]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this research? This action cannot be undone.')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-lg transition-colors" title="Delete">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                    </svg>
+                                                    <span class="hidden sm:inline ml-1">Delete</span>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -192,11 +231,30 @@
                                         <div class="text-xs text-gray-400">{{ $item->created_at->diffForHumans() }}</div>
                                     </td>
                                     <td class="px-4 py-3 text-right">
-                                        <a href="{{ route('admin.approve.thesis.form', $item->id) }}" class="mp-form inline-flex items-center text-[#26225C] hover:text-[#FFC72C] transition-colors" data-target="actionModal">
-                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-                                        </a>
+                                        <div class="flex items-center justify-end space-x-2">
+                                            <a href="{{ route('admin.approve.thesis.form', $item->id) }}" class="mp-form inline-flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors" data-target="actionModal" title="Approve">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                                <span class="hidden sm:inline">Approve</span>
+                                            </a>
+                                            <a href="{{ route('admin.reject.thesis.form', $item->id) }}" class="mp-form inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors" data-target="actionModal" title="Reject">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
+                                                <span class="hidden sm:inline">Reject</span>
+                                            </a>
+                                            <form action="{{ route('admin.research.delete', ['type' => 'thesis', 'id' => $item->id]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this research? This action cannot be undone.')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-lg transition-colors" title="Delete">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                    </svg>
+                                                    <span class="hidden sm:inline ml-1">Delete</span>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -220,16 +278,36 @@
                                         <div class="text-xs text-gray-400">{{ $dissertation->created_at->diffForHumans() }}</div>
                                     </td>
                                     <td class="px-4 py-3 text-right">
-                                        <a href="{{ route('admin.approve.dissertation.form', $dissertation->id) }}" class="mp-form inline-flex items-center text-[#26225C] hover:text-[#FFC72C] transition-colors" data-target="actionModal">
-                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-                                        </a>
+                                        <div class="flex items-center justify-end space-x-2">
+                                            <a href="{{ route('admin.approve.dissertation.form', $dissertation->id) }}" class="mp-form inline-flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors" data-target="actionModal" title="Approve">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                                <span class="hidden sm:inline">Approve</span>
+                                            </a>
+                                            <a href="{{ route('admin.reject.dissertation.form', $dissertation->id) }}" class="mp-form inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors" data-target="actionModal" title="Reject">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
+                                                <span class="hidden sm:inline">Reject</span>
+                                            </a>
+                                            <form action="{{ route('admin.research.delete', ['type' => 'dissertation', 'id' => $dissertation->id]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this research? This action cannot be undone.')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-lg transition-colors" title="Delete">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                    </svg>
+                                                    <span class="hidden sm:inline ml-1">Delete</span>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
+                </div>
                 @else
                     <div class="text-center py-16 bg-white rounded-xl">
                         <div class="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -241,9 +319,7 @@
                         <p class="text-sm text-gray-500">All submissions have been reviewed.</p>
                     </div>
                 @endif
-                    </div>
-                </div>
-                    </div>
+            </div>
 
     <!-- Action Modal -->
     <div id="actionModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 transition-opacity duration-300 ease-in-out" style="display: none;">

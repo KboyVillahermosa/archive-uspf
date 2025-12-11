@@ -116,6 +116,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/approve/dissertation/{id}', [AdminController::class, 'approveDissertation'])->name('approve.dissertation');
     Route::get('/reject/dissertation/{id}', [AdminController::class, 'rejectDissertationForm'])->name('reject.dissertation.form');
     Route::post('/reject/dissertation/{id}', [AdminController::class, 'rejectDissertation'])->name('reject.dissertation');
+    
+    // Delete research route
+    Route::delete('/research/{type}/{id}', [AdminController::class, 'deleteResearch'])->name('research.delete');
 });
 
 // Users management - accessible to admin and faculty with view-any users permission

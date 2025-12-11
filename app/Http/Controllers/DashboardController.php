@@ -175,6 +175,10 @@ class DashboardController extends Controller
                     if (!isset($item->rejection_reason)) {
                         $item->rejection_reason = null;
                     }
+                    // Ensure created_at is cast to Carbon
+                    if ($item->created_at && !($item->created_at instanceof \Carbon\Carbon)) {
+                        $item->created_at = \Carbon\Carbon::parse($item->created_at);
+                    }
                     return $item;
                 });
         }
@@ -203,6 +207,10 @@ class DashboardController extends Controller
                     if (!isset($item->rejection_reason)) {
                         $item->rejection_reason = null;
                     }
+                    // Ensure created_at is cast to Carbon
+                    if ($item->created_at && !($item->created_at instanceof \Carbon\Carbon)) {
+                        $item->created_at = \Carbon\Carbon::parse($item->created_at);
+                    }
                     return $item;
                 });
         }
@@ -222,6 +230,10 @@ class DashboardController extends Controller
                     if (!isset($item->rejection_reason)) {
                         $item->rejection_reason = null;
                     }
+                    // Ensure created_at is cast to Carbon
+                    if ($item->created_at && !($item->created_at instanceof \Carbon\Carbon)) {
+                        $item->created_at = \Carbon\Carbon::parse($item->created_at);
+                    }
                     return $item;
                 });
         }
@@ -240,6 +252,10 @@ class DashboardController extends Controller
                     $item->type = 'dissertation';
                     if (!isset($item->rejection_reason)) {
                         $item->rejection_reason = null;
+                    }
+                    // Ensure created_at is cast to Carbon
+                    if ($item->created_at && !($item->created_at instanceof \Carbon\Carbon)) {
+                        $item->created_at = \Carbon\Carbon::parse($item->created_at);
                     }
                     return $item;
                 });
