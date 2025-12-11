@@ -100,64 +100,60 @@
             <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
                 <div class="overflow-x-auto">
                 @if($totalCount > 0)
-                    <table class="min-w-full divide-y divide-gray-200">
+                    <table class="w-full divide-y divide-gray-200 text-xs table-auto">
                         <thead>
                             <tr class="bg-gradient-to-r from-[#26225C] to-[#3a3770] border-b border-[#FFC72C]">
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Type</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Title</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Author</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Department</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Submitted</th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold text-white uppercase tracking-wider">Actions</th>
+                                <th class="px-2 py-1.5 text-left text-xs font-semibold text-white uppercase tracking-wider">Type</th>
+                                <th class="px-2 py-1.5 text-left text-xs font-semibold text-white uppercase tracking-wider">Title</th>
+                                <th class="px-2 py-1.5 text-left text-xs font-semibold text-white uppercase tracking-wider">Author</th>
+                                <th class="px-2 py-1.5 text-left text-xs font-semibold text-white uppercase tracking-wider">Department</th>
+                                <th class="px-2 py-1.5 text-left text-xs font-semibold text-white uppercase tracking-wider">Submitted</th>
+                                <th class="px-2 py-1.5 text-center text-xs font-semibold text-white uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             @foreach($studentResearch as $research)
-                                <tr class="border-b border-gray-100 hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors bg-white">
-                                    <td class="px-4 py-3">
-                                        <span class="text-xs font-semibold text-[#26225C]">Student</span>
+                                <tr class="border-b border-gray-100 hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors bg-white cursor-pointer" onclick="viewResearch('student', {{ $research->id }})">
+                                    <td class="px-2 py-1.5 whitespace-nowrap" onclick="event.stopPropagation()">
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">S</span>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm font-medium text-[#26225C] max-w-xs truncate">{{ Str::limit($research->title, 60) }}</div>
+                                    <td class="px-2 py-1.5">
+                                        <div class="text-xs font-medium text-[#26225C] max-w-[200px] truncate block" title="{{ $research->title }}">{{ Str::limit($research->title, 50) }}</div>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm text-gray-600 max-w-xs truncate">{{ Str::limit($research->authors, 40) }}</div>
+                                    <td class="px-2 py-1.5">
+                                        <div class="text-xs text-gray-600 max-w-[150px] truncate block" title="{{ $research->authors }}">{{ Str::limit($research->authors, 30) }}</div>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm text-gray-600 max-w-xs truncate">
-                                            {{ $research->department }}
+                                    <td class="px-2 py-1.5">
+                                        <div class="text-xs text-gray-600 max-w-[120px] truncate block" title="{{ $research->department }}{{ $research->program ? ' • ' . $research->program : '' }}">
+                                            {{ Str::limit($research->department, 20) }}
                                             @if($research->program)
-                                                <span class="text-gray-400">• {{ Str::limit($research->program, 20) }}</span>
-            @endif
+                                                <span class="text-gray-400">• {{ Str::limit($research->program, 15) }}</span>
+                                            @endif
                                         </div>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm text-gray-500">{{ $research->created_at->format('M j, Y') }}</div>
-                                        <div class="text-xs text-gray-400">{{ $research->created_at->diffForHumans() }}</div>
+                                    <td class="px-2 py-1.5 whitespace-nowrap">
+                                        <div class="text-xs text-gray-500">{{ $research->created_at->format('M j, Y') }}</div>
                                     </td>
-                                    <td class="px-4 py-3 text-right">
-                                        <div class="flex items-center justify-end space-x-2">
-                                            <a href="{{ route('admin.approve.student.form', $research->id) }}" class="mp-form inline-flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors" data-target="actionModal" title="Approve">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <td class="px-2 py-1.5 text-center" onclick="event.stopPropagation()">
+                                        <div class="flex items-center justify-center space-x-1">
+                                            <a href="{{ route('admin.approve.student.form', $research->id) }}" class="mp-form inline-flex items-center justify-center w-7 h-7 bg-green-600 hover:bg-green-700 text-white rounded transition-colors" data-target="actionModal" title="Approve" onclick="event.stopPropagation()">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                                 </svg>
-                                                <span class="hidden sm:inline">Approve</span>
                                             </a>
-                                            <a href="{{ route('admin.reject.student.form', $research->id) }}" class="mp-form inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors" data-target="actionModal" title="Reject">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <a href="{{ route('admin.reject.student.form', $research->id) }}" class="mp-form inline-flex items-center justify-center w-7 h-7 bg-red-600 hover:bg-red-700 text-white rounded transition-colors" data-target="actionModal" title="Reject" onclick="event.stopPropagation()">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                                 </svg>
-                                                <span class="hidden sm:inline">Reject</span>
                                             </a>
-                                            <form action="{{ route('admin.research.delete', ['type' => 'student', 'id' => $research->id]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this research? This action cannot be undone.')">
+                                            <form action="{{ route('admin.research.delete', ['type' => 'student', 'id' => $research->id]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this research? This action cannot be undone.')" onclick="event.stopPropagation()">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-lg transition-colors" title="Delete">
+                                                <button type="submit" class="inline-flex items-center justify-center w-7 h-7 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors" title="Delete">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                     </svg>
-                                                    <span class="hidden sm:inline ml-1">Delete</span>
                                                 </button>
                                             </form>
                                         </div>
@@ -166,45 +162,41 @@
                             @endforeach
 
                             @foreach($facultyResearch as $research)
-                                <tr class="border-b border-gray-100 hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors bg-white">
-                                    <td class="px-4 py-3">
-                                        <span class="text-xs font-semibold text-purple-700">Faculty</span>
+                                <tr class="border-b border-gray-100 hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors bg-white cursor-pointer" onclick="viewResearch('faculty', {{ $research->id }})">
+                                    <td class="px-2 py-1.5 whitespace-nowrap" onclick="event.stopPropagation()">
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">F</span>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm font-medium text-[#26225C] max-w-xs truncate">{{ Str::limit($research->title, 60) }}</div>
+                                    <td class="px-2 py-1.5">
+                                        <div class="text-xs font-medium text-[#26225C] max-w-[200px] truncate block" title="{{ $research->title }}">{{ Str::limit($research->title, 50) }}</div>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm text-gray-600 max-w-xs truncate">{{ $research->user->name ?? 'N/A' }}</div>
+                                    <td class="px-2 py-1.5">
+                                        <div class="text-xs text-gray-600 max-w-[150px] truncate block" title="{{ $research->user->name ?? 'N/A' }}">{{ Str::limit($research->user->name ?? 'N/A', 30) }}</div>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm text-gray-600 max-w-xs truncate">{{ $research->department }}</div>
+                                    <td class="px-2 py-1.5">
+                                        <div class="text-xs text-gray-600 max-w-[120px] truncate block" title="{{ $research->department }}">{{ Str::limit($research->department, 20) }}</div>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm text-gray-500">{{ $research->created_at->format('M j, Y') }}</div>
-                                        <div class="text-xs text-gray-400">{{ $research->created_at->diffForHumans() }}</div>
+                                    <td class="px-2 py-1.5 whitespace-nowrap">
+                                        <div class="text-xs text-gray-500">{{ $research->created_at->format('M j, Y') }}</div>
                                     </td>
-                                    <td class="px-4 py-3 text-right">
-                                        <div class="flex items-center justify-end space-x-2">
-                                            <a href="{{ route('admin.approve.faculty.form', $research->id) }}" class="mp-form inline-flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors" data-target="actionModal" title="Approve">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <td class="px-2 py-1.5 text-center" onclick="event.stopPropagation()">
+                                        <div class="flex items-center justify-center space-x-1">
+                                            <a href="{{ route('admin.approve.faculty.form', $research->id) }}" class="mp-form inline-flex items-center justify-center w-7 h-7 bg-green-600 hover:bg-green-700 text-white rounded transition-colors" data-target="actionModal" title="Approve" onclick="event.stopPropagation()">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                                 </svg>
-                                                <span class="hidden sm:inline">Approve</span>
                                             </a>
-                                            <a href="{{ route('admin.reject.faculty.form', $research->id) }}" class="mp-form inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors" data-target="actionModal" title="Reject">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <a href="{{ route('admin.reject.faculty.form', $research->id) }}" class="mp-form inline-flex items-center justify-center w-7 h-7 bg-red-600 hover:bg-red-700 text-white rounded transition-colors" data-target="actionModal" title="Reject" onclick="event.stopPropagation()">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                                 </svg>
-                                                <span class="hidden sm:inline">Reject</span>
                                             </a>
-                                            <form action="{{ route('admin.research.delete', ['type' => 'faculty', 'id' => $research->id]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this research? This action cannot be undone.')">
+                                            <form action="{{ route('admin.research.delete', ['type' => 'faculty', 'id' => $research->id]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this research? This action cannot be undone.')" onclick="event.stopPropagation()">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-lg transition-colors" title="Delete">
+                                                <button type="submit" class="inline-flex items-center justify-center w-7 h-7 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors" title="Delete">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                     </svg>
-                                                    <span class="hidden sm:inline ml-1">Delete</span>
                                                 </button>
                                             </form>
                                         </div>
@@ -213,45 +205,41 @@
                             @endforeach
 
                             @foreach($thesis as $item)
-                                <tr class="border-b border-gray-100 hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors bg-white">
-                                    <td class="px-4 py-3">
-                                        <span class="text-xs font-semibold text-green-700">Thesis</span>
+                                <tr class="border-b border-gray-100 hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors bg-white cursor-pointer" onclick="viewResearch('thesis', {{ $item->id }})">
+                                    <td class="px-2 py-1.5 whitespace-nowrap" onclick="event.stopPropagation()">
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">T</span>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm font-medium text-[#26225C] max-w-xs truncate">{{ Str::limit($item->title, 60) }}</div>
+                                    <td class="px-2 py-1.5">
+                                        <div class="text-xs font-medium text-[#26225C] max-w-[200px] truncate block" title="{{ $item->title }}">{{ Str::limit($item->title, 50) }}</div>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm text-gray-600 max-w-xs truncate">{{ Str::limit($item->author, 40) }}</div>
+                                    <td class="px-2 py-1.5">
+                                        <div class="text-xs text-gray-600 max-w-[150px] truncate block" title="{{ $item->author }}">{{ Str::limit($item->author, 30) }}</div>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm text-gray-600 max-w-xs truncate">{{ $item->department }}</div>
+                                    <td class="px-2 py-1.5">
+                                        <div class="text-xs text-gray-600 max-w-[120px] truncate block" title="{{ $item->department }}">{{ Str::limit($item->department, 20) }}</div>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm text-gray-500">{{ $item->created_at->format('M j, Y') }}</div>
-                                        <div class="text-xs text-gray-400">{{ $item->created_at->diffForHumans() }}</div>
+                                    <td class="px-2 py-1.5 whitespace-nowrap">
+                                        <div class="text-xs text-gray-500">{{ $item->created_at->format('M j, Y') }}</div>
                                     </td>
-                                    <td class="px-4 py-3 text-right">
-                                        <div class="flex items-center justify-end space-x-2">
-                                            <a href="{{ route('admin.approve.thesis.form', $item->id) }}" class="mp-form inline-flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors" data-target="actionModal" title="Approve">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <td class="px-2 py-1.5 text-center" onclick="event.stopPropagation()">
+                                        <div class="flex items-center justify-center space-x-1">
+                                            <a href="{{ route('admin.approve.thesis.form', $item->id) }}" class="mp-form inline-flex items-center justify-center w-7 h-7 bg-green-600 hover:bg-green-700 text-white rounded transition-colors" data-target="actionModal" title="Approve" onclick="event.stopPropagation()">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                                 </svg>
-                                                <span class="hidden sm:inline">Approve</span>
                                             </a>
-                                            <a href="{{ route('admin.reject.thesis.form', $item->id) }}" class="mp-form inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors" data-target="actionModal" title="Reject">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <a href="{{ route('admin.reject.thesis.form', $item->id) }}" class="mp-form inline-flex items-center justify-center w-7 h-7 bg-red-600 hover:bg-red-700 text-white rounded transition-colors" data-target="actionModal" title="Reject" onclick="event.stopPropagation()">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                                 </svg>
-                                                <span class="hidden sm:inline">Reject</span>
                                             </a>
-                                            <form action="{{ route('admin.research.delete', ['type' => 'thesis', 'id' => $item->id]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this research? This action cannot be undone.')">
+                                            <form action="{{ route('admin.research.delete', ['type' => 'thesis', 'id' => $item->id]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this research? This action cannot be undone.')" onclick="event.stopPropagation()">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-lg transition-colors" title="Delete">
+                                                <button type="submit" class="inline-flex items-center justify-center w-7 h-7 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors" title="Delete">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                     </svg>
-                                                    <span class="hidden sm:inline ml-1">Delete</span>
                                                 </button>
                                             </form>
                                         </div>
@@ -260,45 +248,41 @@
                             @endforeach
 
                             @foreach($dissertations as $dissertation)
-                                <tr class="border-b border-gray-100 hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors bg-white">
-                                    <td class="px-4 py-3">
-                                        <span class="text-xs font-semibold text-red-700">Dissertation</span>
+                                <tr class="border-b border-gray-100 hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors bg-white cursor-pointer" onclick="viewResearch('dissertation', {{ $dissertation->id }})">
+                                    <td class="px-2 py-1.5 whitespace-nowrap" onclick="event.stopPropagation()">
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">D</span>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm font-medium text-[#26225C] max-w-xs truncate">{{ Str::limit($dissertation->title, 60) }}</div>
+                                    <td class="px-2 py-1.5">
+                                        <div class="text-xs font-medium text-[#26225C] max-w-[200px] truncate block" title="{{ $dissertation->title }}">{{ Str::limit($dissertation->title, 50) }}</div>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm text-gray-600 max-w-xs truncate">{{ Str::limit($dissertation->author, 40) }}</div>
+                                    <td class="px-2 py-1.5">
+                                        <div class="text-xs text-gray-600 max-w-[150px] truncate block" title="{{ $dissertation->author }}">{{ Str::limit($dissertation->author, 30) }}</div>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm text-gray-600 max-w-xs truncate">{{ $dissertation->department }}</div>
+                                    <td class="px-2 py-1.5">
+                                        <div class="text-xs text-gray-600 max-w-[120px] truncate block" title="{{ $dissertation->department }}">{{ Str::limit($dissertation->department, 20) }}</div>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <div class="text-sm text-gray-500">{{ $dissertation->created_at->format('M j, Y') }}</div>
-                                        <div class="text-xs text-gray-400">{{ $dissertation->created_at->diffForHumans() }}</div>
+                                    <td class="px-2 py-1.5 whitespace-nowrap">
+                                        <div class="text-xs text-gray-500">{{ $dissertation->created_at->format('M j, Y') }}</div>
                                     </td>
-                                    <td class="px-4 py-3 text-right">
-                                        <div class="flex items-center justify-end space-x-2">
-                                            <a href="{{ route('admin.approve.dissertation.form', $dissertation->id) }}" class="mp-form inline-flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors" data-target="actionModal" title="Approve">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <td class="px-2 py-1.5 text-center" onclick="event.stopPropagation()">
+                                        <div class="flex items-center justify-center space-x-1">
+                                            <a href="{{ route('admin.approve.dissertation.form', $dissertation->id) }}" class="mp-form inline-flex items-center justify-center w-7 h-7 bg-green-600 hover:bg-green-700 text-white rounded transition-colors" data-target="actionModal" title="Approve" onclick="event.stopPropagation()">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                                 </svg>
-                                                <span class="hidden sm:inline">Approve</span>
                                             </a>
-                                            <a href="{{ route('admin.reject.dissertation.form', $dissertation->id) }}" class="mp-form inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors" data-target="actionModal" title="Reject">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <a href="{{ route('admin.reject.dissertation.form', $dissertation->id) }}" class="mp-form inline-flex items-center justify-center w-7 h-7 bg-red-600 hover:bg-red-700 text-white rounded transition-colors" data-target="actionModal" title="Reject" onclick="event.stopPropagation()">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                                 </svg>
-                                                <span class="hidden sm:inline">Reject</span>
                                             </a>
-                                            <form action="{{ route('admin.research.delete', ['type' => 'dissertation', 'id' => $dissertation->id]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this research? This action cannot be undone.')">
+                                            <form action="{{ route('admin.research.delete', ['type' => 'dissertation', 'id' => $dissertation->id]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this research? This action cannot be undone.')" onclick="event.stopPropagation()">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-lg transition-colors" title="Delete">
+                                                <button type="submit" class="inline-flex items-center justify-center w-7 h-7 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors" title="Delete">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                     </svg>
-                                                    <span class="hidden sm:inline ml-1">Delete</span>
                                                 </button>
                                             </form>
                                         </div>
@@ -319,7 +303,7 @@
                         <p class="text-sm text-gray-500">All submissions have been reviewed.</p>
                     </div>
                 @endif
-            </div>
+                    </div>
 
     <!-- Action Modal -->
     <div id="actionModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 transition-opacity duration-300 ease-in-out" style="display: none;">
@@ -393,5 +377,34 @@
                 wrapper.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
             }
         });
+
+        // Function to view research details
+        function viewResearch(type, id) {
+            if (!id || id === 'null' || id === 'undefined') {
+                console.error('No research ID provided');
+                return;
+            }
+            
+            let url = '';
+            switch(type) {
+                case 'student':
+                    url = `/research/student/${id}/private`;
+                    break;
+                case 'faculty':
+                    url = `/research/faculty/${id}/private`;
+                    break;
+                case 'thesis':
+                    url = `/research/thesis/${id}/private`;
+                    break;
+                case 'dissertation':
+                    url = `/research/dissertation/${id}/private`;
+                    break;
+                default:
+                    console.error('Unknown research type:', type);
+                    return;
+            }
+            
+            window.location.href = url;
+        }
     </script>
 </x-app-layout>

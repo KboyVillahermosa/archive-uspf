@@ -198,15 +198,15 @@
                 @if($allResearch->count() > 0)
                     <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
                     <div class="overflow-x-auto">
-                            <table class="w-full divide-y divide-gray-200 text-xs table-auto">
+                        <table class="min-w-full divide-y divide-gray-200 text-xs">
                                 <thead class="bg-gradient-to-r from-[#26225C] to-[#3a3770] border-b border-[#FFC72C]">
                                 <tr>
-                                        <th class="px-2 py-1.5 text-left text-xs font-semibold text-white uppercase">ID</th>
-                                        <th class="px-2 py-1.5 text-left text-xs font-semibold text-white uppercase">Type</th>
-                                        <th class="px-2 py-1.5 text-left text-xs font-semibold text-white uppercase">Title</th>
-                                        <th class="px-2 py-1.5 text-left text-xs font-semibold text-white uppercase">Department</th>
-                                        <th class="px-2 py-1.5 text-left text-xs font-semibold text-white uppercase">Date</th>
-                                        <th class="px-2 py-1.5 text-center text-xs font-semibold text-white uppercase">Actions</th>
+                                        <th class="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">ID</th>
+                                        <th class="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">Type</th>
+                                        <th class="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">Title</th>
+                                        <th class="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">Department</th>
+                                        <th class="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">Date</th>
+                                        <th class="px-3 py-2 text-center text-xs font-semibold text-white uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
@@ -231,51 +231,55 @@
                                             }
                                         @endphp
                                         <tr class="hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors group">
-                                        <td class="px-2 py-1.5 text-gray-500 cursor-pointer whitespace-nowrap" onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')">
+                                        <td class="px-3 py-2 text-gray-500 cursor-pointer whitespace-nowrap" onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')">
                                             #{{ $research->id }}
                                         </td>
-                                        <td class="px-2 py-1.5 whitespace-nowrap cursor-pointer" onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')">
+                                        <td class="px-3 py-2 whitespace-nowrap cursor-pointer" onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')">
                                             @if($research->type === 'student')
-                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-[#26225C] bg-opacity-10 text-[#26225C]" title="Student">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#26225C] bg-opacity-10 text-[#26225C]" title="Student">
+                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                                     </svg>
+                                                    S
                                                 </span>
                                             @elseif($research->type === 'faculty')
-                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700" title="Faculty">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700" title="Faculty">
+                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
                                                     </svg>
+                                                    F
                                                 </span>
                                             @elseif($research->type === 'thesis')
-                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700" title="Thesis">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700" title="Thesis">
+                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                                     </svg>
+                                                    T
                                                 </span>
                                             @elseif($research->type === 'dissertation')
-                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700" title="Dissertation">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700" title="Dissertation">
+                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                                     </svg>
+                                                    D
                                                 </span>
                                             @endif
                                         </td>
-                                        <td class="px-2 py-1.5 cursor-pointer" onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')">
-                                            <div class="text-xs font-medium text-[#26225C] max-w-xs truncate group-hover:text-[#FFC72C] transition-colors" title="{{ $research->title }}">
+                                        <td class="px-3 py-2 cursor-pointer" onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')">
+                                            <div class="text-xs font-medium text-[#26225C] max-w-md truncate group-hover:text-[#FFC72C] transition-colors" title="{{ $research->title }}">
                                                 {{ $research->title }}
                                             </div>
                                         </td>
-                                        <td class="px-2 py-1.5 whitespace-nowrap text-xs text-gray-600 cursor-pointer" onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')" title="{{ $research->department }}">
-                                            <span class="max-w-[120px] truncate block">{{ $research->department }}</span>
+                                        <td class="px-3 py-2 whitespace-nowrap text-xs text-gray-600 cursor-pointer" onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')" title="{{ $research->department }}">
+                                            <span class="max-w-[150px] truncate block">{{ $research->department }}</span>
                                         </td>
-                                        <td class="px-2 py-1.5 whitespace-nowrap text-xs text-gray-500 cursor-pointer" onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')">
+                                        <td class="px-3 py-2 whitespace-nowrap text-xs text-gray-500 cursor-pointer" onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')">
                                             {{ $research->created_at ? $research->created_at->format('M d, Y') : 'N/A' }}
                                         </td>
-                                        <td class="px-2 py-1.5 whitespace-nowrap text-center" onclick="event.stopPropagation()">
-                                            <div class="flex items-center justify-center space-x-1.5">
+                                        <td class="px-3 py-2 whitespace-nowrap text-center" onclick="event.stopPropagation()">
+                                            <div class="flex items-center justify-center space-x-1">
                                                 @if($research->status === 'pending' && $canApprove)
-                                                    <a href="{{ route('admin.approve.' . $research->type . '.form', $research->id) }}" class="mp-form text-green-600 hover:text-green-700 transition-colors" data-target="actionModal" title="Approve">
+                                                    <a href="{{ route('admin.approve.' . $research->type . '.form', $research->id) }}" class="mp-form inline-flex items-center justify-center w-7 h-7 bg-green-600 hover:bg-green-700 text-white rounded transition-colors" data-target="actionModal" title="Approve">
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                                         </svg>
@@ -285,7 +289,7 @@
                                                     <form action="{{ route('admin.research.delete', ['type' => $research->type, 'id' => $research->id]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this research? This action cannot be undone.')">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="text-red-600 hover:text-red-700 transition-colors" title="Delete">
+                                                        <button type="submit" class="inline-flex items-center justify-center w-7 h-7 bg-red-600 hover:bg-red-700 text-white rounded transition-colors" title="Delete">
                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                             </svg>
