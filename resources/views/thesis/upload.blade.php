@@ -7,19 +7,19 @@
                 <div class="flex items-center space-x-4 mb-4">
                     <div class="w-14 h-14 bg-gradient-to-br from-[#26225C] to-[#3a3770] rounded-xl flex items-center justify-center">
                         <svg class="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
-                    </div>
-                    <div>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                            </div>
+                            <div>
                         <h1 class="text-4xl font-light text-[#26225C] mb-1">Submit Master's Thesis</h1>
                         <p class="text-gray-600">Complete all fields for proper documentation and classification</p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
             <form id="thesis-upload-form" method="POST" action="{{ route('thesis.store') }}" enctype="multipart/form-data">
-                @csrf
-                
+                        @csrf
+                        
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Main Form Content -->
                     <div class="lg:col-span-2 space-y-8">
@@ -35,100 +35,100 @@
                                 <div id="field-title">
                                     <label for="title" class="block text-sm font-semibold text-[#26225C] mb-2">
                                         Research Title <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" name="title" id="title" required
+                            </label>
+                            <input type="text" name="title" id="title" required 
                                         class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#FFC72C] transition-all bg-white"
-                                        placeholder="Enter the full title of your research"
-                                        value="{{ isset($editMode) && $editMode && isset($thesis) ? $thesis->title : old('title') }}">
-                                    @error('title') 
+                                placeholder="Enter the full title of your research"
+                                value="{{ isset($editMode) && $editMode && isset($thesis) ? $thesis->title : old('title') }}">
+                            @error('title') 
                                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
+                            @enderror
+                        </div>
 
-                                <!-- Author and Year -->
+                        <!-- Author and Year -->
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label for="author" class="block text-sm font-semibold text-[#26225C] mb-2">
                                             Authors <span class="text-red-500">*</span>
-                                        </label>
-                                        <input type="text" name="author" id="author" required
+                                </label>
+                                <input type="text" name="author" id="author" required
                                             class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#FFC72C] transition-all bg-white"
-                                            placeholder="Enter your full name"
-                                            value="{{ isset($editMode) && $editMode && isset($thesis) ? $thesis->author : old('author') }}">
-                                        @error('author') 
+                                    placeholder="Enter your full name"
+                                    value="{{ isset($editMode) && $editMode && isset($thesis) ? $thesis->author : old('author') }}">
+                                @error('author') 
                                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                                        @enderror
-                                    </div>
+                                @enderror
+                            </div>
 
                                     <div>
                                         <label for="year_completed" class="block text-sm font-semibold text-[#26225C] mb-2">
                                             Year Completed <span class="text-red-500">*</span>
-                                        </label>
-                                        <input type="number" name="year_completed" id="year_completed" required
+                                </label>
+                                <input type="number" name="year_completed" id="year_completed" required
                                             class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#FFC72C] transition-all bg-white"
-                                            min="1900" max="{{ date('Y') + 1 }}" value="{{ isset($editMode) && $editMode && isset($thesis) ? $thesis->year_completed : old('year_completed', date('Y')) }}">
-                                        @error('year_completed') 
+                                    min="1900" max="{{ date('Y') + 1 }}" value="{{ isset($editMode) && $editMode && isset($thesis) ? $thesis->year_completed : old('year_completed', date('Y')) }}">
+                                @error('year_completed') 
                                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                </div>
+                                @enderror
+                            </div>
+                        </div>
 
-                                <!-- Department and Program -->
+                        <!-- Department and Program -->
                                 <div id="field-department" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label for="department" class="block text-sm font-semibold text-[#26225C] mb-2">
                                             Department <span class="text-red-500">*</span>
-                                        </label>
-                                        <select name="department" id="department" required
+                                </label>
+                                <select name="department" id="department" required
                                             class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#FFC72C] transition-all bg-white">
-                                            <option value="">Select Department</option>
-                                        </select>
-                                        @error('department') 
+                                        <option value="">Select Department</option>
+                                    </select>
+                                @error('department') 
                                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                                        @enderror
-                                    </div>
+                                @enderror
+                            </div>
 
                                     <div>
                                         <label for="program" class="block text-sm font-semibold text-[#26225C] mb-2">
                                             Program <span class="text-red-500">*</span>
-                                        </label>
-                                        <select name="program" id="program" required
+                                </label>
+                                <select name="program" id="program" required
                                             class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#FFC72C] transition-all bg-white">
-                                            <option value="">Select Program</option>
-                                        </select>
-                                        @error('program') 
+                                        <option value="">Select Program</option>
+                                    </select>
+                                @error('program') 
                                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                </div>
+                                @enderror
+                            </div>
+                        </div>
 
-                                <!-- Keywords -->
+                        <!-- Keywords -->
                                 <div>
                                     <label for="keywords" class="block text-sm font-semibold text-[#26225C] mb-2">
                                         Keywords <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" name="keywords" id="keywords" required
+                            </label>
+                            <input type="text" name="keywords" id="keywords" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#FFC72C] transition-all bg-white"
                                         placeholder="keyword1, keyword2, keyword3"
-                                        value="{{ isset($editMode) && $editMode && isset($thesis) ? $thesis->keywords : old('keywords') }}">
+                                value="{{ isset($editMode) && $editMode && isset($thesis) ? $thesis->keywords : old('keywords') }}">
                                     <p class="text-xs text-gray-500 mt-1.5">Separate keywords with commas</p>
-                                    @error('keywords') 
+                            @error('keywords') 
                                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
+                            @enderror
+                        </div>
 
-                                <!-- Abstract -->
+                        <!-- Abstract -->
                                 <div id="field-abstract">
                                     <label for="abstract" class="block text-sm font-semibold text-[#26225C] mb-2">
                                         Abstract <span class="text-red-500">*</span>
-                                    </label>
+                            </label>
                                     <textarea name="abstract" id="abstract" rows="8" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#FFC72C] transition-all resize-none bg-white"
-                                        placeholder="Provide a comprehensive summary of your thesis research (250-300 words recommended)">{{ isset($editMode) && $editMode && isset($thesis) ? $thesis->abstract : old('abstract') }}</textarea>
+                                placeholder="Provide a comprehensive summary of your thesis research (250-300 words recommended)">{{ isset($editMode) && $editMode && isset($thesis) ? $thesis->abstract : old('abstract') }}</textarea>
                                     <p class="text-xs text-gray-500 mt-1.5">Recommended: 250-300 words</p>
-                                    @error('abstract') 
+                            @error('abstract') 
                                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                                    @enderror
+                            @enderror
                                 </div>
                             </div>
                         </div>
@@ -145,24 +145,24 @@
                                 <div id="field-document_file">
                                     <label class="block text-sm font-semibold text-[#26225C] mb-2">
                                         Research File <span class="text-red-500">*</span>
-                                    </label>
+                            </label>
                                     <div class="border-2 border-dashed border-[#FFC72C] rounded-xl p-10 text-center bg-[#FFC72C] bg-opacity-5 hover:bg-opacity-10 transition-all cursor-pointer group">
-                                        <input type="file" name="document_file" id="document_file" accept=".pdf,.doc,.docx" required class="hidden">
-                                        <label for="document_file" class="cursor-pointer">
+                                <input type="file" name="document_file" id="document_file" accept=".pdf,.doc,.docx" required class="hidden">
+                                <label for="document_file" class="cursor-pointer">
                                             <div class="w-20 h-20 bg-[#26225C] rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                                                 <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                                </svg>
+                                    </svg>
                                             </div>
                                             <p class="text-base text-[#26225C] font-semibold mb-1">
                                                 Click to upload or drag and drop
-                                            </p>
+                                    </p>
                                             <p class="text-sm text-gray-600">PDF, DOC, DOCX (Max 10MB)</p>
-                                        </label>
-                                    </div>
-                                    @error('document_file') 
+                                </label>
+                            </div>
+                            @error('document_file') 
                                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                                    @enderror
+                            @enderror
                                 </div>
                             </div>
                         </div>
@@ -170,7 +170,7 @@
                         <!-- Research Citations Section -->
                         <div>
                             <div class="mb-6 pb-4 border-b border-[#FFC72C]">
-                                <div class="flex items-center justify-between">
+                            <div class="flex items-center justify-between">
                                     <div>
                                         <h2 class="text-2xl font-light text-[#26225C] mb-1">Research Citations</h2>
                                         <p class="text-sm text-gray-500">Tag research works that you've referenced</p>
@@ -179,8 +179,8 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                                         </svg>
-                                        Add Citation
-                                    </button>
+                                    Add Citation
+                                </button>
                                 </div>
                             </div>
                             
@@ -234,9 +234,9 @@
                                 <h3 class="text-lg font-semibold mb-2">Need Help?</h3>
                                 <p class="text-sm text-white text-opacity-90 mb-4">Make sure all required fields are filled and your thesis file is properly formatted.</p>
                                 <p class="text-xs text-white text-opacity-75">Your submission will be reviewed by administrators before being published.</p>
-                            </div>
+                        </div>
 
-                            <!-- Submit Button -->
+                        <!-- Submit Button -->
                             <button type="submit" class="w-full bg-[#26225C] hover:bg-[#3a3770] text-white py-4 px-6 rounded-xl transition-all font-semibold flex items-center justify-center gap-2 text-base shadow-lg hover:shadow-xl">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
@@ -249,7 +249,7 @@
             </form>
         </div>
     </div>
-
+                                  
     <script>
         // Scroll to field function
         function scrollToField(fieldId) {
@@ -301,7 +301,7 @@
             } catch (error) {
                 console.error('Error loading departments:', error);
                 if (typeof toastr !== 'undefined') {
-                    toastr.error('Failed to load departments');
+                toastr.error('Failed to load departments');
                 }
             }
         }
@@ -328,7 +328,7 @@
             } catch (error) {
                 console.error('Error loading programs:', error);
                 if (typeof toastr !== 'undefined') {
-                    toastr.error('Failed to load programs');
+                toastr.error('Failed to load programs');
                 }
             }
         }

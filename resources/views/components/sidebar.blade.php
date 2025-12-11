@@ -26,7 +26,7 @@
         <!-- Sidebar Header -->
         <div class="flex items-center h-16 px-4 border-b border-[#1a1840] bg-[#1a1840] flex-shrink-0">
             <div class="flex items-center" :class="expanded ? 'space-x-3' : 'justify-center'">
-                <x-application-logo class="block h-8 w-auto fill-current text-white flex-shrink-0" />
+                <img src="{{ asset('images/logo.png') }}" alt="USPF Logo" class="h-8 w-auto flex-shrink-0" />
                 <span x-show="expanded" 
                       x-transition:enter="transition ease-out duration-200 delay-100" 
                       x-transition:enter-start="opacity-0" 
@@ -245,7 +245,7 @@
         <!-- Mobile Header -->
         <div class="flex items-center justify-between h-16 px-6 border-b border-[#1a1840] bg-[#1a1840] flex-shrink-0">
             <div class="flex items-center space-x-2">
-                <x-application-logo class="block h-8 w-auto fill-current text-white" />
+                <img src="{{ asset('images/logo.png') }}" alt="USPF Logo" class="h-8 w-auto" />
                 <span class="text-white font-semibold text-lg">USPF Archive</span>
             </div>
             <button @click="mobileOpen = false" class="text-white hover:text-[#FFC72C] transition-colors">

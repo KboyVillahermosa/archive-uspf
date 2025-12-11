@@ -4,7 +4,7 @@
             
             <!-- Header -->
             <div class="mb-8 flex items-center justify-between">
-                <div>
+    <div>
                     <h1 class="text-4xl font-light text-[#26225C] mb-2">Manage Users</h1>
                     <p class="text-gray-600">View and manage all system users</p>
                 </div>
@@ -72,8 +72,8 @@
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Department</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-white uppercase">Created</th>
                                 <th class="px-4 py-3 text-right text-xs font-semibold text-white uppercase">Actions</th>
-                            </tr>
-                        </thead>
+                                </tr>
+                            </thead>
 
                         <tbody>
                             @foreach($users as $user)
@@ -86,18 +86,18 @@
                                         <div class="flex items-center gap-3">
                                             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#26225C] to-[#3a3770] flex items-center justify-center font-semibold text-white text-sm">
                                                 {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
-                                            </div>
-                                            <div>
+                                                </div>
+                                                <div>
                                                 <div class="text-sm font-medium text-[#26225C]">{{ $user->name }}</div>
                                                 @if($user->id_number)
                                                     <div class="text-xs text-gray-500">ID: {{ $user->id_number }}</div>
                                                 @endif
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
+                                        </td>
                                     <td class="px-4 py-3">
                                         <div class="text-sm text-gray-600">{{ $user->email }}</div>
-                                    </td>
+                                        </td>
                                     <td class="px-4 py-3">
                                         @if($roleName==='admin')
                                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
@@ -105,20 +105,20 @@
                                             </span>
                                         @elseif($roleName==='faculty')
                                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 border border-purple-200">
-                                                {{ ucfirst(str_replace('_', ' ', $roleName)) }}
-                                            </span>
-                                        @else
+                                                    {{ ucfirst(str_replace('_', ' ', $roleName)) }}
+                                                </span>
+                                            @else
                                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200">
                                                 {{ ucfirst(str_replace('_', ' ', $roleName)) }}
                                             </span>
-                                        @endif
-                                    </td>
+                                            @endif
+                                        </td>
                                     <td class="px-4 py-3">
                                         <div class="text-sm text-gray-600">{{ $user->department ?? 'N/A' }}</div>
                                         @if($user->course)
                                             <div class="text-xs text-gray-500">{{ $user->course }}</div>
-                                        @endif
-                                    </td>
+                                            @endif
+                                        </td>
                                     <td class="px-4 py-3">
                                         <div class="text-sm text-gray-500">{{ $user->created_at->format('M j, Y') }}</div>
                                         <div class="text-xs text-gray-400">{{ $user->created_at->diffForHumans() }}</div>
@@ -127,13 +127,13 @@
                                         <a href="{{ route('admin.users.show', $user->id) }}" class="inline-flex items-center text-[#26225C] hover:text-[#FFC72C] transition-colors" onclick="event.stopPropagation()">
                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                </tr>
+                                                    </svg>
+                                                </a>
+                                        </td>
+                                    </tr>
                             @endforeach
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
 
                     <!-- Pagination -->
                     <div class="px-6 py-4 border-t border-gray-200">
@@ -151,8 +151,8 @@
                     </div>
                 @endif
             </div>
-        </div>
-    </div>
+                </div>
+            </div>
 
     <!-- User Modal -->
     <div id="userModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 transition-opacity duration-300 ease-in-out" style="display: none;">

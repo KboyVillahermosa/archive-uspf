@@ -142,6 +142,7 @@
                                 <h2 class="text-2xl md:text-3xl font-semibold text-white mb-2">{{ $research->title }}</h2>
                                 <p class="text-white/90 text-sm">By: {{ $research->user->name ?? 'N/A' }}</p>
                             </div>
+                            </div>
                         </div>
                     </div>
                 </div>

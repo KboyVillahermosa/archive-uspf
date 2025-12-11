@@ -93,8 +93,9 @@ class ThesisController extends Controller
         // Get analytics
         $viewCount = \App\Models\ResearchAnalytic::getViewCount('thesis', $id);
         $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('thesis', $id);
+        $shareCount = 0; // Share count not implemented yet
         
-        return view('research.thesis-detail', compact('thesis', 'viewCount', 'downloadCount'));
+        return view('research.thesis-detail', compact('thesis', 'viewCount', 'downloadCount', 'shareCount'));
     }
 
     public function showPublic($id)
@@ -106,8 +107,9 @@ class ThesisController extends Controller
         // Get analytics
         $viewCount = \App\Models\ResearchAnalytic::getViewCount('thesis', $id);
         $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('thesis', $id);
+        $shareCount = 0; // Share count not implemented yet
         
-        return view('research.thesis-detail', compact('thesis', 'viewCount', 'downloadCount'));
+        return view('research.thesis-detail', compact('thesis', 'viewCount', 'downloadCount', 'shareCount'));
     }
 
     public function downloadSurvey($id)
@@ -118,13 +120,11 @@ class ThesisController extends Controller
 
     public function download(Request $request, $id)
     {
-        if (auth()->guest()) {
-            return response()->json(['error' => 'You must be logged in to download. Please log in first.'], 401);
-        }
         $thesis = Thesis::findOrFail($id);
         
+        // Only allow download of approved research
         if ($thesis->status !== 'approved') {
-            return response()->json(['error' => 'Not available'], 404);
+            return response()->json(['error' => 'This research is not available for download'], 404);
         }
 
         if (!$thesis->document_file) {
@@ -153,7 +153,22 @@ class ThesisController extends Controller
     public function downloadFile($id)
     {
         $thesis = Thesis::findOrFail($id);
+        
+        // Only allow download of approved research
+        if ($thesis->status !== 'approved') {
+            abort(404, 'Research not found or not available');
+        }
+        
+        if (!$thesis->document_file) {
+            abort(404, 'File not found');
+        }
+        
         $filePath = storage_path('app/public/' . $thesis->document_file);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'File not found on server');
+        }
+        
         return response()->download($filePath, ($thesis->title ?: 'Thesis_' . $thesis->id) . '.pdf');
     }
 

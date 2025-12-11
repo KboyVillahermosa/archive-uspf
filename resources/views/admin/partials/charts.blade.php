@@ -1,4 +1,4 @@
-{{-- Line Chart Section (Monthly Views) --}}
+        {{-- Line Chart Section (Monthly Views) --}}
 <div class="mb-8 -mx-2 sm:-mx-4 lg:-mx-6">
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4 px-2 sm:px-4 lg:px-6">
         <div>
@@ -8,16 +8,16 @@
         <div class="flex gap-2">
             <a href="{{ route('admin.dashboard', ['offset' => ($offset ?? 0) + 1]) }}" class="w-10 h-10 bg-gray-100 hover:bg-[#26225C] hover:text-white text-gray-700 rounded-xl flex items-center justify-center transition-all duration-200 shadow-sm">
                 <span class="text-lg">&laquo;</span>
-            </a>
+                    </a>
             <a href="{{ route('admin.dashboard', ['offset' => max(0, ($offset ?? 0) - 1)]) }}" class="w-10 h-10 bg-gray-100 hover:bg-[#26225C] hover:text-white text-gray-700 rounded-xl flex items-center justify-center transition-all duration-200 shadow-sm">
                 <span class="text-lg">&raquo;</span>
-            </a>
-        </div>
-    </div>
+                    </a>
+                </div>
+            </div>
     <div class="relative min-h-[450px] md:min-h-[550px] lg:min-h-[600px] w-full overflow-hidden bg-gray-50 rounded-xl p-2 md:p-3">
-        <canvas id="monthlyViewsChart" data-chart='@json($chartData ?? [])'></canvas>
-    </div>
-</div>
+                <canvas id="monthlyViewsChart" data-chart='@json($chartData ?? [])'></canvas>
+            </div>
+        </div>
 
 <div class="mb-6 pb-4 border-b-2 border-[#FFC72C]">
     <h2 class="text-3xl font-bold text-[#26225C] mb-1">Analytics</h2>
@@ -28,25 +28,25 @@
     <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
         <h4 class="text-base font-semibold text-[#26225C] mb-5">Research by Department</h4>
         <div class="w-full" style="position: relative; height: 320px;">
-            <canvas id="deptChart"></canvas>
-        </div>
-    </div>
+                    <canvas id="deptChart"></canvas>
+                </div>
+            </div>
     <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
         <h4 class="text-base font-semibold text-[#26225C] mb-5">Top Programs (Student)</h4>
         <div class="w-full" style="position: relative; height: 320px;">
-            <canvas id="programChart"></canvas>
-        </div>
-    </div>
+                    <canvas id="programChart"></canvas>
+                </div>
+            </div>
     <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
         <h4 class="text-base font-semibold text-[#26225C] mb-5">Most Viewed</h4>
         <div class="w-full" style="position: relative; height: 320px;">
-            <canvas id="topViewedChart"></canvas>
-        </div>
-    </div>
+                    <canvas id="topViewedChart"></canvas>
+                </div>
+            </div>
     <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
         <h4 class="text-base font-semibold text-[#26225C] mb-5">Most Downloaded</h4>
         <div class="w-full" style="position: relative; height: 320px;">
-            <canvas id="topDownloadedChart"></canvas>
+                    <canvas id="topDownloadedChart"></canvas>
         </div>
     </div>
 </div>

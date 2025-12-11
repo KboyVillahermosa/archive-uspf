@@ -133,10 +133,12 @@ class StudentResearchController extends Controller
 
     public function download(Request $request, $id)
     {
-        if (auth()->guest()) {
-            return response()->json(['error' => 'You must be logged in to download. Please log in first.'], 401);
-        }
         $research = StudentResearch::findOrFail($id);
+        
+        // Only allow download of approved research
+        if ($research->status !== 'approved') {
+            return response()->json(['error' => 'This research is not available for download'], 404);
+        }
         
         if (!$research->research_file) {
             return response()->json(['error' => 'File not found'], 404);
@@ -174,8 +176,22 @@ class StudentResearchController extends Controller
     public function downloadFile($id)
     {
         $research = StudentResearch::findOrFail($id);
+        
+        // Only allow download of approved research
+        if ($research->status !== 'approved') {
+            abort(404, 'Research not found or not available');
+        }
+        
+        if (!$research->research_file) {
+            abort(404, 'File not found');
+        }
+        
         // Files are stored on the public disk (storage/app/public)
         $filePath = storage_path('app/public/' . $research->research_file);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'File not found on server');
+        }
         
         return response()->download($filePath, $research->title . '.pdf');
     }

@@ -9,7 +9,7 @@
                         <!-- Logo for admin/faculty - only visible on mobile -->
                         <div class="shrink-0 flex items-center md:hidden">
                             <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
-                                <x-application-logo class="block h-9 w-auto fill-current text-white" />
+                                <img src="{{ asset('images/logo.png') }}" alt="USPF Logo" class="h-9 w-auto" />
                                 <span class="text-white font-semibold text-sm">USPF Archive</span>
                             </a>
                         </div>
@@ -17,7 +17,7 @@
                         <!-- Logo for regular users - always visible -->
                         <div class="shrink-0 flex items-center">
                             <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
-                                <x-application-logo class="block h-9 w-auto fill-current text-white" />
+                                <img src="{{ asset('images/logo.png') }}" alt="USPF Logo" class="h-9 w-auto" />
                                 <span class="hidden sm:block text-white font-semibold text-lg">USPF Archive</span>
                             </a>
                         </div>
@@ -26,7 +26,7 @@
                     <!-- Logo for guests - always visible -->
                     <div class="shrink-0 flex items-center">
                         <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
-                            <x-application-logo class="block h-9 w-auto fill-current text-white" />
+                            <img src="{{ asset('images/logo.png') }}" alt="USPF Logo" class="h-9 w-auto" />
                             <span class="hidden sm:block text-white font-semibold text-lg">USPF Archive</span>
                         </a>
                     </div>
