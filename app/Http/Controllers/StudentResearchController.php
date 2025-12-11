@@ -122,7 +122,7 @@ class StudentResearchController extends Controller
         $viewCount = ResearchAnalytic::getViewCount('student', $id);
         $downloadCount = ResearchAnalytic::getDownloadCount('student', $id);
         
-        return view('research.student-detail-public', compact('research', 'viewCount', 'downloadCount'));
+        return view('research.student-detail', compact('research', 'viewCount', 'downloadCount'));
     }
 
     public function downloadSurvey($id)

@@ -701,6 +701,69 @@ class AdminController extends Controller
     }
 
     /**
+     * Delete research
+     */
+    public function deleteResearch(Request $request, $type, $id)
+    {
+        $user = auth()->user();
+        $research = null;
+        $canDelete = false;
+
+        switch ($type) {
+            case 'student':
+                $research = StudentResearch::findOrFail($id);
+                $canDelete = $user->hasRole('admin') 
+                    || $user->hasPermissionTo('delete student-research') 
+                    || $research->user_id === $user->id;
+                break;
+            case 'faculty':
+                $research = FacultyResearch::findOrFail($id);
+                $canDelete = $user->hasRole('admin') 
+                    || $user->hasPermissionTo('delete faculty-research') 
+                    || $research->user_id === $user->id;
+                break;
+            case 'thesis':
+                $research = Thesis::findOrFail($id);
+                $canDelete = $user->hasRole('admin') || $research->user_id === $user->id;
+                break;
+            case 'dissertation':
+                $research = Dissertation::findOrFail($id);
+                $canDelete = $user->hasRole('admin') || $research->user_id === $user->id;
+                break;
+            default:
+                abort(404, 'Invalid research type');
+        }
+
+        if (!$canDelete) {
+            abort(403, 'You do not have permission to delete this research.');
+        }
+
+        // Delete associated files if they exist
+        if (isset($research->research_file) && $research->research_file) {
+            $filePath = storage_path('app/public/' . $research->research_file);
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+        }
+
+        if (isset($research->banner_image) && $research->banner_image) {
+            $bannerPath = storage_path('app/public/' . $research->banner_image);
+            if (file_exists($bannerPath)) {
+                unlink($bannerPath);
+            }
+        }
+
+        // Delete the research record
+        $research->delete();
+
+        if ($request->expectsJson()) {
+            return response()->json(['status' => 'success', 'message' => 'Research deleted successfully!']);
+        }
+
+        return redirect()->back()->with('success', 'Research deleted successfully!');
+    }
+
+    /**
      * Display a listing of users.
      */
     public function users(Request $request)

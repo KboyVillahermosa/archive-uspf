@@ -1,30 +1,154 @@
 <x-app-layout>
+    <style>
+        /* Skeleton Loader Styles */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s ease-in-out infinite;
+            border-radius: 4px;
+        }
+        
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+        
+        .skeleton-text {
+            height: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .skeleton-title {
+            height: 1.5rem;
+            width: 60%;
+            margin-bottom: 0.75rem;
+        }
+        
+        .skeleton-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+        
+        .skeleton-container {
+            display: block;
+        }
+        
+        .content-container {
+            display: none;
+        }
+        
+        .content-container.loaded {
+            display: block;
+        }
+        
+        .skeleton-container.loaded {
+            display: none;
+        }
+    </style>
     <div class="min-h-screen bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             
+            <!-- Skeleton Loader for Banner -->
+            @if($research->banner_image)
+            <div class="skeleton-container banner-skeleton mb-8">
+                <div class="skeleton rounded-xl h-64"></div>
+            </div>
+            @endif
+            
+            <!-- Skeleton Loader for Main Content -->
+            <div class="skeleton-container main-content-skeleton">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-8">
+                        <!-- Basic Info Skeleton -->
+                        @if(!$research->banner_image)
+                        <div class="skeleton-card mb-8">
+                            <div class="flex flex-wrap items-center gap-6">
+                                <div class="skeleton skeleton-text w-32 h-6"></div>
+                                <div class="skeleton skeleton-text w-32 h-6"></div>
+                            </div>
+                        </div>
+                        @endif
+                        <!-- Research Details Skeleton -->
+                        <div class="skeleton-card mb-8">
+                            <div class="skeleton skeleton-title mb-4"></div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div class="skeleton h-24 rounded-lg"></div>
+                                <div class="skeleton h-24 rounded-lg"></div>
+                            </div>
+                            <div class="skeleton h-32 rounded-lg mb-4"></div>
+                            <div class="flex gap-3">
+                                <div class="skeleton h-8 w-20 rounded-full"></div>
+                                <div class="skeleton h-8 w-24 rounded-full"></div>
+                                <div class="skeleton h-8 w-16 rounded-full"></div>
+                            </div>
+                        </div>
+                        <!-- Citation Skeleton -->
+                        <div class="skeleton-card mb-8">
+                            <div class="skeleton skeleton-title mb-4"></div>
+                            <div class="skeleton h-20 rounded-lg"></div>
+                        </div>
+                    </div>
+                    <!-- Sidebar Skeleton -->
+                    <div class="space-y-8">
+                        <div class="skeleton-card">
+                            <div class="skeleton skeleton-title mb-4"></div>
+                            <div class="skeleton h-12 rounded-xl mb-3"></div>
+                            <div class="skeleton h-12 rounded-xl"></div>
+                        </div>
+                        <div class="skeleton-card">
+                            <div class="skeleton skeleton-title mb-4"></div>
+                            <div class="space-y-3">
+                                <div class="skeleton h-8"></div>
+                                <div class="skeleton h-8"></div>
+                                <div class="skeleton h-8"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-card">
+                            <div class="skeleton skeleton-title mb-4"></div>
+                            <div class="flex items-center">
+                                <div class="skeleton w-16 h-16 rounded-xl mr-4"></div>
+                                <div class="flex-1">
+                                    <div class="skeleton h-5 w-32 mb-2"></div>
+                                    <div class="skeleton h-4 w-40 mb-1"></div>
+                                    <div class="skeleton h-4 w-24"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
            
 
             <!-- Research Banner -->
             @if($research->banner_image)
-            <div class="mb-8 rounded-xl overflow-hidden border border-gray-200">
-                <div class="relative h-64">
-                    <img src="{{ asset('storage/' . $research->banner_image) }}" alt="Research Banner" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
-                        <div class="absolute bottom-6 left-6 right-6">
-                            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-[#26225C] bg-opacity-90 text-white mb-3">
-                                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                </svg>
-                                Student Research
-                            </span>
-                            <h2 class="text-2xl md:text-3xl font-semibold text-white mb-2">{{ $research->title }}</h2>
-                            <p class="text-white/90 text-sm">By: {{ $research->authors }}</p>
+            <div class="content-container banner-content mb-8">
+                <div class="rounded-xl overflow-hidden border border-gray-200">
+                    <div class="relative h-64">
+                        <img src="{{ asset('storage/' . $research->banner_image) }}" alt="Research Banner" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
+                            <div class="absolute bottom-6 left-6 right-6">
+                                <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-[#26225C] bg-opacity-90 text-white mb-3">
+                                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                    </svg>
+                                    Student Research
+                                </span>
+                                <h2 class="text-2xl md:text-3xl font-semibold text-white mb-2">{{ $research->title }}</h2>
+                                <p class="text-white/90 text-sm">By: {{ $research->authors }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             @endif
 
+            <div class="content-container main-content-content">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Main Content -->
                 <div class="lg:col-span-2 space-y-8">
@@ -44,6 +168,7 @@
                                 </div>
                             </div>
                             
+                            @if($research->approved_at)
                             <div class="flex items-center">
                                 <div class="w-10 h-10 bg-[#26225C] bg-opacity-10 rounded-lg flex items-center justify-center mr-3">
                                     <svg class="h-5 w-5 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -55,6 +180,7 @@
                                     <p class="font-semibold text-[#26225C]">{{ $research->approved_at->format('F j, Y') }}</p>
                                 </div>
                             </div>
+                            @endif
                         </div>
                     </section>
                     @endif
@@ -66,7 +192,7 @@
                             <p class="text-sm text-gray-500">Comprehensive research information</p>
                         </div>
                         <div>
-                            @if($research->banner_image)
+                            @if($research->banner_image && $research->approved_at)
                             <div class="flex flex-wrap items-center gap-4 mb-6 text-sm text-gray-600">
                                 <div class="flex items-center">
                                     <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -136,7 +262,7 @@
                         </div>
                         <div class="bg-gray-50 p-6 rounded-lg border-l-4 border-[#FFC72C]">
                             <p class="text-sm text-gray-700 font-mono mb-4 leading-relaxed">
-                                {{ $research->authors }} ({{ $research->approved_at->format('Y') }}). <em>{{ $research->title }}</em>. 
+                                {{ $research->authors }} ({{ $research->approved_at ? $research->approved_at->format('Y') : date('Y') }}). <em>{{ $research->title }}</em>. 
                                 {{ $research->department }}, University of Southern Philippines Foundation. 
                                 Retrieved from {{ url()->current() }}
                             </p>
@@ -262,6 +388,7 @@
                                 </span>
                                 <span class="font-semibold text-[#26225C] text-xl">{{ $downloadCount }}</span>
                             </div>
+                            @if($research->approved_at)
                             <div class="flex justify-between items-center py-3">
                                 <span class="text-gray-600 font-medium flex items-center">
                                     <svg class="h-4 w-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -271,6 +398,7 @@
                                 </span>
                                 <span class="font-semibold text-[#26225C] text-xl">{{ $research->approved_at->diffForHumans() }}</span>
                             </div>
+                            @endif
                         </div>
                     </section>
 
@@ -304,6 +432,7 @@
                         </a>
                     </section>
                 </div>
+            </div>
             </div>
         </div>
     </div>
@@ -460,6 +589,29 @@
         // Initialize with first tab active
         document.addEventListener('DOMContentLoaded', function() {
             showTab('cited-by');
+            
+            // Skeleton Loader Management
+            function hideSkeletons() {
+                document.querySelectorAll('.skeleton-container').forEach(skeleton => {
+                    skeleton.classList.add('loaded');
+                });
+                document.querySelectorAll('.content-container').forEach(content => {
+                    content.classList.add('loaded');
+                });
+            }
+            
+            // Hide skeletons when page is fully loaded
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(hideSkeletons, 500);
+                });
+            } else {
+                setTimeout(hideSkeletons, 500);
+            }
+            
+            window.addEventListener('load', function() {
+                hideSkeletons();
+            });
         });
 
         function viewResearch(type, id) {

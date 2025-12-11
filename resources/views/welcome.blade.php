@@ -231,9 +231,6 @@
                                 <a href="{{ url('/dashboard') }}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">Dashboard</a>
                             @else
                                 <a href="{{ route('login') }}" class="text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">Log in</a>
-                                @if (Route::has('register'))
-                                    <a href="{{ route('register') }}" class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold">Register</a>
-                                @endif
                             @endauth
                         @endif
                     </div>
@@ -267,9 +264,6 @@
                         <a href="{{ url('/dashboard') }}" class="btn-primary text-white block w-full text-center px-4 py-2 rounded-lg text-sm font-semibold mb-2">Dashboard</a>
                     @else
                         <a href="{{ route('login') }}" class="text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Log in</a>
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="btn-secondary block w-full text-center px-4 py-2 rounded-lg text-sm font-semibold mt-2">Register</a>
-                        @endif
                     @endif
                 @endif
             </div>
@@ -289,9 +283,6 @@
             <p class="text-lg lg:text-2xl text-white text-center font-medium mb-8 drop-shadow">Discover, share, and celebrate research excellence at USPF</p>
             <div class="flex flex-col sm:flex-row gap-4">
                 <a href="{{ route('research.by-department') }}" class="btn-primary text-white px-8 py-3 rounded-xl text-lg font-semibold">Explore Research</a>
-                @if (Route::has('login') && !auth()->check())
-                    <a href="{{ route('register') }}" class="btn-secondary px-8 py-3 rounded-xl text-lg font-semibold">Join Our Community</a>
-                    @endif
             </div>
     </div>
 </section>
@@ -554,9 +545,6 @@
                     </div>
                     <h3 class="text-2xl font-bold text-[#26225C] mb-4">No Research Available Yet</h3>
                     <p class="text-gray-600 mb-8">Check back later for new research publications</p>
-                    @if (Route::has('login') && !auth()->check())
-                        <a href="{{ route('register') }}" class="btn-primary text-white px-8 py-3 rounded-xl text-lg font-semibold">Join Our Community</a>
-                    @endif
                 </div>
             @endif
         </div>
@@ -591,9 +579,6 @@
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Connect With Us</h4>
                     <p class="text-white/70 mb-4">Stay updated with the latest research and academic news.</p>
-                    @if (Route::has('login') && !auth()->check())
-                        <a href="{{ route('register') }}" class="btn-secondary px-6 py-2 rounded-lg text-sm font-semibold">Join Our Community</a>
-                    @endif
                 </div>
             </div>
             
