@@ -50,17 +50,21 @@ class DatabaseSeeder extends Seeder
         }
 
         // Create student record (only if doesn't exist)
-        Student::firstOrCreate(
-            ['user_id' => $user->id],
-            [
-            'id_number' => '202200672',
-            'first_name' => 'Francisco',
-            'middle_name' => 'Combong',
-            'last_name' => 'Villahermosa',
-            'birthday' => '2003-03-25',
-            'course_and_year' => 'BSIT 4',
-            ]
+        // Check by id_number first (unique constraint), then update user_id if needed
+        $student = Student::firstOrNew(
+            ['id_number' => '202200672']
         );
+        
+        // Update all fields if it's a new record or if user_id doesn't match
+        if (!$student->exists || $student->user_id !== $user->id) {
+            $student->user_id = $user->id;
+            $student->first_name = 'Francisco';
+            $student->middle_name = 'Combong';
+            $student->last_name = 'Villahermosa';
+            $student->birthday = '2003-03-25';
+            $student->course_and_year = 'BSIT 4';
+            $student->save();
+        }
 
         // Create admin user (only if doesn't exist)
         $admin = User::firstOrCreate(

@@ -141,10 +141,34 @@
                             </div>
                             
                             <div class="space-y-6">
+                                <!-- Abstract PDF Upload -->
+                                <div id="field-abstract_file">
+                                    <label class="block text-sm font-semibold text-[#26225C] mb-2">
+                                        Abstract PDF <span class="text-red-500">*</span>
+                            </label>
+                                    <div class="border-2 border-dashed border-[#FFC72C] rounded-xl p-10 text-center bg-[#FFC72C] bg-opacity-5 hover:bg-opacity-10 transition-all cursor-pointer group">
+                                <input type="file" name="abstract_file" id="abstract_file" accept=".pdf" required class="hidden">
+                                <label for="abstract_file" class="cursor-pointer">
+                                            <div class="w-20 h-20 bg-[#26225C] rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                                                <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                            </div>
+                                            <p class="text-base text-[#26225C] font-semibold mb-1">
+                                                Click to upload or drag and drop
+                                    </p>
+                                            <p class="text-sm text-gray-600">PDF (Max 10MB)</p>
+                                </label>
+                            </div>
+                            @error('abstract_file') 
+                                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                                </div>
+
                                 <!-- Research File Upload -->
                                 <div id="field-document_file">
                                     <label class="block text-sm font-semibold text-[#26225C] mb-2">
-                                        Research File <span class="text-red-500">*</span>
+                                        Full Documentation PDF <span class="text-red-500">*</span>
                             </label>
                                     <div class="border-2 border-dashed border-[#FFC72C] rounded-xl p-10 text-center bg-[#FFC72C] bg-opacity-5 hover:bg-opacity-10 transition-all cursor-pointer group">
                                 <input type="file" name="document_file" id="document_file" accept=".pdf,.doc,.docx" required class="hidden">
@@ -215,11 +239,17 @@
                                         </div>
                                         <span class="text-sm text-gray-700 group-hover:text-[#26225C] transition-colors">Abstract (250-300 words)</span>
                                     </button>
+                                    <button type="button" onclick="scrollToField('abstract_file')" class="w-full flex items-center space-x-3 hover:bg-gray-50 p-2 rounded-lg transition-colors text-left group">
+                                        <div class="w-6 h-6 rounded-full border-2 border-[#FFC72C] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                            <div class="w-3 h-3 bg-[#FFC72C] rounded-full"></div>
+                                        </div>
+                                        <span class="text-sm text-gray-700 group-hover:text-[#26225C] transition-colors">Abstract PDF</span>
+                                    </button>
                                     <button type="button" onclick="scrollToField('document_file')" class="w-full flex items-center space-x-3 hover:bg-gray-50 p-2 rounded-lg transition-colors text-left group">
                                         <div class="w-6 h-6 rounded-full border-2 border-[#FFC72C] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                                             <div class="w-3 h-3 bg-[#FFC72C] rounded-full"></div>
                                         </div>
-                                        <span class="text-sm text-gray-700 group-hover:text-[#26225C] transition-colors">Thesis file (PDF/DOC)</span>
+                                        <span class="text-sm text-gray-700 group-hover:text-[#26225C] transition-colors">Full Documentation PDF</span>
                                     </button>
                                 </div>
                             </div>
@@ -345,7 +375,29 @@
             }
         });
 
-        // File upload preview
+        // File upload preview for abstract file
+        document.getElementById('abstract_file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const label = e.target.nextElementSibling;
+                label.innerHTML = `
+                    <div class="flex flex-col items-center justify-center pt-8 pb-8">
+                        <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-lg font-semibold text-gray-700 mb-2">✅ ${file.name}</p>
+                        <p class="text-sm text-gray-500 mb-4">Abstract PDF ready for upload</p>
+                        <button type="button" onclick="clearFile('abstract_file')" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition duration-200 text-sm font-medium">
+                            Change file
+                        </button>
+                    </div>
+                `;
+            }
+        });
+
+        // File upload preview for document file
         document.getElementById('document_file').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {

@@ -27,6 +27,7 @@ class StudentResearchController extends Controller
                 'program' => 'required|exists:programs,id',
                 'banner_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'research_file' => 'required|mimes:pdf|max:10240',
+                'abstract_file' => 'required|mimes:pdf|max:10240',
                 'abstract' => 'required|string',
                 'tags' => 'nullable|string',
             ]);
@@ -59,6 +60,10 @@ class StudentResearchController extends Controller
 
             if ($request->hasFile('research_file')) {
                 $data['research_file'] = $request->file('research_file')->store('research/student', 'public');
+            }
+
+            if ($request->hasFile('abstract_file')) {
+                $data['abstract_file'] = $request->file('abstract_file')->store('research/abstracts', 'public');
             }
 
             $research = StudentResearch::create($data);
@@ -259,6 +264,109 @@ class StudentResearchController extends Controller
         return response()->file($filePath, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="' . $research->title . '.pdf"',
+        ]);
+    }
+
+    public function downloadAbstract(Request $request, $id)
+    {
+        $research = StudentResearch::findOrFail($id);
+        $user = auth()->user();
+
+        // Only allow download of approved research
+        if ($research->status !== 'approved') {
+            return response()->json(['error' => 'This research is not available for download'], 404);
+        }
+        
+        if (!$research->abstract_file) {
+            return response()->json(['error' => 'Abstract file not found'], 404);
+        }
+
+        // Validate survey data
+        $request->validate([
+            'purpose' => 'required|string',
+            'notes' => 'nullable|string|max:500'
+        ]);
+
+        // Track download with survey data
+        ResearchAnalytic::trackDownload(
+            'student', 
+            $id, 
+            $request, 
+            $request->purpose, 
+            $request->notes
+        );
+
+        // Files are stored on the public disk (storage/app/public)
+        $filePath = storage_path('app/public/' . $research->abstract_file);
+        
+        if (!file_exists($filePath)) {
+            return response()->json(['error' => 'Abstract file not found on server'], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Abstract download will start shortly',
+            'download_url' => route('student.download-abstract.file', $id)
+        ]);
+    }
+
+    public function downloadAbstractFile($id)
+    {
+        $research = StudentResearch::findOrFail($id);
+        
+        // Only allow download of approved research
+        if ($research->status !== 'approved') {
+            abort(404, 'Research not found or not available');
+        }
+        
+        if (!$research->abstract_file) {
+            abort(404, 'Abstract file not found');
+        }
+        
+        // Files are stored on the public disk (storage/app/public)
+        $filePath = storage_path('app/public/' . $research->abstract_file);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'Abstract file not found on server');
+        }
+        
+        return response()->download($filePath, $research->title . '_Abstract.pdf');
+    }
+
+    public function viewAbstractPdf($id)
+    {
+        $research = StudentResearch::findOrFail($id);
+        $user = auth()->user();
+        $isOwner = $research->user_id && $research->user_id === $user->id;
+        
+        // Check if user is admin (safely)
+        $isAdmin = false;
+        try {
+            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        } catch (\Exception $e) {
+            $isAdmin = $user->role === 'admin';
+        }
+        
+        // Allow owner and admin to view any status
+        // Others can only view approved research
+        if (!$isOwner && !$isAdmin && $research->status !== 'approved') {
+            abort(404, 'Research not found or not available');
+        }
+        
+        if (!$research->abstract_file) {
+            abort(404, 'Abstract file not found');
+        }
+        
+        // Files are stored on the public disk (storage/app/public)
+        $filePath = storage_path('app/public/' . $research->abstract_file);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'Abstract file not found on server');
+        }
+        
+        return response()->file($filePath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $research->title . '_Abstract.pdf"',
         ]);
     }
 

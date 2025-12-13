@@ -24,6 +24,7 @@ class ThesisController extends Controller
                 'year_completed' => 'required|integer|min:1900|max:' . (date('Y') + 1),
                 'keywords' => 'required|string',
                 'document_file' => 'required|mimes:pdf|max:10240',
+                'abstract_file' => 'required|mimes:pdf|max:10240',
                 'abstract' => 'required|string',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -51,6 +52,10 @@ class ThesisController extends Controller
 
             if ($request->hasFile('document_file')) {
                 $data['document_file'] = $request->file('document_file')->store('thesis', 'public');
+            }
+
+            if ($request->hasFile('abstract_file')) {
+                $data['abstract_file'] = $request->file('abstract_file')->store('research/abstracts', 'public');
             }
 
             $thesis = Thesis::create($data);
@@ -247,6 +252,109 @@ class ThesisController extends Controller
         return response()->file($filePath, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="' . ($thesis->title ?: 'Thesis_' . $thesis->id) . '.pdf"',
+        ]);
+    }
+
+    public function downloadAbstract(Request $request, $id)
+    {
+        $thesis = Thesis::findOrFail($id);
+        $user = auth()->user();
+
+        // Only allow download of approved research
+        if ($thesis->status !== 'approved') {
+            return response()->json(['error' => 'This research is not available for download'], 404);
+        }
+        
+        if (!$thesis->abstract_file) {
+            return response()->json(['error' => 'Abstract file not found'], 404);
+        }
+
+        // Validate survey data
+        $request->validate([
+            'purpose' => 'required|string',
+            'notes' => 'nullable|string|max:500'
+        ]);
+
+        // Track download with survey data
+        \App\Models\ResearchAnalytic::trackDownload(
+            'thesis', 
+            $id, 
+            $request, 
+            $request->purpose, 
+            $request->notes
+        );
+
+        // Files are stored on the public disk (storage/app/public)
+        $filePath = storage_path('app/public/' . $thesis->abstract_file);
+        
+        if (!file_exists($filePath)) {
+            return response()->json(['error' => 'Abstract file not found on server'], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Abstract download will start shortly',
+            'download_url' => route('thesis.download-abstract.file', $id)
+        ]);
+    }
+
+    public function downloadAbstractFile($id)
+    {
+        $thesis = Thesis::findOrFail($id);
+        
+        // Only allow download of approved research
+        if ($thesis->status !== 'approved') {
+            abort(404, 'Research not found or not available');
+        }
+        
+        if (!$thesis->abstract_file) {
+            abort(404, 'Abstract file not found');
+        }
+        
+        // Files are stored on the public disk (storage/app/public)
+        $filePath = storage_path('app/public/' . $thesis->abstract_file);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'Abstract file not found on server');
+        }
+        
+        return response()->download($filePath, ($thesis->title ?: 'Thesis_' . $thesis->id) . '_Abstract.pdf');
+    }
+
+    public function viewAbstractPdf($id)
+    {
+        $thesis = Thesis::findOrFail($id);
+        $user = auth()->user();
+        $isOwner = $thesis->user_id && $thesis->user_id === $user->id;
+        
+        // Check if user is admin (safely)
+        $isAdmin = false;
+        try {
+            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        } catch (\Exception $e) {
+            $isAdmin = $user->role === 'admin';
+        }
+        
+        // Allow owner and admin to view any status
+        // Others can only view approved research
+        if (!$isOwner && !$isAdmin && $thesis->status !== 'approved') {
+            abort(404, 'Research not found or not available');
+        }
+        
+        if (!$thesis->abstract_file) {
+            abort(404, 'Abstract file not found');
+        }
+        
+        // Files are stored on the public disk (storage/app/public)
+        $filePath = storage_path('app/public/' . $thesis->abstract_file);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'Abstract file not found on server');
+        }
+        
+        return response()->file($filePath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . ($thesis->title ?: 'Thesis_' . $thesis->id) . '_Abstract.pdf"',
         ]);
     }
 

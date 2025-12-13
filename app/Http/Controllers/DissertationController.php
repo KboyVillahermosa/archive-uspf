@@ -24,6 +24,7 @@ class DissertationController extends Controller
                 'year_completed' => 'required|integer|min:1900|max:' . (date('Y') + 1),
                 'keywords' => 'required|string',
                 'document_file' => 'required|mimes:pdf|max:10240',
+                'abstract_file' => 'required|mimes:pdf|max:10240',
                 'abstract' => 'required|string',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -51,6 +52,10 @@ class DissertationController extends Controller
 
             if ($request->hasFile('document_file')) {
                 $data['document_file'] = $request->file('document_file')->store('dissertations', 'public');
+            }
+
+            if ($request->hasFile('abstract_file')) {
+                $data['abstract_file'] = $request->file('abstract_file')->store('research/abstracts', 'public');
             }
 
             $dissertation = Dissertation::create($data);
@@ -245,6 +250,109 @@ class DissertationController extends Controller
         return response()->file($filePath, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="' . ($dissertation->title ?: 'Dissertation_' . $dissertation->id) . '.pdf"',
+        ]);
+    }
+
+    public function downloadAbstract(Request $request, $id)
+    {
+        $dissertation = Dissertation::findOrFail($id);
+        $user = auth()->user();
+
+        // Only allow download of approved research
+        if ($dissertation->status !== 'approved') {
+            return response()->json(['error' => 'This research is not available for download'], 404);
+        }
+        
+        if (!$dissertation->abstract_file) {
+            return response()->json(['error' => 'Abstract file not found'], 404);
+        }
+
+        // Validate survey data
+        $request->validate([
+            'purpose' => 'required|string',
+            'notes' => 'nullable|string|max:500'
+        ]);
+
+        // Track download with survey data
+        \App\Models\ResearchAnalytic::trackDownload(
+            'dissertation', 
+            $id, 
+            $request, 
+            $request->purpose, 
+            $request->notes
+        );
+
+        // Files are stored on the public disk (storage/app/public)
+        $filePath = storage_path('app/public/' . $dissertation->abstract_file);
+        
+        if (!file_exists($filePath)) {
+            return response()->json(['error' => 'Abstract file not found on server'], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Abstract download will start shortly',
+            'download_url' => route('dissertation.download-abstract.file', $id)
+        ]);
+    }
+
+    public function downloadAbstractFile($id)
+    {
+        $dissertation = Dissertation::findOrFail($id);
+        
+        // Only allow download of approved research
+        if ($dissertation->status !== 'approved') {
+            abort(404, 'Research not found or not available');
+        }
+        
+        if (!$dissertation->abstract_file) {
+            abort(404, 'Abstract file not found');
+        }
+        
+        // Files are stored on the public disk (storage/app/public)
+        $filePath = storage_path('app/public/' . $dissertation->abstract_file);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'Abstract file not found on server');
+        }
+        
+        return response()->download($filePath, ($dissertation->title ?: 'Dissertation_' . $dissertation->id) . '_Abstract.pdf');
+    }
+
+    public function viewAbstractPdf($id)
+    {
+        $dissertation = Dissertation::findOrFail($id);
+        $user = auth()->user();
+        $isOwner = $dissertation->user_id && $dissertation->user_id === $user->id;
+        
+        // Check if user is admin (safely)
+        $isAdmin = false;
+        try {
+            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        } catch (\Exception $e) {
+            $isAdmin = $user->role === 'admin';
+        }
+        
+        // Allow owner and admin to view any status
+        // Others can only view approved research
+        if (!$isOwner && !$isAdmin && $dissertation->status !== 'approved') {
+            abort(404, 'Research not found or not available');
+        }
+        
+        if (!$dissertation->abstract_file) {
+            abort(404, 'Abstract file not found');
+        }
+        
+        // Files are stored on the public disk (storage/app/public)
+        $filePath = storage_path('app/public/' . $dissertation->abstract_file);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'Abstract file not found on server');
+        }
+        
+        return response()->file($filePath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . ($dissertation->title ?: 'Dissertation_' . $dissertation->id) . '_Abstract.pdf"',
         ]);
     }
 
