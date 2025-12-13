@@ -124,6 +124,20 @@ class FacultyResearchController extends Controller
 
     public function download(Request $request, $id)
     {
+        $user = auth()->user();
+        
+        // Only admins can download
+        $isAdmin = false;
+        try {
+            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        } catch (\Exception $e) {
+            $isAdmin = $user->role === 'admin';
+        }
+        
+        if (!$isAdmin) {
+            return response()->json(['error' => 'Unauthorized. Only administrators can download documents.'], 403);
+        }
+        
         $research = FacultyResearch::findOrFail($id);
         
         // Only allow download of approved research
@@ -170,6 +184,20 @@ class FacultyResearchController extends Controller
     
     public function downloadFile($id)
     {
+        $user = auth()->user();
+        
+        // Only admins can download
+        $isAdmin = false;
+        try {
+            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        } catch (\Exception $e) {
+            $isAdmin = $user->role === 'admin';
+        }
+        
+        if (!$isAdmin) {
+            abort(403, 'Unauthorized. Only administrators can download documents.');
+        }
+        
         $research = FacultyResearch::findOrFail($id);
         
         // Only allow download of approved research
@@ -192,18 +220,21 @@ class FacultyResearchController extends Controller
 
     public function viewPdf($id)
     {
-        $research = FacultyResearch::findOrFail($id);
-        $this->authorize('view', $research);
-        
         $user = auth()->user();
-        $isOwner = $research->user_id === $user->id;
-        $isAdmin = $user->hasRole('admin');
         
-        // Allow owner and admin to view any status
-        // Others can only view approved research
-        if (!$isOwner && !$isAdmin && $research->status !== 'approved') {
-            abort(404, 'Research not found or not available');
+        // Only admins can view PDFs
+        $isAdmin = false;
+        try {
+            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        } catch (\Exception $e) {
+            $isAdmin = $user->role === 'admin';
         }
+        
+        if (!$isAdmin) {
+            abort(403, 'Unauthorized. Only administrators can view documents.');
+        }
+        
+        $research = FacultyResearch::findOrFail($id);
         
         if (!$research->research_file) {
             abort(404, 'File not found');

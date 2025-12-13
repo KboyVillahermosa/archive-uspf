@@ -134,6 +134,20 @@ class DissertationController extends Controller
 
     public function download(Request $request, $id)
     {
+        $user = auth()->user();
+        
+        // Only admins can download
+        $isAdmin = false;
+        try {
+            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        } catch (\Exception $e) {
+            $isAdmin = $user->role === 'admin';
+        }
+        
+        if (!$isAdmin) {
+            return response()->json(['error' => 'Unauthorized. Only administrators can download documents.'], 403);
+        }
+        
         $dissertation = Dissertation::findOrFail($id);
         
         // Only allow download of approved research
@@ -166,6 +180,20 @@ class DissertationController extends Controller
 
     public function downloadFile($id)
     {
+        $user = auth()->user();
+        
+        // Only admins can download
+        $isAdmin = false;
+        try {
+            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        } catch (\Exception $e) {
+            $isAdmin = $user->role === 'admin';
+        }
+        
+        if (!$isAdmin) {
+            abort(403, 'Unauthorized. Only administrators can download documents.');
+        }
+        
         $dissertation = Dissertation::findOrFail($id);
         
         // Only allow download of approved research
@@ -188,12 +216,21 @@ class DissertationController extends Controller
 
     public function viewPdf($id)
     {
-        $dissertation = Dissertation::findOrFail($id);
+        $user = auth()->user();
         
-        // Only allow viewing of approved research
-        if ($dissertation->status !== 'approved') {
-            abort(404, 'Research not found or not available');
+        // Only admins can view PDFs
+        $isAdmin = false;
+        try {
+            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        } catch (\Exception $e) {
+            $isAdmin = $user->role === 'admin';
         }
+        
+        if (!$isAdmin) {
+            abort(403, 'Unauthorized. Only administrators can view documents.');
+        }
+        
+        $dissertation = Dissertation::findOrFail($id);
         
         if (!$dissertation->document_file) {
             abort(404, 'File not found');
