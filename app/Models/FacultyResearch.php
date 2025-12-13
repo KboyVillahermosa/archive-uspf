@@ -14,7 +14,7 @@ class FacultyResearch extends Model
 
     protected $fillable = [
         'title', 'co_researchers', 'department', 'banner_image',
-        'research_file', 'abstract', 'tags', 'status', 'admin_notes',
+        'research_file', 'abstract_file', 'abstract', 'tags', 'status', 'admin_notes',
         'user_id', 'approved_by', 'approved_at', 'views_count', 'downloads_count'
     ];
 
