@@ -305,11 +305,38 @@
             <div class="content-container research-library-content">
             <section class="mb-12">
             <section class="mb-12">
-                <div class="flex items-center justify-between mb-6">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
                         <div>
                         <h2 class="text-2xl font-light text-[#26225C] mb-1">Research Library</h2>
                         <p class="text-sm text-gray-500">Recently added and popular research</p>
                     </div>
+                    
+                    <!-- Search Bar -->
+                    <form method="GET" action="{{ route('dashboard') }}" id="searchForm" class="relative w-full md:w-96">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <input 
+                            type="text" 
+                            name="search"
+                            id="researchSearchInput" 
+                            value="{{ $searchQuery ?? '' }}"
+                            placeholder="Search by title, author, keywords, department..." 
+                            class="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFC72C] focus:border-[#FFC72C] text-sm"
+                        >
+                        <button 
+                            type="button"
+                            id="clearSearchBtn" 
+                            class="absolute inset-y-0 right-0 pr-3 items-center {{ !empty($searchQuery) ? 'flex' : 'hidden' }}"
+                            onclick="clearSearch()"
+                        >
+                            <svg class="h-5 w-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </form>
                 </div>
 
                 <!-- Recently Added -->
@@ -331,7 +358,9 @@
                                     default => 'student.show',
                                 };
                             @endphp
-                            <a href="{{ route($routeName, $item->id) }}" class="group bg-white rounded-xl p-5 border border-gray-200 hover:border-[#FFC72C] hover:shadow-lg transition-all duration-300">
+                            <a href="{{ route($routeName, $item->id) }}" 
+                               class="research-item group bg-white rounded-xl p-5 border border-gray-200 hover:border-[#FFC72C] hover:shadow-lg transition-all duration-300"
+                               data-search-text="{{ strtolower($item->title . ' ' . ($item->authors ?? $item->author ?? '') . ' ' . ($item->department ?? '') . ' ' . ($item->tags ?? $item->keywords ?? '')) }}">
                                 <div class="flex items-center justify-between mb-3">
                                     <span class="text-xs font-medium px-3 py-1 rounded-full bg-[#26225C] bg-opacity-10 text-[#26225C] border border-[#FFC72C] border-opacity-30">{{ ucfirst($type) }}</span>
                                     <span class="text-xs text-gray-400">{{ optional($item->approved_at)->diffForHumans() }}</span>
@@ -434,7 +463,9 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             <!-- Student Research -->
                             @foreach($approvedStudentResearch as $research)
-                            <a href="{{ route('student.show', $research->id) }}" class="group bg-white rounded-xl p-5 border border-gray-200 hover:border-[#FFC72C] hover:shadow-lg transition-all duration-300">
+                            <a href="{{ route('student.show', $research->id) }}" 
+                               class="research-item group bg-white rounded-xl p-5 border border-gray-200 hover:border-[#FFC72C] hover:shadow-lg transition-all duration-300"
+                               data-search-text="{{ strtolower($research->title . ' ' . $research->authors . ' ' . $research->department . ' ' . $research->program . ' ' . ($research->tags ?? '')) }}">
                                 <div class="flex items-center mb-3">
                                     <div class="w-10 h-10 bg-[#26225C] bg-opacity-10 rounded-lg flex items-center justify-center mr-3">
                                         <svg class="h-5 w-5 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -457,7 +488,9 @@
 
                             <!-- Faculty Research -->
                             @foreach($approvedFacultyResearch as $research)
-                            <a href="{{ route('faculty.show', $research->id) }}" class="group bg-white rounded-xl p-5 border border-gray-200 hover:border-[#FFC72C] hover:shadow-lg transition-all duration-300">
+                            <a href="{{ route('faculty.show', $research->id) }}" 
+                               class="research-item group bg-white rounded-xl p-5 border border-gray-200 hover:border-[#FFC72C] hover:shadow-lg transition-all duration-300"
+                               data-search-text="{{ strtolower($research->title . ' ' . $research->user->name . ' ' . ($research->co_researchers ?? '') . ' ' . $research->department . ' ' . ($research->tags ?? '')) }}">
                                 <div class="flex items-center mb-3">
                                     <div class="w-10 h-10 bg-[#26225C] bg-opacity-10 rounded-lg flex items-center justify-center mr-3">
                                         <svg class="h-5 w-5 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -483,7 +516,9 @@
 
                             <!-- Thesis -->
                             @foreach($approvedThesis as $thesis)
-                            <a href="{{ route('thesis.show', $thesis->id) }}" class="group bg-white rounded-xl p-5 border border-gray-200 hover:border-[#FFC72C] hover:shadow-lg transition-all duration-300">
+                            <a href="{{ route('thesis.show', $thesis->id) }}" 
+                               class="research-item group bg-white rounded-xl p-5 border border-gray-200 hover:border-[#FFC72C] hover:shadow-lg transition-all duration-300"
+                               data-search-text="{{ strtolower($thesis->title . ' ' . $thesis->author . ' ' . $thesis->department . ' ' . ($thesis->program ?? '') . ' ' . ($thesis->keywords ?? '')) }}">
                                 <div class="flex items-center mb-3">
                                     <div class="w-10 h-10 bg-[#26225C] bg-opacity-10 rounded-lg flex items-center justify-center mr-3">
                                         <svg class="h-5 w-5 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -506,7 +541,9 @@
 
                             <!-- Dissertations -->
                             @foreach($approvedDissertations as $dissertation)
-                            <a href="{{ route('dissertation.show', $dissertation->id) }}" class="group bg-white rounded-xl p-5 border border-gray-200 hover:border-[#FFC72C] hover:shadow-lg transition-all duration-300">
+                            <a href="{{ route('dissertation.show', $dissertation->id) }}" 
+                               class="research-item group bg-white rounded-xl p-5 border border-gray-200 hover:border-[#FFC72C] hover:shadow-lg transition-all duration-300"
+                               data-search-text="{{ strtolower($dissertation->title . ' ' . $dissertation->author . ' ' . $dissertation->department . ' ' . ($dissertation->program ?? '') . ' ' . ($dissertation->keywords ?? '')) }}">
                                 <div class="flex items-center mb-3">
                                     <div class="w-10 h-10 bg-[#26225C] bg-opacity-10 rounded-lg flex items-center justify-center mr-3">
                                         <svg class="h-5 w-5 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -568,6 +605,131 @@
             window.addEventListener('load', function() {
                 hideSkeletons();
             });
+        });
+
+        // Search/Filter Functionality
+        let searchTimeout;
+        
+        function filterResearch() {
+            const searchInput = document.getElementById('researchSearchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            const searchForm = document.getElementById('searchForm');
+            const searchTerm = searchInput.value.trim();
+            const searchLower = searchTerm.toLowerCase();
+            
+            // Show/hide clear button
+            if (searchTerm.length > 0) {
+                clearBtn.classList.remove('hidden');
+                clearBtn.classList.add('flex');
+            } else {
+                clearBtn.classList.add('hidden');
+                clearBtn.classList.remove('flex');
+            }
+            
+            // Clear previous timeout
+            clearTimeout(searchTimeout);
+            
+            // Client-side filtering for instant feedback
+            const researchItems = document.querySelectorAll('.research-item');
+            let visibleCount = 0;
+            
+            researchItems.forEach(item => {
+                const searchText = item.getAttribute('data-search-text') || '';
+                
+                if (searchTerm === '' || searchText.includes(searchLower)) {
+                    item.style.display = '';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Show "No results" message if needed
+            showNoResultsMessage(visibleCount === 0 && searchTerm.length > 0);
+            
+            // Submit form to server after user stops typing (for accurate server-side search)
+            searchTimeout = setTimeout(function() {
+                if (searchTerm.length >= 2 || searchTerm.length === 0) {
+                    searchForm.submit();
+                }
+            }, 800); // Wait 800ms after user stops typing
+        }
+
+        function clearSearch() {
+            const searchInput = document.getElementById('researchSearchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            const searchForm = document.getElementById('searchForm');
+            
+            searchInput.value = '';
+            clearBtn.classList.add('hidden');
+            clearBtn.classList.remove('flex');
+            
+            // Show all items immediately
+            const researchItems = document.querySelectorAll('.research-item');
+            researchItems.forEach(item => {
+                item.style.display = '';
+            });
+            
+            showNoResultsMessage(false);
+            
+            // Submit form to clear server-side search
+            searchForm.submit();
+        }
+
+        function showNoResultsMessage(show) {
+            let noResultsMsg = document.getElementById('noResultsMessage');
+            
+            if (show && !noResultsMsg) {
+                // Create no results message
+                noResultsMsg = document.createElement('div');
+                noResultsMsg.id = 'noResultsMessage';
+                noResultsMsg.className = 'col-span-full text-center py-16 bg-white rounded-xl border border-gray-200';
+                noResultsMsg.innerHTML = `
+                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No research found</h3>
+                    <p class="text-sm text-gray-500">Try adjusting your search terms</p>
+                `;
+                
+                // Find the first grid container and append the message
+                const firstGrid = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3');
+                if (firstGrid) {
+                    firstGrid.appendChild(noResultsMsg);
+                }
+            } else if (!show && noResultsMsg) {
+                noResultsMsg.remove();
+            }
+        }
+
+        // Initialize search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('researchSearchInput');
+            const searchForm = document.getElementById('searchForm');
+            
+            if (searchInput) {
+                // Search on input (with debounce)
+                searchInput.addEventListener('input', filterResearch);
+                
+                // Submit form on Enter key
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        clearTimeout(searchTimeout);
+                        searchForm.submit();
+                    }
+                });
+            }
+            
+            // If there's a search query, show results count
+            @if(!empty($searchQuery))
+            const resultCount = document.querySelectorAll('.research-item:not([style*="display: none"])').length;
+            if (resultCount === 0) {
+                showNoResultsMessage(true);
+            }
+            @endif
         });
     </script>
 </x-app-layout>

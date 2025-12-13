@@ -84,13 +84,28 @@ class ThesisController extends Controller
     {
         $thesis = Thesis::with(['user', 'approvedBy'])->findOrFail($id);
         
-        if ($thesis->status !== 'approved') {
-            abort(404);
+        $user = auth()->user();
+        $isOwner = $thesis->user_id === $user->id;
+        
+        // Check if user is admin (safely)
+        $isAdmin = false;
+        try {
+            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        } catch (\Exception $e) {
+            // If role check fails, just use the role property
+            $isAdmin = $user->role === 'admin';
         }
         
-        // Track view
+        // Allow owner and admin to view any status
+        // Others can only view approved research
+        if (!$isOwner && !$isAdmin && $thesis->status !== 'approved') {
+            abort(404, 'Research not found or not available');
+        }
+        
+        // Track view (single source of truth - ResearchAnalytic)
         \App\Models\ResearchAnalytic::trackView('thesis', $id, request());
-        // Get analytics
+        
+        // Get analytics from ResearchAnalytic (single source of truth)
         $viewCount = \App\Models\ResearchAnalytic::getViewCount('thesis', $id);
         $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('thesis', $id);
         $shareCount = 0; // Share count not implemented yet
@@ -102,9 +117,10 @@ class ThesisController extends Controller
     {
         $thesis = Thesis::with(['user', 'approvedBy'])->where('status', 'approved')->findOrFail($id);
         
-        // Track view
+        // Track view (single source of truth - ResearchAnalytic)
         \App\Models\ResearchAnalytic::trackView('thesis', $id, request());
-        // Get analytics
+        
+        // Get analytics from ResearchAnalytic (single source of truth)
         $viewCount = \App\Models\ResearchAnalytic::getViewCount('thesis', $id);
         $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('thesis', $id);
         $shareCount = 0; // Share count not implemented yet
@@ -170,6 +186,31 @@ class ThesisController extends Controller
         }
         
         return response()->download($filePath, ($thesis->title ?: 'Thesis_' . $thesis->id) . '.pdf');
+    }
+
+    public function viewPdf($id)
+    {
+        $thesis = Thesis::findOrFail($id);
+        
+        // Only allow viewing of approved research
+        if ($thesis->status !== 'approved') {
+            abort(404, 'Research not found or not available');
+        }
+        
+        if (!$thesis->document_file) {
+            abort(404, 'File not found');
+        }
+        
+        $filePath = storage_path('app/public/' . $thesis->document_file);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'File not found on server');
+        }
+        
+        return response()->file($filePath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . ($thesis->title ?: 'Thesis_' . $thesis->id) . '.pdf"',
+        ]);
     }
 
     public function edit($id)

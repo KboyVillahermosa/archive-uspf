@@ -7,6 +7,7 @@ use App\Models\StudentResearch;
 use App\Models\FacultyResearch;
 use App\Models\Thesis;
 use App\Models\Dissertation;
+use App\Models\Department;
 
 class WelcomeController extends Controller
 {
@@ -40,11 +41,17 @@ class WelcomeController extends Controller
             ->take(6)
             ->get();
         
+        // Fetch all departments with their programs
+        $departments = Department::with('programs')
+            ->orderBy('name')
+            ->get();
+        
         return view('welcome', compact(
             'approvedStudentResearch',
             'approvedFacultyResearch', 
             'approvedThesis',
-            'approvedDissertations'
+            'approvedDissertations',
+            'departments'
         ));
     }
 }

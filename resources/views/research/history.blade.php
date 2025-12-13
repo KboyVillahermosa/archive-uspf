@@ -191,8 +191,39 @@
                 <!-- Actual Research List -->
                 <div class="content-container table-content">
                 <div class="mb-6">
-                    <h2 class="text-2xl font-light text-[#26225C] mb-1">Research Submissions</h2>
-                    <p class="text-sm text-gray-500">{{ $allResearch->count() }} research items</p>
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                        <div>
+                            <h2 class="text-2xl font-light text-[#26225C] mb-1">Research Submissions</h2>
+                            <p class="text-sm text-gray-500">{{ $allResearch->total() }} research items</p>
+                        </div>
+                        
+                        <!-- Search Bar -->
+                        <form method="GET" action="{{ route('research.history') }}" id="searchForm" class="relative w-full md:w-96">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+                            <input 
+                                type="text" 
+                                name="search"
+                                id="researchSearchInput" 
+                                value="{{ $searchQuery ?? '' }}"
+                                placeholder="Search by title, author, department..." 
+                                class="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFC72C] focus:border-[#FFC72C] text-sm"
+                            >
+                            <button 
+                                type="button"
+                                id="clearSearchBtn" 
+                                class="absolute inset-y-0 right-0 pr-3 items-center {{ !empty($searchQuery) ? 'flex' : 'hidden' }}"
+                                onclick="clearSearch()"
+                            >
+                                <svg class="h-5 w-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
                 </div>
 
                 @if($allResearch->count() > 0)
@@ -230,7 +261,8 @@
                                                 $canDelete = $user->hasRole('admin') || (isset($research->user_id) && $research->user_id === $user->id);
                                             }
                                         @endphp
-                                        <tr class="hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors group">
+                                        <tr class="research-item hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors group"
+                                            data-search-text="{{ strtolower($research->title . ' ' . ($research->authors ?? $research->author ?? '') . ' ' . $research->department . ' ' . ($research->program ?? '') . ' ' . ($research->tags ?? $research->keywords ?? '') . ' ' . ($research->co_researchers ?? '')) }}">
                                         <td class="px-3 py-2 text-gray-500 cursor-pointer whitespace-nowrap" onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')">
                                             #{{ $research->id }}
                                         </td>
@@ -431,6 +463,70 @@
             document.getElementById('rejectionModal').classList.add('hidden');
         }
         
+        // Search/Filter Functionality
+        let searchTimeout;
+        
+        function filterResearch() {
+            const searchInput = document.getElementById('researchSearchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            const searchForm = document.getElementById('searchForm');
+            const searchTerm = searchInput.value.trim();
+            const searchLower = searchTerm.toLowerCase();
+            
+            // Show/hide clear button
+            if (searchTerm.length > 0) {
+                clearBtn.classList.remove('hidden');
+                clearBtn.classList.add('flex');
+            } else {
+                clearBtn.classList.add('hidden');
+                clearBtn.classList.remove('flex');
+            }
+            
+            // Clear previous timeout
+            clearTimeout(searchTimeout);
+            
+            // Client-side filtering for instant feedback
+            const researchItems = document.querySelectorAll('.research-item');
+            let visibleCount = 0;
+            
+            researchItems.forEach(item => {
+                const searchText = item.getAttribute('data-search-text') || '';
+                
+                if (searchTerm === '' || searchText.includes(searchLower)) {
+                    item.style.display = '';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Submit form to server after user stops typing (for accurate server-side search)
+            searchTimeout = setTimeout(function() {
+                if (searchTerm.length >= 2 || searchTerm.length === 0) {
+                    searchForm.submit();
+                }
+            }, 800); // Wait 800ms after user stops typing
+        }
+
+        function clearSearch() {
+            const searchInput = document.getElementById('researchSearchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            const searchForm = document.getElementById('searchForm');
+            
+            searchInput.value = '';
+            clearBtn.classList.add('hidden');
+            clearBtn.classList.remove('flex');
+            
+            // Show all items immediately
+            const researchItems = document.querySelectorAll('.research-item');
+            researchItems.forEach(item => {
+                item.style.display = '';
+            });
+            
+            // Submit form to clear server-side search
+            searchForm.submit();
+        }
+        
         // Skeleton Loader Management
         document.addEventListener('DOMContentLoaded', function() {
             function hideSkeletons() {
@@ -454,6 +550,24 @@
             window.addEventListener('load', function() {
                 hideSkeletons();
             });
+            
+            // Initialize search functionality
+            const searchInput = document.getElementById('researchSearchInput');
+            const searchForm = document.getElementById('searchForm');
+            
+            if (searchInput) {
+                // Search on input (with debounce)
+                searchInput.addEventListener('input', filterResearch);
+                
+                // Submit form on Enter key
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        clearTimeout(searchTimeout);
+                        searchForm.submit();
+                    }
+                });
+            }
             
             // Modal initialization for action modal
             const modal = document.getElementById('actionModal');

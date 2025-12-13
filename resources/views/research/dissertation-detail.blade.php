@@ -224,20 +224,100 @@
                     <section class="mb-8">
                         <div class="mb-6">
                             <h3 class="text-2xl font-light text-[#26225C] mb-1">How to Cite</h3>
-                            <p class="text-sm text-gray-500">Academic citation format</p>
+                            <p class="text-sm text-gray-500">Multiple academic citation formats</p>
                         </div>
-                        <div class="bg-gray-50 p-6 rounded-lg border-l-4 border-[#FFC72C]">
-                            <p class="text-sm text-gray-700 font-mono mb-4 leading-relaxed">
-                                {{ $dissertation->author }} ({{ $dissertation->approved_at ? $dissertation->approved_at->format('Y') : $dissertation->year_completed }}). <em>{{ $dissertation->title }}</em> (Doctoral dissertation). 
-                                {{ $dissertation->department }}, University of Southern Philippines Foundation. 
-                                Retrieved from {{ url()->current() }}
-                            </p>
-                            <button onclick="copyToClipboard()" class="inline-flex items-center px-4 py-2 text-sm text-[#26225C] hover:text-[#FFC72C] hover:bg-[#26225C] hover:bg-opacity-5 rounded-lg transition-colors font-medium">
-                                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                                </svg>
-                                Copy Citation
-                            </button>
+                        <div class="bg-gray-50 rounded-lg border-l-4 border-[#FFC72C] overflow-hidden">
+                            <!-- Citation Format Tabs -->
+                            <div class="border-b border-gray-200 bg-white">
+                                <nav class="flex overflow-x-auto -mb-px" style="scrollbar-width: thin;">
+                                    <button onclick="showCitationFormat('apa')" id="citation-tab-apa" class="citation-tab border-transparent text-gray-500 hover:text-[#26225C] hover:border-[#FFC72C] whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm active-citation-tab">
+                                        APA
+                                    </button>
+                                    <button onclick="showCitationFormat('mla')" id="citation-tab-mla" class="citation-tab border-transparent text-gray-500 hover:text-[#26225C] hover:border-[#FFC72C] whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">
+                                        MLA
+                                    </button>
+                                    <button onclick="showCitationFormat('chicago')" id="citation-tab-chicago" class="citation-tab border-transparent text-gray-500 hover:text-[#26225C] hover:border-[#FFC72C] whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">
+                                        Chicago
+                                    </button>
+                                    <button onclick="showCitationFormat('harvard')" id="citation-tab-harvard" class="citation-tab border-transparent text-gray-500 hover:text-[#26225C] hover:border-[#FFC72C] whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">
+                                        Harvard
+                                    </button>
+                                    <button onclick="showCitationFormat('ieee')" id="citation-tab-ieee" class="citation-tab border-transparent text-gray-500 hover:text-[#26225C] hover:border-[#FFC72C] whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">
+                                        IEEE
+                                    </button>
+                                    <button onclick="showCitationFormat('vancouver')" id="citation-tab-vancouver" class="citation-tab border-transparent text-gray-500 hover:text-[#26225C] hover:border-[#FFC72C] whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">
+                                        Vancouver
+                                    </button>
+                                </nav>
+                            </div>
+
+                            <!-- Citation Content -->
+                            <div class="p-6">
+                                @php
+                                    $year = $dissertation->approved_at ? $dissertation->approved_at->format('Y') : $dissertation->year_completed;
+                                    $date = $dissertation->approved_at ? $dissertation->approved_at->format('d M. Y') : date('d M. Y', strtotime($dissertation->year_completed . '-01-01'));
+                                @endphp
+
+                                <!-- APA Format -->
+                                <div id="citation-content-apa" class="citation-content">
+                                    <p class="text-sm text-gray-700 font-mono mb-4 leading-relaxed">
+                                        {{ $dissertation->author }} ({{ $year }}). <em>{{ $dissertation->title }}</em> (Doctoral dissertation). 
+                                        {{ $dissertation->department }}, University of Southern Philippines Foundation. 
+                                        Retrieved from {{ url()->current() }}
+                                    </p>
+                                </div>
+
+                                <!-- MLA Format -->
+                                <div id="citation-content-mla" class="citation-content hidden">
+                                    <p class="text-sm text-gray-700 font-mono mb-4 leading-relaxed">
+                                        {{ $dissertation->author }}. "{{ $dissertation->title }}." Doctoral dissertation, University of Southern Philippines Foundation, 
+                                        {{ $dissertation->department }}, {{ $date }}, 
+                                        {{ url()->current() }}.
+                                    </p>
+                                </div>
+
+                                <!-- Chicago Format -->
+                                <div id="citation-content-chicago" class="citation-content hidden">
+                                    <p class="text-sm text-gray-700 font-mono mb-4 leading-relaxed">
+                                        {{ $dissertation->author }}. "{{ $dissertation->title }}." Doctoral dissertation, {{ $dissertation->department }}, 
+                                        University of Southern Philippines Foundation, {{ $year }}. 
+                                        {{ url()->current() }}.
+                                    </p>
+                                </div>
+
+                                <!-- Harvard Format -->
+                                <div id="citation-content-harvard" class="citation-content hidden">
+                                    <p class="text-sm text-gray-700 font-mono mb-4 leading-relaxed">
+                                        {{ $dissertation->author }} {{ $year }}, <em>{{ $dissertation->title }}</em>, Doctoral dissertation, University of Southern Philippines Foundation, 
+                                        {{ $dissertation->department }}, viewed {{ date('d M Y') }}, &lt;{{ url()->current() }}&gt;.
+                                    </p>
+                                </div>
+
+                                <!-- IEEE Format -->
+                                <div id="citation-content-ieee" class="citation-content hidden">
+                                    <p class="text-sm text-gray-700 font-mono mb-4 leading-relaxed">
+                                        {{ $dissertation->author }}, "{{ $dissertation->title }}," Doctoral dissertation, University of Southern Philippines Foundation, 
+                                        {{ $dissertation->department }}, {{ $year }}. 
+                                        [Online]. Available: {{ url()->current() }}
+                                    </p>
+                                </div>
+
+                                <!-- Vancouver Format -->
+                                <div id="citation-content-vancouver" class="citation-content hidden">
+                                    <p class="text-sm text-gray-700 font-mono mb-4 leading-relaxed">
+                                        {{ $dissertation->author }}. {{ $dissertation->title }}. Doctoral dissertation. University of Southern Philippines Foundation; 
+                                        {{ $year }}. 
+                                        Available from: {{ url()->current() }}
+                                    </p>
+                                </div>
+
+                                <button onclick="copyCitationToClipboard()" class="inline-flex items-center px-4 py-2 text-sm text-[#26225C] hover:text-[#FFC72C] hover:bg-[#26225C] hover:bg-opacity-5 rounded-lg transition-colors font-medium">
+                                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                    Copy Citation
+                                </button>
+                            </div>
                         </div>
                     </section>
 
@@ -310,6 +390,15 @@
                         </div>
                         <div class="space-y-4">
                             @if($dissertation->document_file)
+                                <a href="{{ route('dissertation.view.pdf', $dissertation->id) }}" 
+                                   target="_blank"
+                                   class="flex items-center justify-center w-full px-6 py-3 bg-[#FFC72C] hover:bg-[#e6b326] text-[#26225C] font-medium rounded-xl transition-colors">
+                                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                    View PDF
+                                </a>
                                 <a href="{{ route('dissertation.download-survey', $dissertation->id) }}" 
                                    class="mp-form flex items-center justify-center w-full px-6 py-3 bg-[#26225C] hover:bg-[#3a3770] text-white font-medium rounded-xl transition-colors"
                                    data-target="downloadModal">
@@ -404,17 +493,43 @@
     </div>
 
     <!-- Download Modal -->
-    <div id="downloadModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" style="display: none;">
-        <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4">
-            <div class="modal-content">
-                <!-- Content will be loaded here -->
+    <div id="downloadModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 transition-opacity duration-300 ease-in-out" style="display: none;">
+        <div class="flex justify-center pt-8 px-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full transform transition-all duration-300 ease-out modal-content-wrapper">
+                <div class="modal-content">
+                    <!-- Content will be loaded here -->
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        function copyToClipboard() {
-            const citation = document.querySelector('.font-mono').textContent;
+        function showCitationFormat(format) {
+            // Hide all citation contents
+            document.querySelectorAll('.citation-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.citation-tab').forEach(tab => {
+                tab.classList.remove('border-[#FFC72C]', 'text-[#26225C]', 'active-citation-tab');
+                tab.classList.add('border-transparent', 'text-gray-500');
+            });
+            
+            // Show selected citation content
+            document.getElementById('citation-content-' + format).classList.remove('hidden');
+            
+            // Add active class to selected tab
+            const activeTab = document.getElementById('citation-tab-' + format);
+            activeTab.classList.add('border-[#FFC72C]', 'text-[#26225C]', 'active-citation-tab');
+            activeTab.classList.remove('border-transparent', 'text-gray-500');
+        }
+
+        function copyCitationToClipboard() {
+            const activeCitation = document.querySelector('.citation-content:not(.hidden) .font-mono');
+            if (!activeCitation) return;
+            
+            const citation = activeCitation.textContent;
             navigator.clipboard.writeText(citation).then(() => {
                 const toast = document.createElement('div');
                 toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 font-medium';

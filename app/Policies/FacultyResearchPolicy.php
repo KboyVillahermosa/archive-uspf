@@ -8,12 +8,24 @@ use App\Models\FacultyResearch;
 class FacultyResearchPolicy
 {
     /**
+     * Safely check if user has permission (handles non-existent permissions)
+     */
+    private function hasPermissionSafely(User $user, string $permission): bool
+    {
+        try {
+            return $user->hasPermissionTo($permission);
+        } catch (\Spatie\Permission\Exceptions\PermissionDoesNotExist $e) {
+            return false;
+        }
+    }
+
+    /**
      * Determine if the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('view-any faculty-research') 
-            || $user->hasPermissionTo('view-any faculty_research')
+        return $this->hasPermissionSafely($user, 'view-any faculty-research')
+            || $this->hasPermissionSafely($user, 'view-any faculty_research')
             || $user->hasRole('admin');
     }
 
@@ -23,8 +35,8 @@ class FacultyResearchPolicy
     public function view(User $user, FacultyResearch $research): bool
     {
         // Can view if has permission or owns the research
-        return $user->hasPermissionTo('view faculty-research')
-            || $user->hasPermissionTo('view faculty_research')
+        return $this->hasPermissionSafely($user, 'view faculty-research')
+            || $this->hasPermissionSafely($user, 'view faculty_research')
             || $user->hasRole('admin')
             || $research->user_id === $user->id;
     }
@@ -34,8 +46,8 @@ class FacultyResearchPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasPermissionTo('create faculty-research')
-            || $user->hasPermissionTo('create faculty_research')
+        return $this->hasPermissionSafely($user, 'create faculty-research')
+            || $this->hasPermissionSafely($user, 'create faculty_research')
             || $user->hasRole('admin');
     }
 
@@ -45,8 +57,8 @@ class FacultyResearchPolicy
     public function update(User $user, FacultyResearch $research): bool
     {
         // Can update if has permission or owns the research
-        return $user->hasPermissionTo('update faculty-research')
-            || $user->hasPermissionTo('update faculty_research')
+        return $this->hasPermissionSafely($user, 'update faculty-research')
+            || $this->hasPermissionSafely($user, 'update faculty_research')
             || $user->hasRole('admin')
             || $research->user_id === $user->id;
     }
@@ -57,8 +69,8 @@ class FacultyResearchPolicy
     public function delete(User $user, FacultyResearch $research): bool
     {
         // Can delete if has permission or owns the research
-        return ($user->hasPermissionTo('delete faculty-research')
-            || $user->hasPermissionTo('delete faculty_research')
+        return ($this->hasPermissionSafely($user, 'delete faculty-research')
+            || $this->hasPermissionSafely($user, 'delete faculty_research')
             || $user->hasRole('admin'))
             || $research->user_id === $user->id;
     }

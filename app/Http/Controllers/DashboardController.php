@@ -17,37 +17,77 @@ class DashboardController extends Controller
     /**
      * Display the dashboard
      */
-    public function index()
+    public function index(Request $request)
     {
         // Redirect admin users to admin dashboard
         if (auth()->check() && auth()->user()->role === 'admin') {
             return redirect()->route('admin.dashboard');
         }
         
+        // Get search query
+        $searchQuery = $request->get('search', '');
+        
+        // Build base queries
+        $studentQuery = StudentResearch::where('status', 'approved')->with('user');
+        $facultyQuery = FacultyResearch::where('status', 'approved')->with('user');
+        $thesisQuery = Thesis::where('status', 'approved')->with('user');
+        $dissertationQuery = Dissertation::where('status', 'approved')->with('user');
+        
+        // Apply search filter if query exists
+        if (!empty($searchQuery)) {
+            $searchTerm = '%' . $searchQuery . '%';
+            
+            // Student Research: search in title, authors, department, program, tags
+            $studentQuery->where(function($q) use ($searchTerm) {
+                $q->where('title', 'LIKE', $searchTerm)
+                  ->orWhere('authors', 'LIKE', $searchTerm)
+                  ->orWhere('department', 'LIKE', $searchTerm)
+                  ->orWhere('program', 'LIKE', $searchTerm)
+                  ->orWhere('tags', 'LIKE', $searchTerm)
+                  ->orWhere('abstract', 'LIKE', $searchTerm);
+            });
+            
+            // Faculty Research: search in title, co_researchers, department, tags
+            $facultyQuery->where(function($q) use ($searchTerm) {
+                $q->where('title', 'LIKE', $searchTerm)
+                  ->orWhere('co_researchers', 'LIKE', $searchTerm)
+                  ->orWhere('department', 'LIKE', $searchTerm)
+                  ->orWhere('tags', 'LIKE', $searchTerm)
+                  ->orWhere('abstract', 'LIKE', $searchTerm)
+                  ->orWhereHas('user', function($userQuery) use ($searchTerm) {
+                      $userQuery->where('name', 'LIKE', $searchTerm);
+                  });
+            });
+            
+            // Thesis: search in title, author, department, program, keywords
+            $thesisQuery->where(function($q) use ($searchTerm) {
+                $q->where('title', 'LIKE', $searchTerm)
+                  ->orWhere('author', 'LIKE', $searchTerm)
+                  ->orWhere('department', 'LIKE', $searchTerm)
+                  ->orWhere('program', 'LIKE', $searchTerm)
+                  ->orWhere('keywords', 'LIKE', $searchTerm)
+                  ->orWhere('abstract', 'LIKE', $searchTerm);
+            });
+            
+            // Dissertation: search in title, author, department, program, keywords
+            $dissertationQuery->where(function($q) use ($searchTerm) {
+                $q->where('title', 'LIKE', $searchTerm)
+                  ->orWhere('author', 'LIKE', $searchTerm)
+                  ->orWhere('department', 'LIKE', $searchTerm)
+                  ->orWhere('program', 'LIKE', $searchTerm)
+                  ->orWhere('keywords', 'LIKE', $searchTerm)
+                  ->orWhere('abstract', 'LIKE', $searchTerm);
+            });
+        }
+        
         // Fetch approved research for display
-        $approvedStudentResearch = StudentResearch::where('status', 'approved')
-            ->with('user')
-            ->latest('approved_at')
-            ->take(6)
-            ->get();
-            
-        $approvedFacultyResearch = FacultyResearch::where('status', 'approved')
-            ->with('user')
-            ->latest('approved_at')
-            ->take(6)
-            ->get();
-            
-        $approvedThesis = Thesis::where('status', 'approved')
-            ->with('user')
-            ->latest('approved_at')
-            ->take(6)
-            ->get();
-            
-        $approvedDissertations = Dissertation::where('status', 'approved')
-            ->with('user')
-            ->latest('approved_at')
-            ->take(6)
-            ->get();
+        // When searching, fetch more results to ensure we have enough matches
+        $limit = !empty($searchQuery) ? 50 : 6;
+        
+        $approvedStudentResearch = $studentQuery->latest('approved_at')->take($limit)->get();
+        $approvedFacultyResearch = $facultyQuery->latest('approved_at')->take($limit)->get();
+        $approvedThesis = $thesisQuery->latest('approved_at')->take($limit)->get();
+        $approvedDissertations = $dissertationQuery->latest('approved_at')->take($limit)->get();
 
         // Most recent across all types (by approved_at)
         $mostRecent = collect()
@@ -56,7 +96,7 @@ class DashboardController extends Controller
             ->merge($approvedThesis->map(function ($r) { $r->type = 'thesis'; return $r; }))
             ->merge($approvedDissertations->map(function ($r) { $r->type = 'dissertation'; return $r; }))
             ->sortByDesc('approved_at')
-            ->take(6)
+            ->take(!empty($searchQuery) ? 50 : 6)
             ->values();
 
         // Aggregate analytics for most viewed and most popular
@@ -69,9 +109,12 @@ class DashboardController extends Controller
             )
             ->groupBy('research_type', 'research_id');
 
+        // When searching, fetch more analytics results
+        $analyticsLimit = !empty($searchQuery) ? 50 : 6;
+        
         $mostViewedRaw = (clone $analytics)
             ->orderByDesc('views')
-            ->limit(6)
+            ->limit($analyticsLimit)
             ->get();
 
         $mostPopularRaw = (clone $analytics)
@@ -83,11 +126,35 @@ class DashboardController extends Controller
                 DB::raw("(SUM(CASE WHEN action='view' THEN 1 ELSE 0 END) * 0.7 + SUM(CASE WHEN action='download' THEN 1 ELSE 0 END) * 1.0) as popularity_score")
             )
             ->orderByDesc('popularity_score')
-            ->limit(6)
+            ->limit($analyticsLimit)
             ->get();
 
         $mostViewed = $this->hydrateAnalyticsRows($mostViewedRaw);
         $mostPopular = $this->hydrateAnalyticsRows($mostPopularRaw);
+        
+        // Apply search filter to mostRecent, mostViewed, and mostPopular if search exists
+        if (!empty($searchQuery)) {
+            $searchLower = strtolower($searchQuery);
+            
+            $filterFunction = function($item) use ($searchLower) {
+                // Build comprehensive search text
+                $searchText = strtolower(
+                    ($item->title ?? '') . ' ' .
+                    ($item->authors ?? $item->author ?? '') . ' ' .
+                    ($item->department ?? '') . ' ' .
+                    ($item->program ?? '') . ' ' .
+                    ($item->tags ?? $item->keywords ?? '') . ' ' .
+                    ($item->co_researchers ?? '') . ' ' .
+                    ($item->abstract ?? '') . ' ' .
+                    (isset($item->user) && $item->user ? $item->user->name : '')
+                );
+                return str_contains($searchText, $searchLower);
+            };
+            
+            $mostRecent = $mostRecent->filter($filterFunction)->values();
+            $mostViewed = $mostViewed->filter($filterFunction)->values();
+            $mostPopular = $mostPopular->filter($filterFunction)->values();
+        }
         
         return view('dashboard', compact(
             'approvedStudentResearch',
@@ -96,7 +163,8 @@ class DashboardController extends Controller
             'approvedDissertations',
             'mostRecent',
             'mostViewed',
-            'mostPopular'
+            'mostPopular',
+            'searchQuery'
         ));
     }
 
@@ -139,6 +207,9 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         
+        // Get search query
+        $searchQuery = $request->get('search', '');
+        
         // Get table names from models
         $studentTable = (new StudentResearch)->getTable();
         $facultyTable = (new FacultyResearch)->getTable();
@@ -153,20 +224,25 @@ class DashboardController extends Controller
 
         // Check if student research table exists and get data
         if (Schema::hasTable($studentTable)) {
-            $studentColumns = ['id', 'title', 'department', 'status', 'created_at', 'user_id'];
+            $studentColumns = ['id', 'title', 'department', 'status', 'created_at', 'user_id', 'authors', 'program', 'tags'];
             if (Schema::hasColumn($studentTable, 'rejection_reason')) {
                 $studentColumns[] = 'rejection_reason';
             }
             
-            // If user has view-any permission, show all student research, otherwise only their own
-            $studentQuery = StudentResearch::select($studentColumns);
+            // History page should always show only the user's own research
+            $studentQuery = StudentResearch::select($studentColumns)
+                ->where('user_id', $user->id);
             
-            if ($user->hasPermissionTo('view-any student-research') || $user->hasRole('admin')) {
-                // Show all student research - load user relationship
-                $studentQuery->with('user');
-            } else {
-                // Show only their own research
-                $studentQuery->where('user_id', $user->id);
+            // Apply search filter
+            if (!empty($searchQuery)) {
+                $searchTerm = '%' . $searchQuery . '%';
+                $studentQuery->where(function($q) use ($searchTerm) {
+                    $q->where('title', 'LIKE', $searchTerm)
+                      ->orWhere('authors', 'LIKE', $searchTerm)
+                      ->orWhere('department', 'LIKE', $searchTerm)
+                      ->orWhere('program', 'LIKE', $searchTerm)
+                      ->orWhere('tags', 'LIKE', $searchTerm);
+                });
             }
             
             $studentResearch = $studentQuery->get()
@@ -185,20 +261,27 @@ class DashboardController extends Controller
 
         // Check if faculty research table exists and get data
         if (Schema::hasTable($facultyTable)) {
-            $facultyColumns = ['id', 'title', 'department', 'status', 'created_at', 'user_id'];
+            $facultyColumns = ['id', 'title', 'department', 'status', 'created_at', 'user_id', 'co_researchers', 'tags'];
             if (Schema::hasColumn($facultyTable, 'rejection_reason')) {
                 $facultyColumns[] = 'rejection_reason';
             }
             
-            // If user has view-any permission, show all faculty research, otherwise only their own
-            $facultyQuery = FacultyResearch::select($facultyColumns);
+            // History page should always show only the user's own research
+            $facultyQuery = FacultyResearch::select($facultyColumns)
+                ->where('user_id', $user->id);
             
-            if ($user->hasPermissionTo('view-any faculty-research') || $user->hasRole('admin')) {
-                // Show all faculty research - load user relationship
-                $facultyQuery->with('user');
-            } else {
-                // Show only their own research
-                $facultyQuery->where('user_id', $user->id);
+            // Apply search filter
+            if (!empty($searchQuery)) {
+                $searchTerm = '%' . $searchQuery . '%';
+                $facultyQuery->where(function($q) use ($searchTerm) {
+                    $q->where('title', 'LIKE', $searchTerm)
+                      ->orWhere('co_researchers', 'LIKE', $searchTerm)
+                      ->orWhere('department', 'LIKE', $searchTerm)
+                      ->orWhere('tags', 'LIKE', $searchTerm)
+                      ->orWhereHas('user', function($userQuery) use ($searchTerm) {
+                          $userQuery->where('name', 'LIKE', $searchTerm);
+                      });
+                });
             }
             
             $facultyResearch = $facultyQuery->get()
@@ -217,14 +300,26 @@ class DashboardController extends Controller
 
         // Check if thesis table exists and get data
         if (Schema::hasTable($thesisTable)) {
-            $thesisColumns = ['id', 'title', 'department', 'status', 'created_at'];
+            $thesisColumns = ['id', 'title', 'department', 'status', 'created_at', 'author', 'program', 'keywords'];
             if (Schema::hasColumn($thesisTable, 'rejection_reason')) {
                 $thesisColumns[] = 'rejection_reason';
             }
             
-            $theses = Thesis::where('user_id', $user->id)
-                ->select($thesisColumns)
-                ->get()
+            $thesisQuery = Thesis::where('user_id', $user->id)->select($thesisColumns);
+            
+            // Apply search filter
+            if (!empty($searchQuery)) {
+                $searchTerm = '%' . $searchQuery . '%';
+                $thesisQuery->where(function($q) use ($searchTerm) {
+                    $q->where('title', 'LIKE', $searchTerm)
+                      ->orWhere('author', 'LIKE', $searchTerm)
+                      ->orWhere('department', 'LIKE', $searchTerm)
+                      ->orWhere('program', 'LIKE', $searchTerm)
+                      ->orWhere('keywords', 'LIKE', $searchTerm);
+                });
+            }
+            
+            $theses = $thesisQuery->get()
                 ->map(function ($item) {
                     $item->type = 'thesis';
                     if (!isset($item->rejection_reason)) {
@@ -240,14 +335,26 @@ class DashboardController extends Controller
 
         // Check if dissertation table exists and get data
         if (Schema::hasTable($dissertationTable)) {
-            $dissertationColumns = ['id', 'title', 'department', 'status', 'created_at'];
+            $dissertationColumns = ['id', 'title', 'department', 'status', 'created_at', 'author', 'program', 'keywords'];
             if (Schema::hasColumn($dissertationTable, 'rejection_reason')) {
                 $dissertationColumns[] = 'rejection_reason';
             }
             
-            $dissertations = Dissertation::where('user_id', $user->id)
-                ->select($dissertationColumns)
-                ->get()
+            $dissertationQuery = Dissertation::where('user_id', $user->id)->select($dissertationColumns);
+            
+            // Apply search filter
+            if (!empty($searchQuery)) {
+                $searchTerm = '%' . $searchQuery . '%';
+                $dissertationQuery->where(function($q) use ($searchTerm) {
+                    $q->where('title', 'LIKE', $searchTerm)
+                      ->orWhere('author', 'LIKE', $searchTerm)
+                      ->orWhere('department', 'LIKE', $searchTerm)
+                      ->orWhere('program', 'LIKE', $searchTerm)
+                      ->orWhere('keywords', 'LIKE', $searchTerm);
+                });
+            }
+            
+            $dissertations = $dissertationQuery->get()
                 ->map(function ($item) {
                     $item->type = 'dissertation';
                     if (!isset($item->rejection_reason)) {
@@ -288,6 +395,7 @@ class DashboardController extends Controller
             [
                 'path' => $request->url(),
                 'pageName' => 'page',
+                'query' => $request->query(), // Preserve search query in pagination links
             ]
         );
 
@@ -297,6 +405,7 @@ class DashboardController extends Controller
             'approvedCount' => $approvedCount,
             'rejectedCount' => $rejectedCount,
             'totalCount' => $totalCount,
+            'searchQuery' => $searchQuery,
         ]);
     }
     /**

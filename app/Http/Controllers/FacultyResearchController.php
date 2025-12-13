@@ -88,16 +88,20 @@ class FacultyResearchController extends Controller
         $research = FacultyResearch::with(['user', 'approvedBy'])->findOrFail($id);
         $this->authorize('view', $research);
         
-        // If not admin, only show approved research
-        if (!$research->user || (auth()->id() !== $research->user_id && !auth()->user()->hasRole('admin'))) {
-            if ($research->status !== 'approved') {
-                abort(404);
-            }
+        $user = auth()->user();
+        $isOwner = $research->user_id === $user->id;
+        $isAdmin = $user->hasRole('admin');
+        
+        // Allow owner and admin to view any status
+        // Others can only view approved research
+        if (!$isOwner && !$isAdmin && $research->status !== 'approved') {
+            abort(404, 'Research not found or not available');
         }
         
-        $research->incrementViews();
+        // Track view (single source of truth - ResearchAnalytic)
+        \App\Models\ResearchAnalytic::trackView('faculty', $id, request());
         
-        // Get analytics
+        // Get analytics from ResearchAnalytic (single source of truth)
         $viewCount = \App\Models\ResearchAnalytic::getViewCount('faculty', $id);
         $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('faculty', $id);
         
@@ -108,9 +112,10 @@ class FacultyResearchController extends Controller
     {
         $research = FacultyResearch::with(['user', 'approvedBy'])->where('status', 'approved')->findOrFail($id);
         
-        $research->incrementViews();
+        // Track view (single source of truth - ResearchAnalytic)
+        \App\Models\ResearchAnalytic::trackView('faculty', $id, request());
         
-        // Get analytics
+        // Get analytics from ResearchAnalytic (single source of truth)
         $viewCount = \App\Models\ResearchAnalytic::getViewCount('faculty', $id);
         $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('faculty', $id);
         
@@ -183,6 +188,37 @@ class FacultyResearchController extends Controller
         }
         
         return response()->download($filePath, 'Faculty_Research_' . $research->id . '.pdf');
+    }
+
+    public function viewPdf($id)
+    {
+        $research = FacultyResearch::findOrFail($id);
+        $this->authorize('view', $research);
+        
+        $user = auth()->user();
+        $isOwner = $research->user_id === $user->id;
+        $isAdmin = $user->hasRole('admin');
+        
+        // Allow owner and admin to view any status
+        // Others can only view approved research
+        if (!$isOwner && !$isAdmin && $research->status !== 'approved') {
+            abort(404, 'Research not found or not available');
+        }
+        
+        if (!$research->research_file) {
+            abort(404, 'File not found');
+        }
+        
+        $filePath = storage_path('app/public/' . $research->research_file);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'File not found on server');
+        }
+        
+        return response()->file($filePath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . ($research->title ?: 'Faculty_Research_' . $research->id) . '.pdf"',
+        ]);
     }
 
     public function edit($id)
