@@ -222,12 +222,10 @@
                 <!-- Logo -->
                 <div class="flex items-center">
                     <div class="flex-shrink-0 flex items-center">
-                        <div class="h-10 w-10 bg-white/10 rounded-xl flex items-center justify-center mr-3">
-                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                            </svg>
-                        </div>
-                        <h1 class="text-xl font-bold text-white">USPF Research Archive</h1>
+                        <a href="{{ route('welcome') }}" class="flex items-center space-x-2">
+                            <img src="{{ asset('images/logo.png') }}" alt="USPF Logo" class="h-9 w-auto" />
+                            <h1 class="text-xl font-bold text-white">USPF Research Archive</h1>
+                        </a>
                     </div>
                 </div>
 
@@ -249,6 +247,9 @@
                                 <a href="{{ url('/dashboard') }}" class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">Dashboard</a>
                             @else
                                 <a href="{{ route('login') }}" class="text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">Log in</a>
+                                @if (Route::has('register'))
+                                    <a href="{{ route('register') }}" class="btn-secondary px-4 py-2 rounded-lg text-sm font-semibold">Register</a>
+                                @endif
                             @endauth
                         @endif
                     </div>
@@ -281,7 +282,10 @@
                     @auth
                         <a href="{{ url('/dashboard') }}" class="btn-primary text-white block w-full text-center px-4 py-2 rounded-lg text-sm font-semibold mb-2">Dashboard</a>
                     @else
-                        <a href="{{ route('login') }}" class="text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Log in</a>
+                        <a href="{{ route('login') }}" class="text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 mb-2">Log in</a>
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="btn-secondary block w-full text-center px-4 py-2 rounded-lg text-sm font-semibold">Register</a>
+                        @endif
                     @endif
                 @endif
             </div>
@@ -308,9 +312,9 @@
                     <a href="{{ route('research.by-department') }}" class="btn-primary text-white px-8 py-4 rounded-xl text-lg font-semibold shadow-lg">
                         Explore Research
                     </a>
-                    @if (Route::has('login') && !auth()->check())
-                        <a href="{{ route('login') }}" class="btn-secondary px-8 py-4 rounded-xl text-lg font-semibold shadow-lg">
-                            Sign In
+                    @if (Route::has('register') && !auth()->check())
+                        <a href="{{ route('register') }}" class="btn-secondary px-8 py-4 rounded-xl text-lg font-semibold shadow-lg">
+                            Sign Up
                         </a>
                     @endif
                 </div>
@@ -743,12 +747,10 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
                 <div>
                     <div class="flex items-center mb-4">
-                        <div class="h-10 w-10 bg-white/20 rounded-xl flex items-center justify-center mr-3">
-                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold">USPF Research Archive</h3>
+                        <a href="{{ route('welcome') }}" class="flex items-center space-x-2">
+                            <img src="{{ asset('images/logo.png') }}" alt="USPF Logo" class="h-10 w-auto" />
+                            <h3 class="text-xl font-bold">USPF Research Archive</h3>
+                        </a>
                     </div>
                     <p class="text-white/70 leading-relaxed">Promoting academic excellence through research collaboration and knowledge sharing.</p>
                 </div>

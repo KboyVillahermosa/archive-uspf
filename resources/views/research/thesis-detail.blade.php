@@ -389,7 +389,15 @@
                             <h3 class="text-lg font-medium text-[#26225C]">Quick Actions</h3>
                         </div>
                         <div class="space-y-4">
-                            @if($thesis->document_file)
+                            @php
+                                $isAdmin = false;
+                                try {
+                                    $isAdmin = auth()->user()->hasRole('admin') || auth()->user()->role === 'admin';
+                                } catch (\Exception $e) {
+                                    $isAdmin = auth()->user()->role === 'admin';
+                                }
+                            @endphp
+                            @if($thesis->document_file && $isAdmin)
                                 <a href="{{ route('thesis.view.pdf', $thesis->id) }}" 
                                    target="_blank"
                                    class="flex items-center justify-center w-full px-6 py-3 bg-[#FFC72C] hover:bg-[#e6b326] text-[#26225C] font-medium rounded-xl transition-colors">
