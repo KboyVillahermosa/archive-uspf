@@ -69,4 +69,20 @@ class ResearchAnalytic extends Model
             ->where('action', 'download')
             ->count();
     }
+
+    /**
+     * Get both view and download counts for a research item
+     * Following MVC best practices - centralized data retrieval
+     *
+     * @param string $researchType
+     * @param int $researchId
+     * @return array ['views' => int, 'downloads' => int]
+     */
+    public static function getAnalytics($researchType, $researchId)
+    {
+        return [
+            'views' => self::getViewCount($researchType, $researchId),
+            'downloads' => self::getDownloadCount($researchType, $researchId),
+        ];
+    }
 }

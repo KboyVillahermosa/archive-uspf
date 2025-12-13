@@ -94,17 +94,20 @@ class StudentResearchController extends Controller
         $research = StudentResearch::with('user')->findOrFail($id);
         $this->authorize('view', $research);
         
-        // If not admin and not owner, only show approved research
-        if (!$research->user || (auth()->id() !== $research->user_id && !auth()->user()->hasRole('admin'))) {
-            if ($research->status !== 'approved') {
-                abort(404);
-            }
+        $user = auth()->user();
+        $isOwner = $research->user_id === $user->id;
+        $isAdmin = $user->hasRole('admin');
+        
+        // Allow owner and admin to view any status
+        // Others can only view approved research
+        if (!$isOwner && !$isAdmin && $research->status !== 'approved') {
+            abort(404, 'Research not found or not available');
         }
         
-        // Track view
+        // Track view (single source of truth - ResearchAnalytic)
         ResearchAnalytic::trackView('student', $id, request());
         
-        // Get analytics
+        // Get analytics from ResearchAnalytic (single source of truth)
         $viewCount = ResearchAnalytic::getViewCount('student', $id);
         $downloadCount = ResearchAnalytic::getDownloadCount('student', $id);
         
@@ -194,6 +197,38 @@ class StudentResearchController extends Controller
         }
         
         return response()->download($filePath, $research->title . '.pdf');
+    }
+
+    public function viewPdf($id)
+    {
+        $research = StudentResearch::findOrFail($id);
+        $this->authorize('view', $research);
+        
+        $user = auth()->user();
+        $isOwner = $research->user_id === $user->id;
+        $isAdmin = $user->hasRole('admin');
+        
+        // Allow owner and admin to view any status
+        // Others can only view approved research
+        if (!$isOwner && !$isAdmin && $research->status !== 'approved') {
+            abort(404, 'Research not found or not available');
+        }
+        
+        if (!$research->research_file) {
+            abort(404, 'File not found');
+        }
+        
+        // Files are stored on the public disk (storage/app/public)
+        $filePath = storage_path('app/public/' . $research->research_file);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'File not found on server');
+        }
+        
+        return response()->file($filePath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $research->title . '.pdf"',
+        ]);
     }
 
     public function edit($id)

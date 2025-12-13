@@ -1,25 +1,32 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
+    <div class="min-h-screen bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-4xl font-light text-[#26225C] mb-2">Profile Settings</h1>
+                <p class="text-gray-600">Manage your account information and preferences</p>
             </div>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
+            <div class="space-y-6">
+                <!-- Profile Information Card -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-6">
+                        <div class="max-w-2xl">
+                            @include('profile.partials.update-profile-information-form')
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Update Password Card -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-6">
+                        <div class="max-w-2xl">
+                            @include('profile.partials.update-password-form')
+                        </div>
+                    </div>
                 </div>
             </div>
-
-          
         </div>
     </div>
 </x-app-layout>

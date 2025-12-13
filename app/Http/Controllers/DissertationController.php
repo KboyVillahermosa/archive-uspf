@@ -84,13 +84,28 @@ class DissertationController extends Controller
     {
         $dissertation = Dissertation::with(['user', 'approvedBy'])->findOrFail($id);
         
-        if ($dissertation->status !== 'approved') {
-            abort(404);
+        $user = auth()->user();
+        $isOwner = $dissertation->user_id === $user->id;
+        
+        // Check if user is admin (safely)
+        $isAdmin = false;
+        try {
+            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        } catch (\Exception $e) {
+            // If role check fails, just use the role property
+            $isAdmin = $user->role === 'admin';
         }
         
-        // Track view
+        // Allow owner and admin to view any status
+        // Others can only view approved research
+        if (!$isOwner && !$isAdmin && $dissertation->status !== 'approved') {
+            abort(404, 'Research not found or not available');
+        }
+        
+        // Track view (single source of truth - ResearchAnalytic)
         \App\Models\ResearchAnalytic::trackView('dissertation', $id, request());
-        // Get analytics
+        
+        // Get analytics from ResearchAnalytic (single source of truth)
         $viewCount = \App\Models\ResearchAnalytic::getViewCount('dissertation', $id);
         $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('dissertation', $id);
         
@@ -101,9 +116,10 @@ class DissertationController extends Controller
     {
         $dissertation = Dissertation::with(['user', 'approvedBy'])->where('status', 'approved')->findOrFail($id);
         
-        // Track view
+        // Track view (single source of truth - ResearchAnalytic)
         \App\Models\ResearchAnalytic::trackView('dissertation', $id, request());
-        // Get analytics
+        
+        // Get analytics from ResearchAnalytic (single source of truth)
         $viewCount = \App\Models\ResearchAnalytic::getViewCount('dissertation', $id);
         $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('dissertation', $id);
         
@@ -168,6 +184,31 @@ class DissertationController extends Controller
         }
         
         return response()->download($filePath, ($dissertation->title ?: 'Dissertation_' . $dissertation->id) . '.pdf');
+    }
+
+    public function viewPdf($id)
+    {
+        $dissertation = Dissertation::findOrFail($id);
+        
+        // Only allow viewing of approved research
+        if ($dissertation->status !== 'approved') {
+            abort(404, 'Research not found or not available');
+        }
+        
+        if (!$dissertation->document_file) {
+            abort(404, 'File not found');
+        }
+        
+        $filePath = storage_path('app/public/' . $dissertation->document_file);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'File not found on server');
+        }
+        
+        return response()->file($filePath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . ($dissertation->title ?: 'Dissertation_' . $dissertation->id) . '.pdf"',
+        ]);
     }
 
     public function edit($id)

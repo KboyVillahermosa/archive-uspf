@@ -72,6 +72,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/download-file/thesis/{id}', [ThesisController::class, 'downloadFile'])->name('thesis.download.file');
     Route::get('/download-file/dissertation/{id}', [DissertationController::class, 'downloadFile'])->name('dissertation.download.file');
     
+    // PDF viewer routes
+    Route::get('/view-pdf/student/{id}', [StudentResearchController::class, 'viewPdf'])->name('student.view.pdf');
+    Route::get('/view-pdf/faculty/{id}', [FacultyResearchController::class, 'viewPdf'])->name('faculty.view.pdf');
+    Route::get('/view-pdf/thesis/{id}', [ThesisController::class, 'viewPdf'])->name('thesis.view.pdf');
+    Route::get('/view-pdf/dissertation/{id}', [DissertationController::class, 'viewPdf'])->name('dissertation.view.pdf');
+    
     // Research history/tracking routes
     Route::get('/research/history', [DashboardController::class, 'researchHistory'])->name('research.history');
     

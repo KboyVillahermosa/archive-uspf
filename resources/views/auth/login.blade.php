@@ -62,18 +62,7 @@
                 </div>
                 
                 <!-- Welcome Message -->
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back!</h1>
-                
-                <!-- Register Prompt -->
-                @if (Route::has('register'))
-                <p class="text-gray-600 mb-8">
-                    Don't have an account? 
-                    <a href="{{ route('register') }}" class="text-[#26225C] font-semibold underline hover:text-[#3a3770] transition-colors">
-                        Create a new account now
-                    </a>
-                    , it's FREE! Takes less than a minute.
-                </p>
-                @endif
+                <h1 class="text-3xl font-bold text-gray-900 mb-8">Welcome Back!</h1>
                 
                 <form method="POST" action="{{ route('login') }}" class="space-y-6">
                     @csrf
@@ -114,18 +103,6 @@
                             {{ __('Login Now') }}
                         </x-primary-button>
                     </div>
-
-                    <!-- Forgot Password -->
-                    @if (Route::has('password.request'))
-                    <div class="text-center">
-                        <p class="text-sm text-gray-600">
-                            Forget password 
-                            <a href="{{ route('password.request') }}" class="text-[#26225C] font-semibold underline hover:text-[#3a3770] transition-colors">
-                                Click here
-                            </a>
-                        </p>
-                    </div>
-                    @endif
                 </form>
             </div>
         </div>
