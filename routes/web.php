@@ -115,6 +115,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/research', [AdminController::class, 'allResearch'])->name('research');
     Route::get('/research/filter-form', [AdminController::class, 'filterForm'])->name('research.filter-form');
     Route::get('/pending-research', [AdminController::class, 'pendingResearch'])->name('pending-research');
+    Route::get('/downloads-views', [AdminController::class, 'downloadsViews'])->name('downloads-views');
     
     // Student research approval
     Route::get('/approve/student/{id}', [AdminController::class, 'approveStudentForm'])->name('approve.student.form');

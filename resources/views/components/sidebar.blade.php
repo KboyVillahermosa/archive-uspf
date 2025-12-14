@@ -156,6 +156,25 @@
                 </a>
             @endif
 
+            @if($isAdmin)
+                <!-- Downloads & Views (admin only) -->
+                <a href="{{ route('admin.downloads-views') }}" 
+                   class="flex items-center text-sm font-medium rounded-lg transition-all duration-200 group {{ request()->routeIs('admin.downloads-views') ? 'bg-[#FFC72C] text-[#26225C] shadow-md' : 'text-white hover:bg-[#1a1840] hover:text-[#FFC72C]' }}"
+                   :class="expanded ? 'px-4 py-3 justify-start' : 'px-2 py-3 justify-center'">
+                    <svg class="w-5 h-5 flex-shrink-0" :class="expanded ? 'mr-3' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <span x-show="expanded" 
+                          x-transition:enter="transition ease-out duration-200 delay-100" 
+                          x-transition:enter-start="opacity-0" 
+                          x-transition:enter-end="opacity-100" 
+                          x-transition:leave="transition ease-in duration-150" 
+                          x-transition:leave-start="opacity-100" 
+                          x-transition:leave-end="opacity-0"
+                          class="whitespace-nowrap">Downloads & Views</span>
+                </a>
+            @endif
+
             @if($isFaculty)
                 <!-- Upload Research (faculty only) -->
                 <a href="{{ route('faculty.upload') }}" 
@@ -329,6 +348,18 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
                     </svg>
                     <span>Roles & Permissions</span>
+                </a>
+            @endif
+
+            @if($isAdmin)
+                <!-- Downloads & Views -->
+                <a href="{{ route('admin.downloads-views') }}" 
+                   @click="mobileOpen = false"
+                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.downloads-views') ? 'bg-[#FFC72C] text-[#26225C] shadow-md' : 'text-white hover:bg-[#1a1840] hover:text-yellow-300' }}">
+                    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <span>Downloads & Views</span>
                 </a>
             @endif
 

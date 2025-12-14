@@ -8,9 +8,11 @@ use App\Models\Thesis;
 use App\Models\Dissertation;
 use App\Models\User;
 use App\Models\Student;
+use App\Models\ResearchAnalytic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
@@ -77,17 +79,17 @@ class AdminController extends Controller
             // Apply department filtering for faculty users
             if ($isFaculty && $userDepartment) {
                 $deptCounts = $deptCounts
-                    ->merge(StudentResearch::where('status','approved')->where('department', $userDepartment)->select('department', \DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'))
-                    ->merge(FacultyResearch::where('status','approved')->where('department', $userDepartment)->select('department', \DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'))
-                    ->merge(Thesis::where('status','approved')->where('department', $userDepartment)->select('department', \DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'))
-                    ->merge(Dissertation::where('status','approved')->where('department', $userDepartment)->select('department', \DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'));
+                    ->merge(StudentResearch::where('status','approved')->where('department', $userDepartment)->select('department', DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'))
+                    ->merge(FacultyResearch::where('status','approved')->where('department', $userDepartment)->select('department', DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'))
+                    ->merge(Thesis::where('status','approved')->where('department', $userDepartment)->select('department', DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'))
+                    ->merge(Dissertation::where('status','approved')->where('department', $userDepartment)->select('department', DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'));
             } else {
                 // Admin sees all departments
                 $deptCounts = $deptCounts
-                    ->merge(StudentResearch::where('status','approved')->select('department', \DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'))
-                    ->merge(FacultyResearch::where('status','approved')->select('department', \DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'))
-                    ->merge(Thesis::where('status','approved')->select('department', \DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'))
-                    ->merge(Dissertation::where('status','approved')->select('department', \DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'));
+                    ->merge(StudentResearch::where('status','approved')->select('department', DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'))
+                    ->merge(FacultyResearch::where('status','approved')->select('department', DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'))
+                    ->merge(Thesis::where('status','approved')->select('department', DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'))
+                    ->merge(Dissertation::where('status','approved')->select('department', DB::raw('count(*) as total'))->groupBy('department')->pluck('total','department'));
             }
 
             $departmentToCount = [];
@@ -103,14 +105,14 @@ class AdminController extends Controller
             if ($isFaculty && $userDepartment) {
                 $programCounts = StudentResearch::where('status','approved')
                     ->where('department', $userDepartment)
-                    ->select('program', \DB::raw('count(*) as total'))
+                    ->select('program', DB::raw('count(*) as total'))
                     ->groupBy('program')
                     ->orderByDesc('total')
                     ->limit(8)
                     ->get();
             } else {
                 $programCounts = StudentResearch::where('status','approved')
-                    ->select('program', \DB::raw('count(*) as total'))
+                    ->select('program', DB::raw('count(*) as total'))
                     ->groupBy('program')
                     ->orderByDesc('total')
                     ->limit(8)
@@ -1159,5 +1161,157 @@ class AdminController extends Controller
             return response()->json(['status' => 'success', 'message' => $msg]);
         }
         return back()->with('success', $msg);
+    }
+
+    public function downloadsViews()
+    {
+        $user = auth()->user();
+        
+        // Check if user is admin
+        $isAdmin = $user->hasRole('admin') || ($user->role === 'admin');
+        
+        if (!$isAdmin) {
+            abort(403, 'Access denied. Admin privileges required.');
+        }
+
+        // Get most viewed research (top 20)
+        $mostViewed = DB::table('research_analytics')
+            ->select('research_type', 'research_id', DB::raw('COUNT(*) as view_count'))
+            ->where('action', 'view')
+            ->groupBy('research_type', 'research_id')
+            ->orderBy('view_count', 'desc')
+            ->limit(20)
+            ->get();
+
+        // Get most downloaded research (top 20)
+        $mostDownloaded = DB::table('research_analytics')
+            ->select('research_type', 'research_id', DB::raw('COUNT(*) as download_count'))
+            ->where('action', 'download')
+            ->groupBy('research_type', 'research_id')
+            ->orderBy('download_count', 'desc')
+            ->limit(20)
+            ->get();
+
+        // Get recent downloads with purpose and notes (last 20)
+        $recentDownloads = ResearchAnalytic::where('action', 'download')
+            ->orderBy('created_at', 'desc')
+            ->limit(20)
+            ->get();
+
+        // Get recent approved research (last 20)
+        $recentResearch = collect();
+        
+        // Get recent from each research type
+        $recentStudent = StudentResearch::where('status', 'approved')
+            ->orderBy('approved_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function($item) {
+                $item->research_type = 'student';
+                $item->view_count = ResearchAnalytic::getViewCount('student', $item->id);
+                $item->download_count = ResearchAnalytic::getDownloadCount('student', $item->id);
+                return $item;
+            });
+        
+        $recentFaculty = FacultyResearch::where('status', 'approved')
+            ->orderBy('approved_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function($item) {
+                $item->research_type = 'faculty';
+                $item->view_count = ResearchAnalytic::getViewCount('faculty', $item->id);
+                $item->download_count = ResearchAnalytic::getDownloadCount('faculty', $item->id);
+                return $item;
+            });
+        
+        $recentThesis = Thesis::where('status', 'approved')
+            ->orderBy('approved_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function($item) {
+                $item->research_type = 'thesis';
+                $item->view_count = ResearchAnalytic::getViewCount('thesis', $item->id);
+                $item->download_count = ResearchAnalytic::getDownloadCount('thesis', $item->id);
+                return $item;
+            });
+        
+        $recentDissertation = Dissertation::where('status', 'approved')
+            ->orderBy('approved_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function($item) {
+                $item->research_type = 'dissertation';
+                $item->view_count = ResearchAnalytic::getViewCount('dissertation', $item->id);
+                $item->download_count = ResearchAnalytic::getDownloadCount('dissertation', $item->id);
+                return $item;
+            });
+
+        $recentResearch = $recentResearch
+            ->merge($recentStudent)
+            ->merge($recentFaculty)
+            ->merge($recentThesis)
+            ->merge($recentDissertation)
+            ->sortByDesc(function($item) {
+                return $item->approved_at ?? $item->created_at;
+            })
+            ->take(20);
+
+        // Enrich most viewed with research details
+        $mostViewedEnriched = $mostViewed->map(function($item) {
+            $research = $this->getResearchByType($item->research_type, $item->research_id);
+            if ($research) {
+                $research->view_count = $item->view_count;
+                $research->research_type = $item->research_type;
+                return $research;
+            }
+            return null;
+        })->filter();
+
+        // Enrich most downloaded with research details
+        $mostDownloadedEnriched = $mostDownloaded->map(function($item) {
+            $research = $this->getResearchByType($item->research_type, $item->research_id);
+            if ($research) {
+                $research->download_count = $item->download_count;
+                $research->research_type = $item->research_type;
+                return $research;
+            }
+            return null;
+        })->filter();
+
+        // Enrich recent downloads with research details and purpose/notes
+        $recentDownloadsEnriched = $recentDownloads->map(function($download) {
+            $research = $this->getResearchByType($download->research_type, $download->research_id);
+            if ($research) {
+                $research->download_purpose = $download->download_purpose;
+                $research->download_notes = $download->download_notes;
+                $research->download_date = $download->created_at;
+                $research->research_type = $download->research_type;
+                return $research;
+            }
+            return null;
+        })->filter();
+
+        return view('admin.downloads-views', [
+            'mostViewed' => $mostViewedEnriched,
+            'mostDownloaded' => $mostDownloadedEnriched,
+            'recentDownloads' => $recentDownloadsEnriched,
+            'recentResearch' => $recentResearch
+        ]);
+    }
+
+    private function getResearchByType($type, $id)
+    {
+        switch ($type) {
+            case 'student':
+                return StudentResearch::find($id);
+            case 'faculty':
+                return FacultyResearch::find($id);
+            case 'thesis':
+                return Thesis::find($id);
+            case 'dissertation':
+                return Dissertation::find($id);
+            default:
+                return null;
+        }
     }
 }
