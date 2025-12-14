@@ -86,8 +86,42 @@ class RegisteredUserController extends Controller
         // Assign student role
         $user->assignRole('student');
 
+        // #region agent log
+        $mailConfig = [
+            'mail_mailer_env' => env('MAIL_MAILER'),
+            'mail_mailer_config' => config('mail.default'),
+            'mail_host' => env('MAIL_HOST'),
+            'mail_port' => env('MAIL_PORT'),
+            'mail_username' => env('MAIL_USERNAME'),
+            'has_mail_password' => !empty(env('MAIL_PASSWORD')),
+            'mail_from_address' => env('MAIL_FROM_ADDRESS'),
+            'mail_from_name' => env('MAIL_FROM_NAME'),
+            'mail_from_config' => config('mail.from'),
+            'app_url' => env('APP_URL'),
+            'app_url_config' => config('app.url'),
+            'queue_connection' => config('queue.default'),
+            'queue_driver' => env('QUEUE_CONNECTION'),
+        ];
+        file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode(['id'=>'log_'.time().'_reg1','timestamp'=>time()*1000,'location'=>'RegisteredUserController.php:88','message'=>'Registration - Full mail config before sending','data'=>array_merge($mailConfig,['user_id'=>$user->id,'email'=>$user->email]),'sessionId'=>'debug-session','runId'=>'run1','hypothesisId'=>'A,B,C'])."\n", FILE_APPEND);
+        // #endregion
+
         // Send verification email
-        event(new Registered($user));
+        try {
+            // #region agent log
+            file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode(['id'=>'log_'.time().'_reg2','timestamp'=>time()*1000,'location'=>'RegisteredUserController.php:95','message'=>'Dispatching Registered event','data'=>['user_id'=>$user->id,'email'=>$user->email,'event'=>'Registered'],'sessionId'=>'debug-session','runId'=>'run1','hypothesisId'=>'D'])."\n", FILE_APPEND);
+            // #endregion
+            
+            event(new Registered($user));
+            
+            // #region agent log
+            file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode(['id'=>'log_'.time().'_reg3','timestamp'=>time()*1000,'location'=>'RegisteredUserController.php:100','message'=>'Registered event dispatched successfully','data'=>['user_id'=>$user->id,'email'=>$user->email,'queue_connection'=>config('queue.default'),'is_queued'=>config('queue.default')!=='sync'],'sessionId'=>'debug-session','runId'=>'run1','hypothesisId'=>'D'])."\n", FILE_APPEND);
+            // #endregion
+        } catch (\Exception $e) {
+            // #region agent log
+            file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode(['id'=>'log_'.time().'_reg4','timestamp'=>time()*1000,'location'=>'RegisteredUserController.php:105','message'=>'Error dispatching Registered event','data'=>['user_id'=>$user->id,'email'=>$user->email,'error'=>$e->getMessage(),'class'=>get_class($e),'file'=>$e->getFile(),'line'=>$e->getLine()],'sessionId'=>'debug-session','runId'=>'run1','hypothesisId'=>'E'])."\n", FILE_APPEND);
+            // #endregion
+            \Log::error('Registration email error: ' . $e->getMessage(), ['exception' => $e]);
+        }
 
         // Auto-login user so they can access verification notice page
         Auth::login($user);
