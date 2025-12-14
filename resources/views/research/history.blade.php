@@ -193,7 +193,7 @@
                 <div class="mb-6">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
                         <div>
-                            <h2 class="text-2xl font-light text-[#26225C] mb-1">Research Submissions</h2>
+                    <h2 class="text-2xl font-light text-[#26225C] mb-1">Research Submissions</h2>
                             <p class="text-sm text-gray-500">{{ $allResearch->total() }} research items</p>
                         </div>
                         

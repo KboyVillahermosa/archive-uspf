@@ -111,7 +111,7 @@ class DashboardController extends Controller
 
         // When searching, fetch more analytics results
         $analyticsLimit = !empty($searchQuery) ? 50 : 6;
-        
+
         $mostViewedRaw = (clone $analytics)
             ->orderByDesc('views')
             ->limit($analyticsLimit)

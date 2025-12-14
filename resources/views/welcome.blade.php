@@ -224,7 +224,7 @@
                     <div class="flex-shrink-0 flex items-center">
                         <a href="{{ route('welcome') }}" class="flex items-center space-x-2">
                             <img src="{{ asset('images/logo.png') }}" alt="USPF Logo" class="h-9 w-auto" />
-                            <h1 class="text-xl font-bold text-white">USPF Research Archive</h1>
+                        <h1 class="text-xl font-bold text-white">USPF Research Archive</h1>
                         </a>
                     </div>
                 </div>
@@ -295,9 +295,9 @@
     <!-- Hero Section -->
     <section class="relative w-full h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden">
         <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0" style="filter: brightness(0.75);">
-            <source src="/images/bg.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+        <source src="/images/bg.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
         <div class="absolute inset-0 hero-overlay z-10"></div>
         
         <div class="relative z-20 flex flex-col items-center justify-center w-full h-full px-4 sm:px-6 lg:px-8 animate-fade-in">
@@ -319,8 +319,8 @@
                     @endif
                 </div>
             </div>
-        </div>
-    </section>
+    </div>
+</section>
 
     <!-- Main Content -->
     <main class="py-16 lg:py-24 bg-gray-50">
@@ -330,12 +330,12 @@
                 <div class="text-center mb-12">
                     <h2 class="text-4xl lg:text-5xl font-bold gradient-text mb-4">Research Statistics</h2>
                     <p class="text-xl text-gray-600 max-w-2xl mx-auto">Explore our comprehensive collection of academic research papers and publications</p>
-                </div>
+                    </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    @php
-                        $totalResearch = $approvedStudentResearch->count() + $approvedFacultyResearch->count() + $approvedThesis->count() + $approvedDissertations->count();
-                    @endphp
+                        @php
+                            $totalResearch = $approvedStudentResearch->count() + $approvedFacultyResearch->count() + $approvedThesis->count() + $approvedDissertations->count();
+                        @endphp
                     
                     <div class="stats-card rounded-xl p-8 text-center">
                         <div class="h-20 w-20 bg-[#26225C] rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg">
@@ -398,8 +398,8 @@
                                 </div>
                             </div>
                             <a href="{{ route('research.by-department') }}" class="btn-primary text-white px-6 py-3 rounded-lg text-sm font-semibold whitespace-nowrap">View All</a>
-                        </div>
                     </div>
+                </div>
 
                     <div class="research-grid">
                         @foreach($approvedStudentResearch->take(3) as $research)
@@ -409,7 +409,7 @@
                                         <div class="h-12 w-12 bg-blue-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
                                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                            </svg>
+                                        </svg>
                                         </div>
                                         <span class="badge-student text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Student Research</span>
                                     </div>
@@ -427,7 +427,7 @@
                                         <div class="h-12 w-12 bg-purple-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
                                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                                            </svg>
+                                        </svg>
                                         </div>
                                         <span class="badge-faculty text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Faculty Research</span>
                                     </div>
@@ -470,7 +470,7 @@
                                         <div class="h-12 w-12 bg-green-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
                                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                            </svg>
+                                        </svg>
                                         </div>
                                         <span class="badge-thesis text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Thesis</span>
                                     </div>
@@ -488,7 +488,7 @@
                                         <div class="h-12 w-12 bg-red-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
                                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                            </svg>
+                                        </svg>
                                         </div>
                                         <span class="badge-dissertation text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Dissertation</span>
                                     </div>
@@ -547,7 +547,7 @@
                                         <div class="h-12 w-12 bg-purple-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
                                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                                            </svg>
+                            </svg>
                                         </div>
                                         <span class="badge-faculty text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Faculty Research</span>
                                     </div>
@@ -570,7 +570,7 @@
                         <p class="text-lg lg:text-xl mb-10 opacity-90 max-w-2xl mx-auto">Discover our complete collection of research papers and academic excellence</p>
                         <a href="{{ route('research.by-department') }}" class="btn-secondary px-10 py-4 rounded-xl text-lg font-semibold inline-block">Browse All Research</a>
                     </div>
-                </div>
+                    </div>
                 @else
                 <!-- Empty State -->
                 <div class="text-center py-16 animate-slide-up">
@@ -749,7 +749,7 @@
                     <div class="flex items-center mb-4">
                         <a href="{{ route('welcome') }}" class="flex items-center space-x-2">
                             <img src="{{ asset('images/logo.png') }}" alt="USPF Logo" class="h-10 w-auto" />
-                            <h3 class="text-xl font-bold">USPF Research Archive</h3>
+                        <h3 class="text-xl font-bold">USPF Research Archive</h3>
                         </a>
                     </div>
                     <p class="text-white/70 leading-relaxed">Promoting academic excellence through research collaboration and knowledge sharing.</p>
@@ -821,11 +821,11 @@
                             `;
                         }, 300);
                     } else {
-                        mobileMenu.classList.add('hidden');
-                        mobileMenuButton.setAttribute('aria-expanded', 'false');
-                        hamburgerIcon.innerHTML = `
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        `;
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuButton.setAttribute('aria-expanded', 'false');
+                    hamburgerIcon.innerHTML = `
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    `;
                     }
                 });
             });

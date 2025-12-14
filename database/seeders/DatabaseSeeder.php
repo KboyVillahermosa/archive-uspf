@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
 
         // Create student user (only if doesn't exist)
         $user = User::firstOrCreate(
-            ['email' => 'kvillahermosa_ccs@uspf.edu.ph'],
+            ['email' => 'test_ccs@uspf.edu.ph'],
             [
             'name' => 'Francisco Combong Villahermosa',
             'password' => Hash::make('password'),

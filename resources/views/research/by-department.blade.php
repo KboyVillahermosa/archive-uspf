@@ -80,8 +80,8 @@
                                 <div class="flex items-center space-x-3 mb-2">
                                     <div class="w-10 h-10 bg-[#26225C] bg-opacity-10 rounded-lg flex items-center justify-center">
                                         <svg class="h-6 w-6 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $stats['config']['icon'] }}"></path>
-                                        </svg>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $stats['config']['icon'] }}"></path>
+                                            </svg>
                                     </div>
                                     <h2 class="text-2xl font-light text-[#26225C]">{{ $department }}</h2>
                                 </div>
@@ -106,7 +106,7 @@
                                     @endif
                                 </div>
                             </div>
-
+                            
                             <!-- Research Table -->
                             <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
                                 <div class="overflow-x-auto">
@@ -121,59 +121,59 @@
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-100">
-                                            @foreach($stats['research'] as $research)
-                                                @php
-                                                    $type = '';
-                                                    $route = '';
+                                        @foreach($stats['research'] as $research)
+                                            @php
+                                                $type = '';
+                                                $route = '';
                                                     $typeBadge = '';
-                                                    $typeColor = '';
-                                                    
-                                                    if(isset($research->authors)) {
-                                                        $type = 'Student';
-                                                        $route = route('student.show', $research->id);
-                                                        $author = $research->authors;
-                                                        $typeBadge = 'S';
+                                                $typeColor = '';
+                                                
+                                                if(isset($research->authors)) {
+                                                    $type = 'Student';
+                                                    $route = route('student.show', $research->id);
+                                                    $author = $research->authors;
+                                                    $typeBadge = 'S';
                                                         $typeColor = 'bg-[#26225C] bg-opacity-10 text-[#26225C]';
-                                                    } elseif(isset($research->co_researchers)) {
-                                                        $type = 'Faculty';
-                                                        $route = route('faculty.show', $research->id);
-                                                        $author = $research->user->name ?? 'Unknown';
-                                                        $typeBadge = 'F';
+                                                } elseif(isset($research->co_researchers)) {
+                                                    $type = 'Faculty';
+                                                    $route = route('faculty.show', $research->id);
+                                                    $author = $research->user->name ?? 'Unknown';
+                                                    $typeBadge = 'F';
                                                         $typeColor = 'bg-purple-100 text-purple-700';
-                                                    } elseif(isset($research->author) && isset($research->keywords)) {
-                                                        if(Str::contains($research->keywords, 'doctoral') || ($research->year_completed ?? 0) > 2020) {
-                                                            $type = 'Dissertation';
-                                                            $route = route('dissertation.show', $research->id);
-                                                            $typeBadge = 'D';
+                                                } elseif(isset($research->author) && isset($research->keywords)) {
+                                                    if(Str::contains($research->keywords, 'doctoral') || ($research->year_completed ?? 0) > 2020) {
+                                                        $type = 'Dissertation';
+                                                        $route = route('dissertation.show', $research->id);
+                                                        $typeBadge = 'D';
                                                             $typeColor = 'bg-red-100 text-red-700';
-                                                        } else {
-                                                            $type = 'Thesis';
-                                                            $route = route('thesis.show', $research->id);
-                                                            $typeBadge = 'T';
-                                                            $typeColor = 'bg-green-100 text-green-700';
-                                                        }
-                                                        $author = $research->author;
                                                     } else {
                                                         $type = 'Thesis';
                                                         $route = route('thesis.show', $research->id);
-                                                        $author = $research->author ?? 'Unknown';
                                                         $typeBadge = 'T';
-                                                        $typeColor = 'bg-green-100 text-green-700';
+                                                            $typeColor = 'bg-green-100 text-green-700';
                                                     }
-                                                @endphp
-                                                
+                                                    $author = $research->author;
+                                                } else {
+                                                    $type = 'Thesis';
+                                                    $route = route('thesis.show', $research->id);
+                                                    $author = $research->author ?? 'Unknown';
+                                                    $typeBadge = 'T';
+                                                        $typeColor = 'bg-green-100 text-green-700';
+                                                }
+                                            @endphp
+                                            
                                                 <tr class="hover:bg-gray-50 transition-colors">
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium {{ $typeColor }}">
-                                                            {{ $type }}
-                                                        </span>
+                                                        {{ $type }}
+                                                    </span>
                                                     </td>
                                                     <td class="px-6 py-4">
                                                         <div class="text-sm font-medium text-[#26225C] max-w-md">
                                                             <a href="{{ $route }}" class="hover:text-[#FFC72C] transition-colors">
                                                                 {{ $research->title }}
                                                             </a>
-                                                        </div>
+                                                </div>
                                                     </td>
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <div class="text-sm text-gray-600">{{ Str::limit($author, 40) }}</div>
@@ -181,15 +181,15 @@
                                                     <td class="px-6 py-4 whitespace-nowrap">
                                                         <div class="text-sm text-gray-500">
                                                             {{ $research->approved_at ? $research->approved_at->format('M d, Y') : 'N/A' }}
-                                                        </div>
+                                                </div>
                                                     </td>
                                                     <td class="px-6 py-4 whitespace-nowrap text-center">
                                                         <a href="{{ $route }}" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-[#26225C] bg-[#FFC72C] bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors">
                                                             View
-                                                        </a>
+                                            </a>
                                                     </td>
                                                 </tr>
-                                            @endforeach
+                                        @endforeach
                                         </tbody>
                                     </table>
                                 </div>

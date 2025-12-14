@@ -13,16 +13,16 @@
                 <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                     <div class="p-6">
                         <div class="max-w-2xl">
-                            @include('profile.partials.update-profile-information-form')
+                    @include('profile.partials.update-profile-information-form')
                         </div>
-                    </div>
                 </div>
+            </div>
 
                 <!-- Update Password Card -->
                 <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                     <div class="p-6">
                         <div class="max-w-2xl">
-                            @include('profile.partials.update-password-form')
+                    @include('profile.partials.update-password-form')
                         </div>
                     </div>
                 </div>

@@ -80,15 +80,15 @@ class ResearchSeeder extends Seeder
                     ],
                     [
                         'name' => "Student {$i} - {$deptShortName}",
-                        'password' => Hash::make('password'),
-                        'role' => 'student',
-                        'status' => 'active',
+                    'password' => Hash::make('password'),
+                    'role' => 'student',
+                    'status' => 'active',
                         'department' => $department->name,
-                        'email_verified_at' => now(),
+                    'email_verified_at' => now(),
                     ]
                 );
                 if (!$user->hasRole('student')) {
-                    $user->assignRole('student');
+                $user->assignRole('student');
                 }
                 $studentUsers->push($user);
             }
@@ -102,20 +102,20 @@ class ResearchSeeder extends Seeder
                     ],
                     [
                         'name' => "Dr. Faculty {$i} - {$deptShortName}",
-                        'password' => Hash::make('password'),
-                        'role' => 'faculty',
-                        'status' => 'active',
+                    'password' => Hash::make('password'),
+                    'role' => 'faculty',
+                    'status' => 'active',
                         'department' => $department->name,
-                        'email_verified_at' => now(),
+                    'email_verified_at' => now(),
                     ]
                 );
                 if (!$user->hasRole('faculty')) {
-                    $user->assignRole('faculty');
+                $user->assignRole('faculty');
                 }
                 $facultyUsers->push($user);
             }
         }
-
+        
         return [
             'students' => $studentUsers,
             'faculty' => $facultyUsers
@@ -568,7 +568,7 @@ class ResearchSeeder extends Seeder
         
         return $path;
     }
-
+    
     private function generateAuthors($primaryAuthor, $count)
     {
         $authors = [$primaryAuthor];

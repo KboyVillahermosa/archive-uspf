@@ -101,7 +101,7 @@ class FacultyResearchController extends Controller
         // Others can only view approved research
         if (!$isOwner && !$isAdmin && $research->status !== 'approved') {
             abort(404, 'Research not found or not available');
-        }
+            }
         
         // Track view (single source of truth - ResearchAnalytic)
         \App\Models\ResearchAnalytic::trackView('faculty', $id, request());

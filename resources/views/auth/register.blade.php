@@ -31,7 +31,7 @@
             
             <!-- Content -->
             <div class="relative z-10 flex flex-col justify-between p-16 text-white">
-                <div>
+        <div>
                     <!-- Logo -->
                     <div class="mb-12">
                         <img src="{{ asset('images/logo.png') }}" alt="USPF Logo" class="h-16 w-auto" />
@@ -87,9 +87,9 @@
                                     required 
                                     autocomplete="family-name" />
                         <x-input-error :messages="$errors->get('last_name')" class="mt-2" />
-                    </div>
+        </div>
 
-                    <!-- Email Address -->
+        <!-- Email Address -->
                     <div>
                         <x-input-label for="email" :value="__('USPF Email Address')" />
                         <x-text-input id="email" 
@@ -106,8 +106,8 @@
                         <p class="mt-1 text-xs text-gray-400">
                             Example: <span class="font-mono">fvillahermosa_ccs@uspf.edu.ph</span>
                         </p>
-                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                    </div>
+            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        </div>
 
                     <!-- Department -->
                     <div>
@@ -142,40 +142,40 @@
                         <x-input-error :messages="$errors->get('program')" class="mt-2" />
                     </div>
 
-                    <!-- Password -->
+        <!-- Password -->
                     <div>
-                        <x-input-label for="password" :value="__('Password')" />
+            <x-input-label for="password" :value="__('Password')" />
                         <x-text-input id="password" 
                                     class="block mt-1 w-full"
-                                    type="password"
-                                    name="password"
+                            type="password"
+                            name="password"
                                     required 
                                     autocomplete="new-password" />
-                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                    </div>
+            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        </div>
 
-                    <!-- Confirm Password -->
+        <!-- Confirm Password -->
                     <div>
-                        <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
                         <x-text-input id="password_confirmation" 
                                     class="block mt-1 w-full"
-                                    type="password"
+                            type="password"
                                     name="password_confirmation" 
                                     required 
                                     autocomplete="new-password" />
-                        <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-                    </div>
+            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        </div>
 
                     <div class="flex items-center justify-between mt-6">
                         <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#26225C]" href="{{ route('login') }}">
-                            {{ __('Already registered?') }}
-                        </a>
+                {{ __('Already registered?') }}
+            </a>
 
                         <x-primary-button class="bg-[#26225C] hover:bg-[#3a3770]">
-                            {{ __('Register') }}
-                        </x-primary-button>
-                    </div>
-                </form>
+                {{ __('Register') }}
+            </x-primary-button>
+        </div>
+    </form>
             </div>
         </div>
     </div>

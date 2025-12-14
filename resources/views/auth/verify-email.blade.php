@@ -44,8 +44,8 @@
                     <p class="text-xl opacity-90 leading-relaxed max-w-md">
                         We've sent a verification link to your email address. Please check your inbox and click the link to verify your account.
                     </p>
-                </div>
-                
+    </div>
+
                 <!-- Copyright -->
                 <div class="text-sm opacity-75">
                     © {{ date('Y') }} USPF Research Archive. All rights reserved.
@@ -83,31 +83,31 @@
                     </div>
 
                     <!-- Success Message -->
-                    @if (session('status') == 'verification-link-sent')
+    @if (session('status') == 'verification-link-sent')
                         <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-r-lg mb-6">
                             <p class="text-sm text-green-700 font-medium">
-                                {{ __('A new verification link has been sent to the email address you provided during registration.') }}
+            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
                             </p>
-                        </div>
-                    @endif
+        </div>
+    @endif
 
                     <!-- Actions -->
                     <div class="space-y-4">
                         <!-- Resend Verification Email -->
-                        <form method="POST" action="{{ route('verification.send') }}">
-                            @csrf
+        <form method="POST" action="{{ route('verification.send') }}">
+            @csrf
                             <button type="submit" class="w-full bg-[#26225C] hover:bg-[#3a3770] text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg">
-                                {{ __('Resend Verification Email') }}
+                    {{ __('Resend Verification Email') }}
                             </button>
-                        </form>
+        </form>
 
                         <!-- Log Out -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
                             <button type="submit" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
-                                {{ __('Log Out') }}
-                            </button>
-                        </form>
+                {{ __('Log Out') }}
+            </button>
+        </form>
                     </div>
 
                     <!-- Help Text -->
