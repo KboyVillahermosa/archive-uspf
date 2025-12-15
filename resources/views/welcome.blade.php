@@ -356,7 +356,7 @@
                         <h2 class="text-3xl sm:text-4xl font-bold gradient-text mb-2">Discover Research</h2>
                         <p class="text-gray-600 text-sm sm:text-base">Search through our comprehensive collection of academic research</p>
                     </div>
-                    
+                
                     <form id="search-form" method="GET" action="{{ route('welcome') }}" class="relative">
                         <div class="relative">
                             <div class="relative flex items-center bg-white rounded-2xl shadow-xl border-2 border-gray-200 hover:border-[#FFC72C] focus-within:border-[#26225C] focus-within:ring-4 focus-within:ring-[#FFC72C]/20 transition-all duration-300">
@@ -367,8 +367,8 @@
                                     <svg id="loading-spinner" class="w-6 h-6 hidden animate-spin" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                </div>
+                            </svg>
+                        </div>
                                 <input 
                                     type="text" 
                                     name="search" 
@@ -400,8 +400,8 @@
                                         </svg>
                                     </button>
                                 </div>
-                            </div>
-                            
+                    </div>
+                    
                             @if(!empty($searchQuery))
                             <div class="mt-4 flex items-center justify-center gap-4 flex-wrap">
                                 <div class="flex items-center gap-2 bg-gradient-to-r from-[#FFC72C]/10 to-[#FFC72C]/5 border border-[#FFC72C]/30 rounded-xl px-4 py-2">
@@ -424,7 +424,7 @@
                                 >
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                    </svg>
+                            </svg>
                                     Reset
                                 </button>
                             </div>
@@ -446,14 +446,14 @@
                                         <span class="px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700 rounded-full text-xs font-medium border border-gray-200">
                                             Departments
                                         </span>
-                                    </div>
-                                </div>
+                        </div>
+                    </div>
                                 <div class="text-center">
                                     <p class="text-xs text-gray-400">
                                         Press <kbd class="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-[10px] font-mono text-gray-600">/</kbd> to focus search
                                     </p>
-                                </div>
-                            </div>
+                        </div>
+                    </div>
                             @endif
                         </div>
                     </form>
@@ -667,8 +667,8 @@
                         <p class="text-gray-600 mb-4">We couldn't find any research matching "<span class="font-semibold">{{ $searchQuery }}</span>"</p>
                         <p class="text-gray-500 mb-8 text-sm">Try adjusting your search terms or <a href="{{ route('welcome') }}" class="text-[#26225C] hover:text-[#FFC72C] font-semibold underline">browse all research</a></p>
                     @else
-                        <h3 class="text-2xl font-bold text-[#26225C] mb-4">No Research Available Yet</h3>
-                        <p class="text-gray-600 mb-8">Check back later for new research publications</p>
+                    <h3 class="text-2xl font-bold text-[#26225C] mb-4">No Research Available Yet</h3>
+                    <p class="text-gray-600 mb-8">Check back later for new research publications</p>
                     @endif
                 </div>
             @endif

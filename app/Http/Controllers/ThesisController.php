@@ -26,6 +26,7 @@ class ThesisController extends Controller
                 'document_file' => 'required|mimes:pdf|max:10240',
                 'abstract_file' => 'required|mimes:pdf|max:10240',
                 'abstract' => 'required|string',
+                'adviser_id' => 'nullable|exists:users,id',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Return JSON error response for AJAX requests

@@ -58,9 +58,9 @@ class ResearchAnalytic extends Model
         if (!$existing) {
             try {
                 $created = self::create([
-                    'research_type' => $researchType,
-                    'research_id' => $researchId,
-                    'action' => 'view',
+                'research_type' => $researchType,
+                'research_id' => $researchId,
+                'action' => 'view',
                     'ip_address' => $ipAddress,
                     'user_agent' => $userAgent,
                     'user_id' => $userId
@@ -93,12 +93,12 @@ class ResearchAnalytic extends Model
         
         try {
             $created = self::create([
-                'research_type' => $researchType,
-                'research_id' => $researchId,
-                'action' => 'download',
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-                'download_purpose' => $purpose,
+            'research_type' => $researchType,
+            'research_id' => $researchId,
+            'action' => 'download',
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'download_purpose' => $purpose,
                 'download_notes' => $notes,
                 'user_id' => $userId
             ]);
@@ -117,7 +117,7 @@ class ResearchAnalytic extends Model
                 'research_type' => $researchType,
                 'research_id' => $researchId,
                 'user_id' => $userId
-            ]);
+        ]);
         }
     }
 

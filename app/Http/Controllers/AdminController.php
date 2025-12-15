@@ -55,6 +55,27 @@ class AdminController extends Controller
             $pendingDissertations = Dissertation::where('status', 'pending')->count();
         }
 
+        // Count research waiting for adviser approval (for admin reminder)
+        $waitingForAdviserApproval = 0;
+        if ($isAdmin) {
+            $waitingForAdviserApproval = StudentResearch::whereNotNull('adviser_id')
+                    ->whereNull('adviser_approved_at')
+                    ->where('status', 'pending')
+                    ->count()
+                + FacultyResearch::whereNotNull('adviser_id')
+                    ->whereNull('adviser_approved_at')
+                    ->where('status', 'pending')
+                    ->count()
+                + Thesis::whereNotNull('adviser_id')
+                    ->whereNull('adviser_approved_at')
+                    ->where('status', 'pending')
+                    ->count()
+                + Dissertation::whereNotNull('adviser_id')
+                    ->whereNull('adviser_approved_at')
+                    ->where('status', 'pending')
+                    ->count();
+        }
+
         // Line chart month selection via offset
         $offset = (int) $request->query('offset', 0);
         if ($offset < 0) { $offset = 0; }
@@ -387,6 +408,7 @@ class AdminController extends Controller
             'pendingFacultyResearch',
             'pendingThesis',
             'pendingDissertations',
+            'waitingForAdviserApproval',
             'monthName',
             'offset',
             'chartData',
@@ -662,12 +684,21 @@ class AdminController extends Controller
             abort(403, 'Access denied. You can only approve research for your assigned course/program.');
         }
         
-        $research->update([
+        $updateData = [
             'status' => 'approved',
             'approved_by' => auth()->id(),
             'approved_at' => now(),
             'admin_notes' => $request->input('notes', 'Approved by admin')
-        ]);
+        ];
+
+        // If admin approves research with assigned adviser that hasn't been approved by adviser yet, mark it as approved
+        $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        if ($isAdmin && $research->adviser_id && !$research->adviser_approved_at) {
+            $updateData['adviser_approved_at'] = now();
+            $updateData['adviser_approved_by'] = auth()->id();
+        }
+
+        $research->update($updateData);
 
         if ($request->expectsJson()) {
             return response()->json(['status' => 'success', 'message' => 'Student research approved successfully!']);
@@ -720,12 +751,21 @@ class AdminController extends Controller
             abort(403, 'Access denied. You can only approve research from your department.');
         }
         
-        $research->update([
+        $updateData = [
             'status' => 'approved',
             'approved_by' => auth()->id(),
             'approved_at' => now(),
             'admin_notes' => $request->input('notes', 'Approved by admin')
-        ]);
+        ];
+
+        // If admin approves research with assigned adviser that hasn't been approved by adviser yet, mark it as approved
+        $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        if ($isAdmin && $research->adviser_id && !$research->adviser_approved_at) {
+            $updateData['adviser_approved_at'] = now();
+            $updateData['adviser_approved_by'] = auth()->id();
+        }
+
+        $research->update($updateData);
 
         if ($request->expectsJson()) {
             return response()->json(['status' => 'success', 'message' => 'Faculty research approved successfully!']);
@@ -774,12 +814,21 @@ class AdminController extends Controller
             abort(403, 'Access denied. You can only approve thesis from your department.');
         }
         
-        $thesis->update([
+        $updateData = [
             'status' => 'approved',
             'approved_by' => auth()->id(),
             'approved_at' => now(),
             'admin_notes' => $request->input('notes', 'Approved by admin')
-        ]);
+        ];
+
+        // If admin approves research with assigned adviser that hasn't been approved by adviser yet, mark it as approved
+        $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        if ($isAdmin && $thesis->adviser_id && !$thesis->adviser_approved_at) {
+            $updateData['adviser_approved_at'] = now();
+            $updateData['adviser_approved_by'] = auth()->id();
+        }
+
+        $thesis->update($updateData);
 
         if ($request->expectsJson()) {
             return response()->json(['status' => 'success', 'message' => 'Thesis approved successfully!']);
@@ -828,12 +877,21 @@ class AdminController extends Controller
             abort(403, 'Access denied. You can only approve dissertations from your department.');
         }
         
-        $dissertation->update([
+        $updateData = [
             'status' => 'approved',
             'approved_by' => auth()->id(),
             'approved_at' => now(),
             'admin_notes' => $request->input('notes', 'Approved by admin')
-        ]);
+        ];
+
+        // If admin approves research with assigned adviser that hasn't been approved by adviser yet, mark it as approved
+        $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        if ($isAdmin && $dissertation->adviser_id && !$dissertation->adviser_approved_at) {
+            $updateData['adviser_approved_at'] = now();
+            $updateData['adviser_approved_by'] = auth()->id();
+        }
+
+        $dissertation->update($updateData);
 
         if ($request->expectsJson()) {
             return response()->json(['status' => 'success', 'message' => 'Dissertation approved successfully!']);
@@ -1658,5 +1716,134 @@ class AdminController extends Controller
             default:
                 return null;
         }
+    }
+
+    public function adviserApprovals()
+    {
+        $user = auth()->user();
+        $isFaculty = $user->hasRole('faculty') || $user->role === 'faculty';
+        
+        if (!$isFaculty) {
+            abort(403, 'Access denied. Faculty privileges required.');
+        }
+
+        // Get research where current user is the adviser and not yet approved by adviser
+        $studentResearch = StudentResearch::where('adviser_id', $user->id)
+            ->whereNull('adviser_approved_at')
+            ->with(['user', 'adviser'])
+            ->latest()
+            ->get();
+
+        $facultyResearch = FacultyResearch::where('adviser_id', $user->id)
+            ->whereNull('adviser_approved_at')
+            ->with(['user', 'adviser'])
+            ->latest()
+            ->get();
+
+        $thesis = Thesis::where('adviser_id', $user->id)
+            ->whereNull('adviser_approved_at')
+            ->with(['user', 'adviser'])
+            ->latest()
+            ->get();
+
+        $dissertations = Dissertation::where('adviser_id', $user->id)
+            ->whereNull('adviser_approved_at')
+            ->with(['user', 'adviser'])
+            ->latest()
+            ->get();
+
+        return view('admin.adviser-approvals', compact(
+            'studentResearch',
+            'facultyResearch',
+            'thesis',
+            'dissertations'
+        ));
+    }
+
+    public function approveAdviser(Request $request, $type, $id)
+    {
+        $user = auth()->user();
+        $isFaculty = $user->hasRole('faculty') || $user->role === 'faculty';
+        
+        if (!$isFaculty) {
+            abort(403, 'Access denied. Faculty privileges required.');
+        }
+
+        $research = $this->getResearchByType($type, $id);
+        
+        if (!$research) {
+            abort(404, 'Research not found.');
+        }
+
+        // Check if current user is the adviser
+        if ($research->adviser_id !== $user->id) {
+            abort(403, 'Access denied. You are not the assigned adviser for this research.');
+        }
+
+        // Check if already approved by adviser
+        if ($research->adviser_approved_at) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This research has already been approved by the adviser.'
+            ], 400);
+        }
+
+        $research->update([
+            'adviser_approved_at' => now(),
+            'adviser_approved_by' => $user->id,
+        ]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Research approved by adviser successfully!'
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Research approved by adviser successfully!');
+    }
+
+    public function rejectAdviser(Request $request, $type, $id)
+    {
+        $user = auth()->user();
+        $isFaculty = $user->hasRole('faculty') || $user->role === 'faculty';
+        
+        if (!$isFaculty) {
+            abort(403, 'Access denied. Faculty privileges required.');
+        }
+
+        $research = $this->getResearchByType($type, $id);
+        
+        if (!$research) {
+            abort(404, 'Research not found.');
+        }
+
+        // Check if current user is the adviser
+        if ($research->adviser_id !== $user->id) {
+            abort(403, 'Access denied. You are not the assigned adviser for this research.');
+        }
+
+        // Check if already approved by adviser
+        if ($research->adviser_approved_at) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This research has already been approved by the adviser.'
+            ], 400);
+        }
+
+        // For rejection, we can clear the adviser_id or add a rejection note
+        // For now, we'll just clear the adviser assignment
+        $research->update([
+            'adviser_id' => null,
+        ]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Research rejected. Adviser assignment removed.'
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Research rejected. Adviser assignment removed.');
     }
 }

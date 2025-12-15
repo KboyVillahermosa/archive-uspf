@@ -33,6 +33,7 @@ class StudentResearchController extends Controller
                 'abstract_file' => 'required|mimes:pdf|max:10240',
                 'abstract' => 'required|string',
                 'tags' => 'nullable|string',
+                'adviser_id' => 'nullable|exists:users,id',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Return JSON error response for AJAX requests
