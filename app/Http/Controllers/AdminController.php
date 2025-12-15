@@ -382,6 +382,50 @@ class AdminController extends Controller
             ];
         }
 
+        // Fetch research waiting for adviser approval (only for admins)
+        $adviserPendingResearch = [];
+        if ($isAdmin) {
+            $adviserPendingStudent = StudentResearch::whereNotNull('adviser_id')
+                ->whereNull('adviser_approved_at')
+                ->where('status', 'pending')
+                ->with(['user', 'adviser'])
+                ->latest()
+                ->limit(10)
+                ->get();
+
+            $adviserPendingFaculty = FacultyResearch::whereNotNull('adviser_id')
+                ->whereNull('adviser_approved_at')
+                ->where('status', 'pending')
+                ->with(['user', 'adviser'])
+                ->latest()
+                ->limit(10)
+                ->get();
+
+            $adviserPendingThesis = Thesis::whereNotNull('adviser_id')
+                ->whereNull('adviser_approved_at')
+                ->where('status', 'pending')
+                ->with(['user', 'adviser'])
+                ->latest()
+                ->limit(10)
+                ->get();
+
+            $adviserPendingDissertations = Dissertation::whereNotNull('adviser_id')
+                ->whereNull('adviser_approved_at')
+                ->where('status', 'pending')
+                ->with(['user', 'adviser'])
+                ->latest()
+                ->limit(10)
+                ->get();
+
+            $adviserPendingResearch = [
+                'student' => $adviserPendingStudent,
+                'faculty' => $adviserPendingFaculty,
+                'thesis' => $adviserPendingThesis,
+                'dissertations' => $adviserPendingDissertations,
+                'total_count' => $adviserPendingStudent->count() + $adviserPendingFaculty->count() + $adviserPendingThesis->count() + $adviserPendingDissertations->count(),
+            ];
+        }
+
         return view('admin.dashboard', compact(
             'pendingStudentResearch',
             'pendingFacultyResearch',
@@ -398,7 +442,8 @@ class AdminController extends Controller
             'chartTopDownloaded',
             'chartTopPopular',
             'studentActivity',
-            'isAdmin'
+            'isAdmin',
+            'adviserPendingResearch'
         ));
     }
 
@@ -865,6 +910,144 @@ class AdminController extends Controller
             return response()->json(['status' => 'success', 'message' => 'Dissertation rejected.']);
         }
         return redirect()->back()->with('success', 'Dissertation rejected.');
+    }
+
+    /**
+     * Get list of faculty members for adviser selection
+     */
+    public function getFacultyList(Request $request)
+    {
+        $query = User::where(function($q) {
+            $q->where('role', 'faculty')
+              ->orWhereHas('roles', function($roleQuery) {
+                  $roleQuery->where('name', 'faculty');
+              });
+        });
+
+        // If search query provided, filter by name or email
+        if ($request->has('q') && $request->q) {
+            $searchTerm = $request->q;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%")
+                  ->orWhere('email', 'like', "%{$searchTerm}%")
+                  ->orWhere('first_name', 'like', "%{$searchTerm}%")
+                  ->orWhere('last_name', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        $faculty = $query->select('id', 'name', 'email', 'department', 'first_name', 'last_name')
+            ->orderBy('name')
+            ->limit(20)
+            ->get()
+            ->map(function($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name ?? ($user->first_name . ' ' . $user->last_name),
+                    'email' => $user->email,
+                    'department' => $user->department ?? 'N/A',
+                ];
+            });
+
+        return response()->json($faculty);
+    }
+
+    /**
+     * Show research pending adviser approval for current faculty user
+     */
+    public function adviserPendingResearch(Request $request)
+    {
+        $user = auth()->user();
+        $isFaculty = $user->hasRole('faculty') || $user->role === 'faculty';
+        
+        if (!$isFaculty) {
+            abort(403, 'Access denied. Only faculty members can view adviser pending research.');
+        }
+
+        // Get research where current user is assigned as adviser and not yet approved
+        $studentResearch = StudentResearch::where('adviser_id', $user->id)
+            ->whereNull('adviser_approved_at')
+            ->where('status', 'pending')
+            ->with('user')
+            ->latest()
+            ->get();
+
+        $facultyResearch = FacultyResearch::where('adviser_id', $user->id)
+            ->whereNull('adviser_approved_at')
+            ->where('status', 'pending')
+            ->with('user')
+            ->latest()
+            ->get();
+
+        $thesis = Thesis::where('adviser_id', $user->id)
+            ->whereNull('adviser_approved_at')
+            ->where('status', 'pending')
+            ->with('user')
+            ->latest()
+            ->get();
+
+        $dissertations = Dissertation::where('adviser_id', $user->id)
+            ->whereNull('adviser_approved_at')
+            ->where('status', 'pending')
+            ->with('user')
+            ->latest()
+            ->get();
+
+        return view('admin.adviser-pending', compact('studentResearch', 'facultyResearch', 'thesis', 'dissertations'));
+    }
+
+    /**
+     * Approve research as adviser
+     */
+    public function approveAsAdviser(Request $request, $type, $id)
+    {
+        $user = auth()->user();
+        $isFaculty = $user->hasRole('faculty') || $user->role === 'faculty';
+        
+        if (!$isFaculty) {
+            abort(403, 'Access denied. Only faculty members can approve as adviser.');
+        }
+
+        $research = null;
+        switch ($type) {
+            case 'student':
+                $research = StudentResearch::findOrFail($id);
+                break;
+            case 'faculty':
+                $research = FacultyResearch::findOrFail($id);
+                break;
+            case 'thesis':
+                $research = Thesis::findOrFail($id);
+                break;
+            case 'dissertation':
+                $research = Dissertation::findOrFail($id);
+                break;
+            default:
+                abort(404, 'Invalid research type.');
+        }
+
+        // Verify that current user is the assigned adviser
+        if ($research->adviser_id !== $user->id) {
+            abort(403, 'Access denied. You are not the assigned adviser for this research.');
+        }
+
+        // Check if already approved by adviser
+        if ($research->adviser_approved_at) {
+            if ($request->expectsJson()) {
+                return response()->json(['status' => 'error', 'message' => 'This research has already been approved by the adviser.'], 400);
+            }
+            return redirect()->back()->with('error', 'This research has already been approved by the adviser.');
+        }
+
+        // Approve as adviser
+        $research->update([
+            'adviser_approved_at' => now(),
+            'adviser_approved_by' => $user->id,
+        ]);
+
+        if ($request->expectsJson()) {
+            return response()->json(['status' => 'success', 'message' => 'Research approved as adviser successfully!']);
+        }
+        return redirect()->back()->with('success', 'Research approved as adviser successfully!');
     }
 
     /**

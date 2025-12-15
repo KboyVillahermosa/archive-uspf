@@ -114,6 +114,39 @@
                                         value="{{ isset($editMode) && $editMode && isset($research) ? $research->tags : old('tags') }}">
                                     <p class="text-xs text-gray-500 mt-1.5">Separate keywords with commas</p>
                                 </div>
+
+                                <!-- Adviser Selection -->
+                                <div id="field-adviser">
+                                    <label for="adviser_id" class="block text-sm font-semibold text-[#26225C] mb-2">
+                                        Adviser <span class="text-gray-400 text-xs font-normal">(Optional)</span>
+                                    </label>
+                                    <div class="relative">
+                                        <input type="text" 
+                                            id="adviser_search" 
+                                            autocomplete="off"
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#26225C] focus:border-[#FFC72C] transition-all bg-white"
+                                            placeholder="Search for a faculty member..."
+                                            value="">
+                                        <input type="hidden" name="adviser_id" id="adviser_id" value="{{ old('adviser_id') }}">
+                                        <div id="adviser_results" class="absolute z-10 w-full bg-white border border-gray-300 rounded-xl mt-1 max-h-60 overflow-y-auto hidden shadow-lg"></div>
+                                    </div>
+                                    <div id="selected_adviser_display" class="mt-3 hidden">
+                                        <div class="bg-[#26225C] bg-opacity-10 border border-[#FFC72C] border-opacity-30 rounded-xl p-4">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <p class="font-medium text-[#26225C]" id="selected_adviser_name"></p>
+                                                    <p class="text-sm text-gray-600 mt-1" id="selected_adviser_email"></p>
+                                                </div>
+                                                <button type="button" onclick="clearAdviserSelection()" class="text-[#26225C] hover:text-red-600 transition-colors">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1.5">Select a faculty member as your research adviser</p>
+                                </div>
                             </div>
                         </div>
 
@@ -813,6 +846,79 @@
                     });
                 }
             });
+        }
+
+        // Adviser search functionality
+        let adviserSearchTimeout;
+        const adviserSearchInput = document.getElementById('adviser_search');
+        const adviserResultsDiv = document.getElementById('adviser_results');
+        const adviserIdInput = document.getElementById('adviser_id');
+        const selectedAdviserDisplay = document.getElementById('selected_adviser_display');
+        const selectedAdviserName = document.getElementById('selected_adviser_name');
+        const selectedAdviserEmail = document.getElementById('selected_adviser_email');
+
+        if (adviserSearchInput) {
+            adviserSearchInput.addEventListener('input', function() {
+                clearTimeout(adviserSearchTimeout);
+                const query = this.value.trim();
+                
+                if (query.length < 2) {
+                    adviserResultsDiv.classList.add('hidden');
+                    return;
+                }
+                
+                adviserSearchTimeout = setTimeout(() => {
+                    fetch(`/api/faculty?q=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            displayAdviserResults(data);
+                        })
+                        .catch(error => {
+                            console.error('Adviser search error:', error);
+                        });
+                }, 300);
+            });
+
+            // Hide results when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!adviserSearchInput.contains(e.target) && !adviserResultsDiv.contains(e.target)) {
+                    adviserResultsDiv.classList.add('hidden');
+                }
+            });
+        }
+
+        function displayAdviserResults(results) {
+            if (results.length === 0) {
+                adviserResultsDiv.innerHTML = '<div class="p-4 text-gray-500 text-sm text-center">No faculty members found</div>';
+                adviserResultsDiv.classList.remove('hidden');
+                return;
+            }
+            
+            adviserResultsDiv.innerHTML = results.map(faculty => `
+                <div class="p-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors" 
+                     onclick="selectAdviser(${faculty.id}, '${faculty.name.replace(/'/g, "\\'")}', '${faculty.email.replace(/'/g, "\\'")}')">
+                    <div class="font-medium text-[#26225C]">${faculty.name}</div>
+                    <div class="text-sm text-gray-600 mt-1">${faculty.email}</div>
+                    <div class="text-xs text-gray-500 mt-1">${faculty.department}</div>
+                </div>
+            `).join('');
+            
+            adviserResultsDiv.classList.remove('hidden');
+        }
+
+        function selectAdviser(id, name, email) {
+            adviserIdInput.value = id;
+            selectedAdviserName.textContent = name;
+            selectedAdviserEmail.textContent = email;
+            adviserSearchInput.value = '';
+            adviserResultsDiv.classList.add('hidden');
+            selectedAdviserDisplay.classList.remove('hidden');
+        }
+
+        function clearAdviserSelection() {
+            adviserIdInput.value = '';
+            adviserSearchInput.value = '';
+            selectedAdviserDisplay.classList.add('hidden');
         }
     </script>
 </x-app-layout>
