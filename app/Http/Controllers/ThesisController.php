@@ -352,9 +352,17 @@ class ThesisController extends Controller
             abort(404, 'Abstract file not found on server');
         }
         
-        return response()->file($filePath, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . ($thesis->title ?: 'Thesis_' . $thesis->id) . '_Abstract.pdf"',
+        // Generate PDF URL for embedding
+        $pdfUrl = asset('storage/' . $thesis->abstract_file);
+        $backUrl = route('thesis.show.public', $thesis->id);
+        $downloadUrl = route('thesis.download-abstract', $thesis->id);
+        
+        return view('pdf.viewer', [
+            'title' => 'Abstract PDF',
+            'subtitle' => $thesis->title ?: 'Thesis_' . $thesis->id,
+            'pdfUrl' => $pdfUrl,
+            'backUrl' => $backUrl,
+            'downloadUrl' => $downloadUrl,
         ]);
     }
 

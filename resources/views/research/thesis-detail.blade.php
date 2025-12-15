@@ -399,7 +399,6 @@
                             @endphp
                             @if($thesis->abstract_file)
                                 <a href="{{ route('thesis.view-abstract.pdf', $thesis->id) }}" 
-                                   target="_blank"
                                    class="flex items-center justify-center w-full px-6 py-3 bg-[#FFC72C] hover:bg-[#e6b326] text-[#26225C] font-medium rounded-xl transition-colors">
                                     <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>

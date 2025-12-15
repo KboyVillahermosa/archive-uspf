@@ -354,9 +354,17 @@ class FacultyResearchController extends Controller
             abort(404, 'Abstract file not found on server');
         }
         
-        return response()->file($filePath, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . ($research->title ?: 'Faculty_Research_' . $research->id) . '_Abstract.pdf"',
+        // Generate PDF URL for embedding
+        $pdfUrl = asset('storage/' . $research->abstract_file);
+        $backUrl = route('faculty.show.public', $research->id);
+        $downloadUrl = route('faculty.download-abstract', $research->id);
+        
+        return view('pdf.viewer', [
+            'title' => 'Abstract PDF',
+            'subtitle' => $research->title ?: 'Faculty_Research_' . $research->id,
+            'pdfUrl' => $pdfUrl,
+            'backUrl' => $backUrl,
+            'downloadUrl' => $downloadUrl,
         ]);
     }
 

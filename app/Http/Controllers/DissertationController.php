@@ -350,9 +350,17 @@ class DissertationController extends Controller
             abort(404, 'Abstract file not found on server');
         }
         
-        return response()->file($filePath, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . ($dissertation->title ?: 'Dissertation_' . $dissertation->id) . '_Abstract.pdf"',
+        // Generate PDF URL for embedding
+        $pdfUrl = asset('storage/' . $dissertation->abstract_file);
+        $backUrl = route('dissertation.show.public', $dissertation->id);
+        $downloadUrl = route('dissertation.download-abstract', $dissertation->id);
+        
+        return view('pdf.viewer', [
+            'title' => 'Abstract PDF',
+            'subtitle' => $dissertation->title ?: 'Dissertation_' . $dissertation->id,
+            'pdfUrl' => $pdfUrl,
+            'backUrl' => $backUrl,
+            'downloadUrl' => $downloadUrl,
         ]);
     }
 
