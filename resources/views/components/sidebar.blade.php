@@ -14,32 +14,20 @@
     );
     
     // Allow both admin and faculty to manage users (faculty can manage department users only)
+    // #region agent log
+    file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode(['sessionId' => 'debug-session', 'runId' => 'run1', 'hypothesisId' => 'B', 'location' => 'sidebar.blade.php:17', 'message' => 'Checking canManageUsers permission', 'data' => ['isAdmin' => $isAdmin, 'isFaculty' => $isFaculty, 'user_id' => $user ? $user->id : null], 'timestamp' => time() * 1000]) . "\n", FILE_APPEND);
+    // #endregion
     try {
-        $canManageUsers = $isAdmin || ($isFaculty && $user && $user->hasPermissionTo('manage department users')) || ($user && $user->hasPermissionTo('view-any users'));
+    $canManageUsers = $isAdmin || ($isFaculty && $user && $user->hasPermissionTo('manage department users')) || ($user && $user->hasPermissionTo('view-any users'));
+        // #region agent log
+        file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode(['sessionId' => 'debug-session', 'runId' => 'run1', 'hypothesisId' => 'B', 'location' => 'sidebar.blade.php:21', 'message' => 'canManageUsers check completed', 'data' => ['canManageUsers' => $canManageUsers], 'timestamp' => time() * 1000]) . "\n", FILE_APPEND);
+        // #endregion
     } catch (\Exception $e) {
+        // #region agent log
+        file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode(['sessionId' => 'debug-session', 'runId' => 'run1', 'hypothesisId' => 'B', 'location' => 'sidebar.blade.php:25', 'message' => 'Permission check exception in sidebar', 'data' => ['exception' => get_class($e), 'message' => $e->getMessage()], 'timestamp' => time() * 1000]) . "\n", FILE_APPEND);
+        // #endregion
         // Fallback: allow if admin or has view-any users permission
         $canManageUsers = $isAdmin || ($user && $user->hasPermissionTo('view-any users'));
-    }
-    
-    // Count pending adviser approvals for current faculty user
-    $adviserPendingCount = 0;
-    if ($isFaculty && $user) {
-        $adviserPendingCount = \App\Models\StudentResearch::where('adviser_id', $user->id)
-            ->whereNull('adviser_approved_at')
-            ->where('status', 'pending')
-            ->count()
-            + \App\Models\FacultyResearch::where('adviser_id', $user->id)
-            ->whereNull('adviser_approved_at')
-            ->where('status', 'pending')
-            ->count()
-            + \App\Models\Thesis::where('adviser_id', $user->id)
-            ->whereNull('adviser_approved_at')
-            ->where('status', 'pending')
-            ->count()
-            + \App\Models\Dissertation::where('adviser_id', $user->id)
-            ->whereNull('adviser_approved_at')
-            ->where('status', 'pending')
-            ->count();
     }
 @endphp
 
@@ -130,30 +118,6 @@
                             Department Pending
                         @else
                             Pending Research
-                        @endif
-                    </span>
-                </a>
-            @endif
-
-            @if($isFaculty)
-                <!-- Adviser Approvals (for faculty only) -->
-                <a href="{{ route('admin.adviser-pending-research') }}" 
-                   class="flex items-center text-sm font-medium rounded-lg transition-all duration-200 group {{ request()->routeIs('admin.adviser-pending-research') ? 'bg-[#FFC72C] text-[#26225C] shadow-md' : 'text-white hover:bg-[#1a1840] hover:text-[#FFC72C]' }}"
-                   :class="expanded ? 'px-4 py-3 justify-start' : 'px-2 py-3 justify-center'">
-                    <svg class="w-5 h-5 flex-shrink-0" :class="expanded ? 'mr-3' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span x-show="expanded" 
-                          x-transition:enter="transition ease-out duration-200 delay-100" 
-                          x-transition:enter-start="opacity-0" 
-                          x-transition:enter-end="opacity-100" 
-                          x-transition:leave="transition ease-in duration-150" 
-                          x-transition:leave-start="opacity-100" 
-                          x-transition:leave-end="opacity-0"
-                          class="whitespace-nowrap flex items-center">
-                        Adviser Approvals
-                        @if($adviserPendingCount > 0)
-                            <span class="ml-2 bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">{{ $adviserPendingCount }}</span>
                         @endif
                     </span>
                 </a>
@@ -369,23 +333,6 @@
                             Department Pending
                         @else
                             Pending Research
-                        @endif
-                    </span>
-                </a>
-            @endif
-
-            @if($isFaculty)
-                <!-- Adviser Approvals (for faculty only) -->
-                <a href="{{ route('admin.adviser-pending-research') }}" 
-                   @click="mobileOpen = false"
-                   class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('admin.adviser-pending-research') ? 'bg-[#FFC72C] text-[#26225C] shadow-md' : 'text-white hover:bg-[#1a1840] hover:text-yellow-300' }}">
-                    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="flex items-center">
-                        Adviser Approvals
-                        @if($adviserPendingCount > 0)
-                            <span class="ml-2 bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">{{ $adviserPendingCount }}</span>
                         @endif
                     </span>
                 </a>
