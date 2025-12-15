@@ -91,6 +91,7 @@
 
 <script>
 function handleFormSubmit(event) {
+    event.preventDefault();
     const btn = document.getElementById('download-btn');
     const btnText = btn.querySelector('.btn-text');
     const btnLoading = btn.querySelector('.btn-loading');
@@ -100,15 +101,46 @@ function handleFormSubmit(event) {
     btnLoading.classList.remove('hidden');
     btn.disabled = true;
     
-    // Log form data for debugging
+    // Get form data
     const formData = new FormData(event.target);
-    console.log('Form submission data:', Object.fromEntries(formData));
+    const formAction = event.target.action;
     
-    // Reset button state after 5 seconds in case of issues
-    setTimeout(() => {
+    // Submit via fetch to handle login requirements
+    fetch(formAction, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.login_required) {
+            // Redirect to login page
+            window.location.href = '{{ route("login") }}';
+        } else if (data.status === 'success' && data.download_url) {
+            // Close modal and trigger download
+            const modal = document.getElementById('downloadModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+            }
+            // Trigger download
+            window.location.href = data.download_url;
+        } else {
+            alert(data.error || 'An error occurred. Please try again.');
+            btnText.classList.remove('hidden');
+            btnLoading.classList.add('hidden');
+            btn.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
         btnText.classList.remove('hidden');
         btnLoading.classList.add('hidden');
         btn.disabled = false;
-    }, 5000);
+    });
 }
 </script>

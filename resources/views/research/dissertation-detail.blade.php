@@ -390,11 +390,12 @@
                         </div>
                         <div class="space-y-4">
                             @php
+                                $user = auth()->user();
                                 $isAdmin = false;
                                 try {
-                                    $isAdmin = auth()->user()->hasRole('admin') || auth()->user()->role === 'admin';
+                                    $isAdmin = $user && ($user->hasRole('admin') || $user->role === 'admin');
                                 } catch (\Exception $e) {
-                                    $isAdmin = auth()->user()->role === 'admin';
+                                    $isAdmin = $user && $user->role === 'admin';
                                 }
                             @endphp
                             @if($dissertation->abstract_file)
@@ -406,6 +407,7 @@
                                     </svg>
                                     View Abstract PDF
                                 </a>
+                                @if(auth()->check())
                                 <a href="{{ route('dissertation.download-abstract', $dissertation->id) }}" 
                                    class="mp-form flex items-center justify-center w-full px-6 py-3 bg-[#26225C] hover:bg-[#3a3770] text-white font-medium rounded-xl transition-colors"
                                    data-target="downloadModal">
@@ -414,6 +416,7 @@
                                     </svg>
                                     Download Abstract
                                 </a>
+                                @endif
                             @endif
                             
                             @if($dissertation->document_file && $isAdmin)
@@ -481,6 +484,36 @@
                                 <span class="font-semibold text-[#26225C] text-xl">{{ $dissertation->approved_at->diffForHumans() }}</span>
                             </div>
                             @endif
+                        </div>
+                    </section>
+
+                    <!-- Suggestions -->
+                    <section>
+                        <div class="mb-4">
+                            <h3 class="text-lg font-medium text-[#26225C]">Suggestions</h3>
+                        </div>
+                        <div class="space-y-3">
+                            @forelse($relatedResearch ?? [] as $related)
+                                <div class="flex items-start gap-3 p-3 border border-gray-200 rounded-lg hover:border-[#FFC72C] hover:shadow-md transition-all bg-white">
+                                    <div class="flex-shrink-0 w-10 h-10 bg-[#26225C] bg-opacity-10 rounded-full flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <a href="{{ route($related['route'], $related['id']) }}" 
+                                           class="text-sm font-semibold text-blue-600 hover:text-blue-800 underline line-clamp-2 mb-1 block">
+                                            {{ $related['title'] }}
+                                        </a>
+                                        <div class="text-xs text-gray-600 mt-1">
+                                            <span>Views: {{ $related['viewCount'] ?? 0 }}</span>
+                                            <span class="ml-3">Downloads: {{ $related['downloadCount'] ?? 0 }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="text-sm text-gray-500 text-center py-4">No related research found</p>
+                            @endforelse
                         </div>
                     </section>
 

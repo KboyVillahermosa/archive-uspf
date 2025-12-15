@@ -31,6 +31,18 @@ Route::post('/download/faculty/{id}', [FacultyResearchController::class, 'downlo
 Route::post('/download/thesis/{id}', [ThesisController::class, 'download'])->name('thesis.download');
 Route::post('/download/dissertation/{id}', [DissertationController::class, 'download'])->name('dissertation.download');
 
+// Abstract PDF viewer routes (public - blurred for non-authenticated users)
+Route::get('/view-abstract-pdf/student/{id}', [StudentResearchController::class, 'viewAbstractPdf'])->name('student.view-abstract.pdf');
+Route::get('/view-abstract-pdf/faculty/{id}', [FacultyResearchController::class, 'viewAbstractPdf'])->name('faculty.view-abstract.pdf');
+Route::get('/view-abstract-pdf/thesis/{id}', [ThesisController::class, 'viewAbstractPdf'])->name('thesis.view-abstract.pdf');
+Route::get('/view-abstract-pdf/dissertation/{id}', [DissertationController::class, 'viewAbstractPdf'])->name('dissertation.view-abstract.pdf');
+
+// Abstract download GET routes (redirect to login if not authenticated, show survey if authenticated)
+Route::get('/download-abstract/student/{id}', [StudentResearchController::class, 'downloadAbstractGet'])->name('student.download-abstract.get');
+Route::get('/download-abstract/faculty/{id}', [FacultyResearchController::class, 'downloadAbstractGet'])->name('faculty.download-abstract.get');
+Route::get('/download-abstract/thesis/{id}', [ThesisController::class, 'downloadAbstractGet'])->name('thesis.download-abstract.get');
+Route::get('/download-abstract/dissertation/{id}', [DissertationController::class, 'downloadAbstractGet'])->name('dissertation.download-abstract.get');
+
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -78,22 +90,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/view-pdf/thesis/{id}', [ThesisController::class, 'viewPdf'])->name('thesis.view.pdf');
     Route::get('/view-pdf/dissertation/{id}', [DissertationController::class, 'viewPdf'])->name('dissertation.view.pdf');
     
-    // Abstract download routes (accessible to all authenticated users)
+    // Abstract download routes (require authentication)
     Route::post('/download-abstract/student/{id}', [StudentResearchController::class, 'downloadAbstract'])->name('student.download-abstract');
     Route::get('/download-abstract-file/student/{id}', [StudentResearchController::class, 'downloadAbstractFile'])->name('student.download-abstract.file');
-    Route::get('/view-abstract-pdf/student/{id}', [StudentResearchController::class, 'viewAbstractPdf'])->name('student.view-abstract.pdf');
     
     Route::post('/download-abstract/faculty/{id}', [FacultyResearchController::class, 'downloadAbstract'])->name('faculty.download-abstract');
     Route::get('/download-abstract-file/faculty/{id}', [FacultyResearchController::class, 'downloadAbstractFile'])->name('faculty.download-abstract.file');
-    Route::get('/view-abstract-pdf/faculty/{id}', [FacultyResearchController::class, 'viewAbstractPdf'])->name('faculty.view-abstract.pdf');
     
     Route::post('/download-abstract/thesis/{id}', [ThesisController::class, 'downloadAbstract'])->name('thesis.download-abstract');
     Route::get('/download-abstract-file/thesis/{id}', [ThesisController::class, 'downloadAbstractFile'])->name('thesis.download-abstract.file');
-    Route::get('/view-abstract-pdf/thesis/{id}', [ThesisController::class, 'viewAbstractPdf'])->name('thesis.view-abstract.pdf');
     
     Route::post('/download-abstract/dissertation/{id}', [DissertationController::class, 'downloadAbstract'])->name('dissertation.download-abstract');
     Route::get('/download-abstract-file/dissertation/{id}', [DissertationController::class, 'downloadAbstractFile'])->name('dissertation.download-abstract.file');
-    Route::get('/view-abstract-pdf/dissertation/{id}', [DissertationController::class, 'viewAbstractPdf'])->name('dissertation.view-abstract.pdf');
     
     // Research history/tracking routes
     Route::get('/research/history', [DashboardController::class, 'researchHistory'])->name('research.history');

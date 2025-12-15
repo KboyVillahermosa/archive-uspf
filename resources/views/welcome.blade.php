@@ -325,62 +325,112 @@
     <!-- Main Content -->
     <main class="py-16 lg:py-24 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Statistics Overview -->
-            <div class="mb-20 animate-slide-up">
-                <div class="text-center mb-12">
-                    <h2 class="text-4xl lg:text-5xl font-bold gradient-text mb-4">Research Statistics</h2>
-                    <p class="text-xl text-gray-600 max-w-2xl mx-auto">Explore our comprehensive collection of academic research papers and publications</p>
-                    </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        @php
-                            $totalResearch = $approvedStudentResearch->count() + $approvedFacultyResearch->count() + $approvedThesis->count() + $approvedDissertations->count();
-                        @endphp
-                    
-                    <div class="stats-card rounded-xl p-8 text-center">
-                        <div class="h-20 w-20 bg-[#26225C] rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg">
-                            <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
+            <!-- Search and Filter Section -->
+            <div class="mb-12 animate-slide-up">
+                <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-[#FFC72C]">
+                    <form id="researchSearchForm" method="GET" action="{{ route('welcome') }}" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <!-- Search Input -->
+                            <div class="md:col-span-2">
+                                <label for="search" class="block text-sm font-semibold text-[#26225C] mb-2">Search</label>
+                                <input type="text" 
+                                       id="search" 
+                                       name="search" 
+                                       value="{{ request('search') }}"
+                                       placeholder="Search by title, author, or keywords..."
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFC72C] focus:border-[#FFC72C]">
+                            </div>
+                            
+                            <!-- Research Type Filter -->
+                            <div>
+                                <label for="type" class="block text-sm font-semibold text-[#26225C] mb-2">Type</label>
+                                <select id="type" 
+                                        name="type" 
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFC72C] focus:border-[#FFC72C]">
+                                    <option value="all" {{ request('type') === 'all' || !request('type') ? 'selected' : '' }}>All Types</option>
+                                    <option value="student" {{ request('type') === 'student' ? 'selected' : '' }}>Student Research</option>
+                                    <option value="faculty" {{ request('type') === 'faculty' ? 'selected' : '' }}>Faculty Research</option>
+                                    <option value="thesis" {{ request('type') === 'thesis' ? 'selected' : '' }}>Thesis</option>
+                                    <option value="dissertation" {{ request('type') === 'dissertation' ? 'selected' : '' }}>Dissertation</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Department Filter -->
+                            <div>
+                                <label for="department" class="block text-sm font-semibold text-[#26225C] mb-2">Department</label>
+                                <select id="department" 
+                                        name="department" 
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFC72C] focus:border-[#FFC72C]">
+                                    <option value="all" {{ request('department') === 'all' || !request('department') ? 'selected' : '' }}>All Departments</option>
+                                    @foreach($departments as $dept)
+                                        <option value="{{ $dept->id }}" {{ request('department') == $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
-                        <div class="text-4xl font-bold text-[#26225C] mb-2">{{ $totalResearch }}</div>
-                        <div class="text-sm text-gray-600 font-semibold uppercase tracking-wide">Total Research Papers</div>
-                    </div>
-                    
-                    <div class="stats-card rounded-xl p-8 text-center">
-                        <div class="h-20 w-20 bg-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg">
-                            <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                            </svg>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex gap-3">
+                            <button type="submit" class="btn-primary text-white px-6 py-3 rounded-lg font-semibold">
+                                <svg class="h-5 w-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                                Search
+                            </button>
+                            <a href="{{ route('welcome') }}" class="btn-secondary px-6 py-3 rounded-lg font-semibold">
+                                Clear Filters
+                            </a>
                         </div>
-                        <div class="text-4xl font-bold text-[#26225C] mb-2">{{ $approvedFacultyResearch->count() }}</div>
-                        <div class="text-sm text-gray-600 font-semibold uppercase tracking-wide">Faculty Research</div>
-                    </div>
-                    
-                    <div class="stats-card rounded-xl p-8 text-center">
-                        <div class="h-20 w-20 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg">
-                            <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                            </svg>
-                        </div>
-                        <div class="text-4xl font-bold text-[#26225C] mb-2">{{ $approvedThesis->count() + $approvedDissertations->count() }}</div>
-                        <div class="text-sm text-gray-600 font-semibold uppercase tracking-wide">Graduate Studies</div>
-                    </div>
-                    
-                    <div class="stats-card rounded-xl p-8 text-center">
-                        <div class="h-20 w-20 bg-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg">
-                            <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                            </svg>
-                        </div>
-                        <div class="text-4xl font-bold text-[#26225C] mb-2">{{ $approvedStudentResearch->count() }}</div>
-                        <div class="text-sm text-gray-600 font-semibold uppercase tracking-wide">Student Research</div>
-                    </div>
+                    </form>
                 </div>
             </div>
 
             <!-- Research Sections -->
             <div id="research-section" class="section-anchor">
+            @php
+                // #region agent log
+                $logData = [
+                    'sessionId' => 'debug-session',
+                    'runId' => 'run1',
+                    'hypothesisId' => 'A',
+                    'location' => 'welcome.blade.php:390',
+                    'message' => 'Calculating totalResearch - checking collections',
+                    'data' => [
+                        'hasApprovedStudentResearch' => isset($approvedStudentResearch),
+                        'hasApprovedFacultyResearch' => isset($approvedFacultyResearch),
+                        'hasApprovedThesis' => isset($approvedThesis),
+                        'hasApprovedDissertations' => isset($approvedDissertations),
+                        'studentCount' => isset($approvedStudentResearch) ? $approvedStudentResearch->count() : 'N/A',
+                        'facultyCount' => isset($approvedFacultyResearch) ? $approvedFacultyResearch->count() : 'N/A',
+                        'thesisCount' => isset($approvedThesis) ? $approvedThesis->count() : 'N/A',
+                        'dissertationCount' => isset($approvedDissertations) ? $approvedDissertations->count() : 'N/A',
+                    ],
+                    'timestamp' => time() * 1000
+                ];
+                file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode($logData) . "\n", FILE_APPEND);
+                // #endregion agent log
+                
+                $totalResearch = (isset($approvedStudentResearch) ? $approvedStudentResearch->count() : 0) +
+                                (isset($approvedFacultyResearch) ? $approvedFacultyResearch->count() : 0) +
+                                (isset($approvedThesis) ? $approvedThesis->count() : 0) +
+                                (isset($approvedDissertations) ? $approvedDissertations->count() : 0);
+                
+                // #region agent log
+                $logData2 = [
+                    'sessionId' => 'debug-session',
+                    'runId' => 'run1',
+                    'hypothesisId' => 'A',
+                    'location' => 'welcome.blade.php:390',
+                    'message' => 'totalResearch calculated',
+                    'data' => [
+                        'totalResearch' => $totalResearch,
+                        'isDefined' => isset($totalResearch),
+                    ],
+                    'timestamp' => time() * 1000
+                ];
+                file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode($logData2) . "\n", FILE_APPEND);
+                // #endregion agent log
+            @endphp
             @if($totalResearch > 0)
                 <!-- Recent Research -->
                 <div class="mb-20 animate-slide-up">
@@ -402,44 +452,62 @@
                 </div>
 
                     <div class="research-grid">
-                        @foreach($approvedStudentResearch->take(3) as $research)
-                            @if($research->is_approved ?? true)
-                                <a href="{{ route('student.show.public', $research->id) }}" class="card-hover rounded-xl shadow-md p-6 group">
-                                    <div class="flex items-center mb-4">
-                                        <div class="h-12 w-12 bg-blue-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
-                                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                        </svg>
-                                        </div>
-                                        <span class="badge-student text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Student Research</span>
-                                    </div>
-                                    <h4 class="font-bold text-[#26225C] text-lg mb-3 group-hover:text-blue-600 transition-colors leading-snug">{{ Str::limit($research->title, 60) }}</h4>
-                                    <p class="text-sm text-gray-600 mb-2 font-medium">By: {{ Str::limit($research->authors, 40) }}</p>
-                                    <p class="text-xs text-gray-500">{{ $research->department }} • {{ $research->program }}</p>
-                                </a>
-                            @endif
-                        @endforeach
+                        @php
+                            $recentStudentCount = $approvedStudentResearch->take(3)->count();
+                            $recentFacultyCount = $approvedFacultyResearch->take(3)->count();
+                            $recentTotal = $recentStudentCount + $recentFacultyCount;
+                        @endphp
                         
-                        @foreach($approvedFacultyResearch->take(3) as $research)
-                            @if($research->is_approved ?? true)
-                                <a href="{{ route('faculty.show.public', $research->id) }}" class="card-hover rounded-xl shadow-md p-6 group">
-                                    <div class="flex items-center mb-4">
-                                        <div class="h-12 w-12 bg-purple-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
-                                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                                        </svg>
+                        @if($recentTotal > 0)
+                            @foreach($approvedStudentResearch->take(3) as $research)
+                                @if($research->is_approved ?? true)
+                                    <a href="{{ route('student.show.public', $research->id) }}" class="card-hover rounded-xl shadow-md p-6 group">
+                                        <div class="flex items-center mb-4">
+                                            <div class="h-12 w-12 bg-blue-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
+                                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                            </svg>
+                                            </div>
+                                            <span class="badge-student text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Student Research</span>
                                         </div>
-                                        <span class="badge-faculty text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Faculty Research</span>
-                                    </div>
-                                    <h4 class="font-bold text-[#26225C] text-lg mb-3 group-hover:text-purple-600 transition-colors leading-snug">{{ Str::limit($research->title, 60) }}</h4>
-                                    <p class="text-sm text-gray-600 mb-2 font-medium">Lead: {{ $research->user->name }}</p>
-                                    @if($research->co_researchers)
-                                        <p class="text-xs text-gray-500 mb-2">Co-researchers: {{ Str::limit($research->co_researchers, 40) }}</p>
-                                    @endif
-                                    <p class="text-xs text-gray-500">{{ $research->department }}</p>
-                                </a>
-                            @endif
-                        @endforeach
+                                        <h4 class="font-bold text-[#26225C] text-lg mb-3 group-hover:text-blue-600 transition-colors leading-snug">{{ Str::limit($research->title, 60) }}</h4>
+                                        <p class="text-sm text-gray-600 mb-2 font-medium">By: {{ Str::limit($research->authors, 40) }}</p>
+                                        <p class="text-xs text-gray-500">{{ $research->department }} • {{ $research->program }}</p>
+                                    </a>
+                                @endif
+                            @endforeach
+                            
+                            @foreach($approvedFacultyResearch->take(3) as $research)
+                                @if($research->is_approved ?? true)
+                                    <a href="{{ route('faculty.show.public', $research->id) }}" class="card-hover rounded-xl shadow-md p-6 group">
+                                        <div class="flex items-center mb-4">
+                                            <div class="h-12 w-12 bg-purple-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
+                                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                                            </svg>
+                                            </div>
+                                            <span class="badge-faculty text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Faculty Research</span>
+                                        </div>
+                                        <h4 class="font-bold text-[#26225C] text-lg mb-3 group-hover:text-purple-600 transition-colors leading-snug">{{ Str::limit($research->title, 60) }}</h4>
+                                        <p class="text-sm text-gray-600 mb-2 font-medium">Lead: {{ $research->user->name }}</p>
+                                        @if($research->co_researchers)
+                                            <p class="text-xs text-gray-500 mb-2">Co-researchers: {{ Str::limit($research->co_researchers, 40) }}</p>
+                                        @endif
+                                        <p class="text-xs text-gray-500">{{ $research->department }}</p>
+                                    </a>
+                                @endif
+                            @endforeach
+                        @else
+                            <div class="col-span-full text-center py-12">
+                                <div class="h-16 w-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="text-lg font-semibold text-[#26225C] mb-2">No Results Found</h4>
+                                <p class="text-gray-600">Try adjusting your search or filter criteria</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -463,41 +531,59 @@
                     </div>
                     
                     <div class="research-grid">
-                        @foreach($approvedThesis->take(3) as $thesis)
-                            @if($thesis->is_approved ?? true)
-                                <a href="{{ route('thesis.show.public', $thesis->id) }}" class="card-hover rounded-xl shadow-md p-6 group">
-                                    <div class="flex items-center mb-4">
-                                        <div class="h-12 w-12 bg-green-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
-                                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                        </svg>
-                                        </div>
-                                        <span class="badge-thesis text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Thesis</span>
-                                    </div>
-                                    <h4 class="font-bold text-[#26225C] text-lg mb-3 group-hover:text-green-600 transition-colors leading-snug">{{ Str::limit($thesis->title, 60) }}</h4>
-                                    <p class="text-sm text-gray-600 mb-2 font-medium">By: {{ $thesis->author }}</p>
-                                    <p class="text-xs text-gray-500">{{ $thesis->department }} • {{ $thesis->year_completed }}</p>
-                                </a>
-                            @endif
-                        @endforeach
+                        @php
+                            $popularThesisCount = $approvedThesis->take(3)->count();
+                            $popularDissertationCount = $approvedDissertations->take(3)->count();
+                            $popularTotal = $popularThesisCount + $popularDissertationCount;
+                        @endphp
                         
-                        @foreach($approvedDissertations->take(3) as $dissertation)
-                            @if($dissertation->is_approved ?? true)
-                                <a href="{{ route('dissertation.show.public', $dissertation->id) }}" class="card-hover rounded-xl shadow-md p-6 group">
-                                    <div class="flex items-center mb-4">
-                                        <div class="h-12 w-12 bg-red-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
-                                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                        </svg>
+                        @if($popularTotal > 0)
+                            @foreach($approvedThesis->take(3) as $thesis)
+                                @if($thesis->is_approved ?? true)
+                                    <a href="{{ route('thesis.show.public', $thesis->id) }}" class="card-hover rounded-xl shadow-md p-6 group">
+                                        <div class="flex items-center mb-4">
+                                            <div class="h-12 w-12 bg-green-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
+                                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                            </div>
+                                            <span class="badge-thesis text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Thesis</span>
                                         </div>
-                                        <span class="badge-dissertation text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Dissertation</span>
-                                    </div>
-                                    <h4 class="font-bold text-[#26225C] text-lg mb-3 group-hover:text-red-600 transition-colors leading-snug">{{ Str::limit($dissertation->title, 60) }}</h4>
-                                    <p class="text-sm text-gray-600 mb-2 font-medium">By: {{ $dissertation->author }}</p>
-                                    <p class="text-xs text-gray-500">{{ $dissertation->department }} • {{ $dissertation->year_completed }}</p>
-                                </a>
-                            @endif
-                        @endforeach
+                                        <h4 class="font-bold text-[#26225C] text-lg mb-3 group-hover:text-green-600 transition-colors leading-snug">{{ Str::limit($thesis->title, 60) }}</h4>
+                                        <p class="text-sm text-gray-600 mb-2 font-medium">By: {{ $thesis->author }}</p>
+                                        <p class="text-xs text-gray-500">{{ $thesis->department }} • {{ $thesis->year_completed }}</p>
+                                    </a>
+                                @endif
+                            @endforeach
+                            
+                            @foreach($approvedDissertations->take(3) as $dissertation)
+                                @if($dissertation->is_approved ?? true)
+                                    <a href="{{ route('dissertation.show.public', $dissertation->id) }}" class="card-hover rounded-xl shadow-md p-6 group">
+                                        <div class="flex items-center mb-4">
+                                            <div class="h-12 w-12 bg-red-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
+                                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                            </div>
+                                            <span class="badge-dissertation text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Dissertation</span>
+                                        </div>
+                                        <h4 class="font-bold text-[#26225C] text-lg mb-3 group-hover:text-red-600 transition-colors leading-snug">{{ Str::limit($dissertation->title, 60) }}</h4>
+                                        <p class="text-sm text-gray-600 mb-2 font-medium">By: {{ $dissertation->author }}</p>
+                                        <p class="text-xs text-gray-500">{{ $dissertation->department }} • {{ $dissertation->year_completed }}</p>
+                                    </a>
+                                @endif
+                            @endforeach
+                        @else
+                            <div class="col-span-full text-center py-12">
+                                <div class="h-16 w-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="text-lg font-semibold text-[#26225C] mb-2">No Results Found</h4>
+                                <p class="text-gray-600">Try adjusting your search or filter criteria</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -522,44 +608,62 @@
                     </div>
                     
                     <div class="research-grid">
-                        @foreach($approvedStudentResearch->take(2) as $research)
-                            @if($research->is_approved ?? true)
-                                <a href="{{ route('student.show.public', $research->id) }}" class="card-hover rounded-xl shadow-md p-6 group">
-                                    <div class="flex items-center mb-4">
-                                        <div class="h-12 w-12 bg-blue-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
-                                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                            </svg>
-                                        </div>
-                                        <span class="badge-student text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Student Research</span>
-                                    </div>
-                                    <h4 class="font-bold text-[#26225C] text-lg mb-3 group-hover:text-blue-600 transition-colors leading-snug">{{ Str::limit($research->title, 60) }}</h4>
-                                    <p class="text-sm text-gray-600 mb-2 font-medium">By: {{ Str::limit($research->authors, 40) }}</p>
-                                    <p class="text-xs text-gray-500">{{ $research->department }} • {{ $research->program }}</p>
-                                </a>
-                            @endif
-                        @endforeach
+                        @php
+                            $viewedStudentCount = $approvedStudentResearch->take(2)->count();
+                            $viewedFacultyCount = $approvedFacultyResearch->take(2)->count();
+                            $viewedTotal = $viewedStudentCount + $viewedFacultyCount;
+                        @endphp
                         
-                        @foreach($approvedFacultyResearch->take(2) as $research)
-                            @if($research->is_approved ?? true)
-                                <a href="{{ route('faculty.show.public', $research->id) }}" class="card-hover rounded-xl shadow-md p-6 group">
-                                    <div class="flex items-center mb-4">
-                                        <div class="h-12 w-12 bg-purple-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
-                                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                            </svg>
+                        @if($viewedTotal > 0)
+                            @foreach($approvedStudentResearch->take(2) as $research)
+                                @if($research->is_approved ?? true)
+                                    <a href="{{ route('student.show.public', $research->id) }}" class="card-hover rounded-xl shadow-md p-6 group">
+                                        <div class="flex items-center mb-4">
+                                            <div class="h-12 w-12 bg-blue-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
+                                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                                </svg>
+                                            </div>
+                                            <span class="badge-student text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Student Research</span>
                                         </div>
-                                        <span class="badge-faculty text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Faculty Research</span>
-                                    </div>
-                                    <h4 class="font-bold text-[#26225C] text-lg mb-3 group-hover:text-purple-600 transition-colors leading-snug">{{ Str::limit($research->title, 60) }}</h4>
-                                    <p class="text-sm text-gray-600 mb-2 font-medium">Lead: {{ $research->user->name }}</p>
-                                    @if($research->co_researchers)
-                                        <p class="text-xs text-gray-500 mb-2">Co-researchers: {{ Str::limit($research->co_researchers, 40) }}</p>
-                                    @endif
-                                    <p class="text-xs text-gray-500">{{ $research->department }}</p>
-                                </a>
-                            @endif
-                        @endforeach
+                                        <h4 class="font-bold text-[#26225C] text-lg mb-3 group-hover:text-blue-600 transition-colors leading-snug">{{ Str::limit($research->title, 60) }}</h4>
+                                        <p class="text-sm text-gray-600 mb-2 font-medium">By: {{ Str::limit($research->authors, 40) }}</p>
+                                        <p class="text-xs text-gray-500">{{ $research->department }} • {{ $research->program }}</p>
+                                    </a>
+                                @endif
+                            @endforeach
+                            
+                            @foreach($approvedFacultyResearch->take(2) as $research)
+                                @if($research->is_approved ?? true)
+                                    <a href="{{ route('faculty.show.public', $research->id) }}" class="card-hover rounded-xl shadow-md p-6 group">
+                                        <div class="flex items-center mb-4">
+                                            <div class="h-12 w-12 bg-purple-500 rounded-xl flex items-center justify-center mr-3 shadow-sm">
+                                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                                </svg>
+                                            </div>
+                                            <span class="badge-faculty text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Faculty Research</span>
+                                        </div>
+                                        <h4 class="font-bold text-[#26225C] text-lg mb-3 group-hover:text-purple-600 transition-colors leading-snug">{{ Str::limit($research->title, 60) }}</h4>
+                                        <p class="text-sm text-gray-600 mb-2 font-medium">Lead: {{ $research->user->name }}</p>
+                                        @if($research->co_researchers)
+                                            <p class="text-xs text-gray-500 mb-2">Co-researchers: {{ Str::limit($research->co_researchers, 40) }}</p>
+                                        @endif
+                                        <p class="text-xs text-gray-500">{{ $research->department }}</p>
+                                    </a>
+                                @endif
+                            @endforeach
+                        @else
+                            <div class="col-span-full text-center py-12">
+                                <div class="h-16 w-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="text-lg font-semibold text-[#26225C] mb-2">No Results Found</h4>
+                                <p class="text-gray-600">Try adjusting your search or filter criteria</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -840,6 +944,73 @@
                     `;
                 }
             });
+        });
+    </script>
+    
+    <!-- Search and Filter JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchForm = document.getElementById('researchSearchForm');
+            const searchInput = document.getElementById('search');
+            const typeFilter = document.getElementById('type');
+            const departmentFilter = document.getElementById('department');
+            
+            // Show active filter indicators
+            function updateFilterIndicators() {
+                const hasSearch = searchInput.value.trim() !== '';
+                const hasTypeFilter = typeFilter.value !== 'all';
+                const hasDeptFilter = departmentFilter.value !== 'all';
+                const activeFilters = [hasSearch, hasTypeFilter, hasDeptFilter].filter(Boolean).length;
+                
+                // You can add visual indicators here if needed
+                if (activeFilters > 0) {
+                    // Filters are active
+                    console.log(`${activeFilters} filter(s) active`);
+                }
+            }
+            
+            // Auto-update on filter change (optional - can be enabled)
+            // typeFilter.addEventListener('change', function() {
+            //     searchForm.submit();
+            // });
+            // 
+            // departmentFilter.addEventListener('change', function() {
+            //     searchForm.submit();
+            // });
+            
+            // Update indicators on page load
+            updateFilterIndicators();
+            
+            // Update indicators when inputs change
+            searchInput.addEventListener('input', updateFilterIndicators);
+            typeFilter.addEventListener('change', updateFilterIndicators);
+            departmentFilter.addEventListener('change', updateFilterIndicators);
+            
+            // Smooth scroll to results when form is submitted
+            searchForm.addEventListener('submit', function(e) {
+                // Allow form to submit normally
+                // After page loads, scroll to results section
+                setTimeout(function() {
+                    const researchSection = document.getElementById('research-section');
+                    if (researchSection) {
+                        researchSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 100);
+            });
+            
+            // Clear filters button functionality (already handled by link, but add smooth scroll)
+            const clearFiltersLink = document.querySelector('a[href="{{ route('welcome') }}"]');
+            if (clearFiltersLink && clearFiltersLink.textContent.trim() === 'Clear Filters') {
+                clearFiltersLink.addEventListener('click', function(e) {
+                    // Link will navigate, scroll after navigation
+                    setTimeout(function() {
+                        const researchSection = document.getElementById('research-section');
+                        if (researchSection) {
+                            researchSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }, 100);
+                });
+            }
         });
     </script>
 </body>

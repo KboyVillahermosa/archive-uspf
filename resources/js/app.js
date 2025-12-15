@@ -149,11 +149,34 @@ document.addEventListener("DOMContentLoaded", function () {
                         headers: {
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                             'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'text/html'
+                            'Accept': 'application/json, text/html'
                         }
                     });
 
+                    // Check if response is JSON (login required)
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        const data = await response.json();
+                        if (data.login_required && data.redirect_url) {
+                            // Redirect to login page
+                            window.location.href = data.redirect_url;
+                            return;
+                        }
+                    }
+
                     if (!response.ok) {
+                        // If 401 or 403, try to parse as JSON for redirect
+                        if (response.status === 401 || response.status === 403) {
+                            try {
+                                const data = await response.json();
+                                if (data.login_required && data.redirect_url) {
+                                    window.location.href = data.redirect_url;
+                                    return;
+                                }
+                            } catch (e) {
+                                // Not JSON, continue with error
+                            }
+                        }
                         throw new Error('Failed to load content');
                     }
 

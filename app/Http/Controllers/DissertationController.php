@@ -128,7 +128,171 @@ class DissertationController extends Controller
         $viewCount = \App\Models\ResearchAnalytic::getViewCount('dissertation', $id);
         $downloadCount = \App\Models\ResearchAnalytic::getDownloadCount('dissertation', $id);
         
-        return view('research.dissertation-detail', compact('dissertation', 'viewCount', 'downloadCount'));
+        // Get related research
+        $relatedResearch = $this->getRelatedResearch($dissertation);
+        
+        return view('research.dissertation-detail', compact('dissertation', 'viewCount', 'downloadCount', 'relatedResearch'));
+    }
+
+    private function getRelatedResearch($currentDissertation)
+    {
+        $related = collect();
+        
+        // Extract keywords from current dissertation
+        $keywords = [];
+        if ($currentDissertation->keywords) {
+            $keywords = array_map('trim', explode(',', $currentDissertation->keywords));
+            $keywords = array_filter($keywords, function($k) {
+                return !empty($k);
+            });
+        }
+        
+        // If no keywords, return empty collection
+        if (empty($keywords)) {
+            return $related;
+        }
+        
+        $currentDepartment = $currentDissertation->department;
+        $currentTitleWords = array_map('strtolower', explode(' ', $currentDissertation->title));
+        
+        // Query Student Research
+        $studentResearch = \App\Models\StudentResearch::where('status', 'approved')
+            ->where(function($query) use ($keywords) {
+                foreach ($keywords as $keyword) {
+                    $query->orWhere('tags', 'LIKE', '%' . $keyword . '%');
+                }
+            })
+            ->get();
+        
+        foreach ($studentResearch as $item) {
+            $score = $this->calculateRelevanceScore($item, $keywords, $currentDepartment, $currentTitleWords, 'tags');
+            $related->push([
+                'id' => $item->id,
+                'type' => 'Student Research',
+                'title' => $item->title,
+                'author' => $item->authors,
+                'department' => $item->department,
+                'route' => 'student.show.public',
+                'researchType' => 'student',
+                'viewCount' => \App\Models\ResearchAnalytic::getViewCount('student', $item->id),
+                'downloadCount' => \App\Models\ResearchAnalytic::getDownloadCount('student', $item->id),
+                'score' => $score
+            ]);
+        }
+        
+        // Query Faculty Research
+        $facultyResearch = \App\Models\FacultyResearch::where('status', 'approved')
+            ->where(function($query) use ($keywords) {
+                foreach ($keywords as $keyword) {
+                    $query->orWhere('tags', 'LIKE', '%' . $keyword . '%');
+                }
+            })
+            ->get();
+        
+        foreach ($facultyResearch as $item) {
+            $score = $this->calculateRelevanceScore($item, $keywords, $currentDepartment, $currentTitleWords, 'tags');
+            $related->push([
+                'id' => $item->id,
+                'type' => 'Faculty Research',
+                'title' => $item->title,
+                'author' => $item->user->name ?? ($item->co_researchers ?? 'N/A'),
+                'department' => $item->department,
+                'route' => 'faculty.show.public',
+                'researchType' => 'faculty',
+                'viewCount' => \App\Models\ResearchAnalytic::getViewCount('faculty', $item->id),
+                'downloadCount' => \App\Models\ResearchAnalytic::getDownloadCount('faculty', $item->id),
+                'score' => $score
+            ]);
+        }
+        
+        // Query Thesis
+        $theses = \App\Models\Thesis::where('status', 'approved')
+            ->where(function($query) use ($keywords) {
+                foreach ($keywords as $keyword) {
+                    $query->orWhere('keywords', 'LIKE', '%' . $keyword . '%');
+                }
+            })
+            ->get();
+        
+        foreach ($theses as $item) {
+            $score = $this->calculateRelevanceScore($item, $keywords, $currentDepartment, $currentTitleWords, 'keywords');
+            $related->push([
+                'id' => $item->id,
+                'type' => 'Thesis',
+                'title' => $item->title,
+                'author' => $item->author,
+                'department' => $item->department,
+                'route' => 'thesis.show.public',
+                'researchType' => 'thesis',
+                'viewCount' => \App\Models\ResearchAnalytic::getViewCount('thesis', $item->id),
+                'downloadCount' => \App\Models\ResearchAnalytic::getDownloadCount('thesis', $item->id),
+                'score' => $score
+            ]);
+        }
+        
+        // Query Dissertation
+        $dissertations = Dissertation::where('status', 'approved')
+            ->where('id', '!=', $currentDissertation->id)
+            ->where(function($query) use ($keywords) {
+                foreach ($keywords as $keyword) {
+                    $query->orWhere('keywords', 'LIKE', '%' . $keyword . '%');
+                }
+            })
+            ->get();
+        
+        foreach ($dissertations as $item) {
+            $score = $this->calculateRelevanceScore($item, $keywords, $currentDepartment, $currentTitleWords, 'keywords');
+            $related->push([
+                'id' => $item->id,
+                'type' => 'Dissertation',
+                'title' => $item->title,
+                'author' => $item->author,
+                'department' => $item->department,
+                'route' => 'dissertation.show.public',
+                'researchType' => 'dissertation',
+                'viewCount' => \App\Models\ResearchAnalytic::getViewCount('dissertation', $item->id),
+                'downloadCount' => \App\Models\ResearchAnalytic::getDownloadCount('dissertation', $item->id),
+                'score' => $score
+            ]);
+        }
+        
+        // Sort by score and return top 6
+        return $related->sortByDesc('score')->take(6)->values();
+    }
+
+    private function calculateRelevanceScore($item, $keywords, $currentDepartment, $currentTitleWords, $keywordField)
+    {
+        $score = 0;
+        
+        // Count matching keywords
+        $itemKeywords = [];
+        if ($item->$keywordField) {
+            $itemKeywords = array_map('trim', explode(',', $item->$keywordField));
+            $itemKeywords = array_map('strtolower', $itemKeywords);
+        }
+        
+        foreach ($keywords as $keyword) {
+            if (in_array(strtolower(trim($keyword)), $itemKeywords)) {
+                $score += 2;
+            }
+        }
+        
+        // Bonus for same department
+        if ($item->department && strtolower($item->department) === strtolower($currentDepartment)) {
+            $score += 3;
+        }
+        
+        // Bonus for title word similarity
+        $itemTitleWords = array_map('strtolower', explode(' ', $item->title));
+        $commonWords = array_intersect($currentTitleWords, $itemTitleWords);
+        // Remove common words like "the", "a", "an", "of", "in", "on", "at", "to", "for"
+        $stopWords = ['the', 'a', 'an', 'of', 'in', 'on', 'at', 'to', 'for', 'and', 'or', 'but'];
+        $commonWords = array_filter($commonWords, function($word) use ($stopWords) {
+            return !in_array($word, $stopWords) && strlen($word) > 2;
+        });
+        $score += count($commonWords);
+        
+        return $score;
     }
 
     public function downloadSurvey($id)
@@ -137,20 +301,22 @@ class DissertationController extends Controller
         return view('research.download-survey', compact('dissertation'))->render();
     }
 
-    public function download(Request $request, $id)
+    public function downloadAbstractGet($id)
     {
-        $user = auth()->user();
-        
-        // Only admins can download
-        $isAdmin = false;
-        try {
-            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
-        } catch (\Exception $e) {
-            $isAdmin = $user->role === 'admin';
+        // Check if user is authenticated
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'Please login to download abstract PDFs.');
         }
         
-        if (!$isAdmin) {
-            return response()->json(['error' => 'Unauthorized. Only administrators can download documents.'], 403);
+        // If authenticated, redirect to research detail page where download modal can be opened
+        return redirect()->route('dissertation.show.public', $id)->with('open_download_modal', true);
+    }
+
+    public function download(Request $request, $id)
+    {
+        // Require authentication for full document downloads
+        if (!auth()->check()) {
+            return response()->json(['error' => 'Please login to download full documents.', 'login_required' => true], 401);
         }
         
         $dissertation = Dissertation::findOrFail($id);
@@ -185,18 +351,9 @@ class DissertationController extends Controller
 
     public function downloadFile($id)
     {
-        $user = auth()->user();
-        
-        // Only admins can download
-        $isAdmin = false;
-        try {
-            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
-        } catch (\Exception $e) {
-            $isAdmin = $user->role === 'admin';
-        }
-        
-        if (!$isAdmin) {
-            abort(403, 'Unauthorized. Only administrators can download documents.');
+        // Require authentication for full document downloads
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'Please login to download full documents.');
         }
         
         $dissertation = Dissertation::findOrFail($id);
@@ -221,21 +378,12 @@ class DissertationController extends Controller
 
     public function viewPdf($id)
     {
-        $user = auth()->user();
-        
-        // Only admins can view PDFs
-        $isAdmin = false;
-        try {
-            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
-        } catch (\Exception $e) {
-            $isAdmin = $user->role === 'admin';
-        }
-        
-        if (!$isAdmin) {
-            abort(403, 'Unauthorized. Only administrators can view documents.');
-        }
-        
         $dissertation = Dissertation::findOrFail($id);
+        
+        // Only allow viewing of approved research
+        if ($dissertation->status !== 'approved') {
+            abort(404, 'Research not found or not available');
+        }
         
         if (!$dissertation->document_file) {
             abort(404, 'File not found');
@@ -247,16 +395,33 @@ class DissertationController extends Controller
             abort(404, 'File not found on server');
         }
         
-        return response()->file($filePath, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . ($dissertation->title ?: 'Dissertation_' . $dissertation->id) . '.pdf"',
+        // Check if user is authenticated
+        $isAuthenticated = auth()->check();
+        
+        // Generate PDF URL for embedding
+        $pdfUrl = asset('storage/' . $dissertation->document_file);
+        $backUrl = route('dissertation.show.public', $dissertation->id);
+        $downloadUrl = route('dissertation.download-survey', $dissertation->id);
+        
+        return view('pdf.viewer', [
+            'title' => 'Full Document PDF',
+            'subtitle' => $dissertation->title ?: 'Dissertation_' . $dissertation->id,
+            'pdfUrl' => $pdfUrl,
+            'backUrl' => $backUrl,
+            'downloadUrl' => $downloadUrl,
+            'isAuthenticated' => $isAuthenticated,
+            'blurred' => !$isAuthenticated, // Blur if not authenticated
         ]);
     }
 
     public function downloadAbstract(Request $request, $id)
     {
+        // Require authentication for abstract PDF downloads
+        if (!auth()->check()) {
+            return response()->json(['error' => 'Please login to download abstract PDFs.', 'login_required' => true], 401);
+        }
+        
         $dissertation = Dissertation::findOrFail($id);
-        $user = auth()->user();
 
         // Only allow download of approved research
         if ($dissertation->status !== 'approved') {
@@ -298,6 +463,11 @@ class DissertationController extends Controller
 
     public function downloadAbstractFile($id)
     {
+        // Require authentication for abstract PDF downloads
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'Please login to download abstract PDFs.');
+        }
+        
         $dissertation = Dissertation::findOrFail($id);
         
         // Only allow download of approved research
@@ -322,20 +492,9 @@ class DissertationController extends Controller
     public function viewAbstractPdf($id)
     {
         $dissertation = Dissertation::findOrFail($id);
-        $user = auth()->user();
-        $isOwner = $dissertation->user_id && $dissertation->user_id === $user->id;
         
-        // Check if user is admin (safely)
-        $isAdmin = false;
-        try {
-            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
-        } catch (\Exception $e) {
-            $isAdmin = $user->role === 'admin';
-        }
-        
-        // Allow owner and admin to view any status
-        // Others can only view approved research
-        if (!$isOwner && !$isAdmin && $dissertation->status !== 'approved') {
+        // Only allow viewing of approved research abstracts
+        if ($dissertation->status !== 'approved') {
             abort(404, 'Research not found or not available');
         }
         
@@ -350,10 +509,13 @@ class DissertationController extends Controller
             abort(404, 'Abstract file not found on server');
         }
         
+        // Check if user is authenticated
+        $isAuthenticated = auth()->check();
+        
         // Generate PDF URL for embedding
         $pdfUrl = asset('storage/' . $dissertation->abstract_file);
         $backUrl = route('dissertation.show.public', $dissertation->id);
-        $downloadUrl = route('dissertation.download-abstract', $dissertation->id);
+        $downloadUrl = route('dissertation.download-abstract.get', $dissertation->id);
         
         return view('pdf.viewer', [
             'title' => 'Abstract PDF',
@@ -361,6 +523,8 @@ class DissertationController extends Controller
             'pdfUrl' => $pdfUrl,
             'backUrl' => $backUrl,
             'downloadUrl' => $downloadUrl,
+            'isAuthenticated' => $isAuthenticated,
+            'blurred' => !$isAuthenticated, // Blur if not authenticated
         ]);
     }
 
