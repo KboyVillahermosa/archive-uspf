@@ -117,7 +117,8 @@ class WelcomeController extends Controller
             'approvedFacultyResearch', 
             'approvedThesis',
             'approvedDissertations',
-            'departments'
+            'departments',
+            'searchQuery'
         ));
     }
 }

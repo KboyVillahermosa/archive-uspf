@@ -193,6 +193,65 @@
         .cta-section {
             box-shadow: 0 10px 40px rgba(38, 34, 92, 0.15);
         }
+        
+        /* Search Bar Enhancements */
+        #search-input:focus {
+            animation: searchPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes searchPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(38, 34, 92, 0.1);
+            }
+            50% {
+                box-shadow: 0 0 0 4px rgba(38, 34, 92, 0.05);
+            }
+        }
+        
+        /* Smooth transitions for search container */
+        #search-form .relative > div {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Loading spinner animation */
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Search button hover effect */
+        #search-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        #search-button:active {
+            transform: translateY(0);
+        }
+        
+        /* Clear button animation */
+        #clear-search:hover {
+            transform: rotate(90deg);
+        }
+        
+        /* Search tips hover */
+        .search-tip {
+            transition: all 0.2s ease;
+        }
+        
+        .search-tip:hover {
+            background: linear-gradient(135deg, #FFC72C 0%, #FFD700 100%);
+            color: #26225C;
+            transform: translateY(-2px);
+            cursor: pointer;
+        }
     </style>
     </head>
 
@@ -290,61 +349,121 @@
     <!-- Main Content -->
     <main class="py-12 lg:py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Statistics Overview -->
-            <div class="mb-16 animate-slide-up">
-                <div class="text-center mb-12">
-                    <h2 class="text-4xl font-bold gradient-text mb-4">Research Statistics</h2>
-                    <p class="text-xl text-gray-600">Explore our comprehensive collection of academic research</p>
-                    </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        @php
-                            $totalResearch = $approvedStudentResearch->count() + $approvedFacultyResearch->count() + $approvedThesis->count() + $approvedDissertations->count();
-                        @endphp
-                    
-                    <div class="stats-card rounded-2xl p-6 text-center">
-                        <div class="h-16 w-16 bg-gradient-to-br from-[#26225C] to-[#3a3770] rounded-xl flex items-center justify-center mx-auto mb-4">
-                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <div class="text-3xl font-bold text-[#26225C] mb-2">{{ $totalResearch }}</div>
-                        <div class="text-sm text-gray-600 font-medium">Total Research Papers</div>
+            <!-- Search Bar -->
+            <div class="mb-12 animate-slide-up">
+                <div class="max-w-4xl mx-auto">
+                    <div class="text-center mb-6">
+                        <h2 class="text-3xl sm:text-4xl font-bold gradient-text mb-2">Discover Research</h2>
+                        <p class="text-gray-600 text-sm sm:text-base">Search through our comprehensive collection of academic research</p>
                     </div>
                     
-                    <div class="stats-card rounded-2xl p-6 text-center">
-                        <div class="h-16 w-16 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center mx-auto mb-4">
-                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                            </svg>
+                    <form id="search-form" method="GET" action="{{ route('welcome') }}" class="relative">
+                        <div class="relative">
+                            <div class="relative flex items-center bg-white rounded-2xl shadow-xl border-2 border-gray-200 hover:border-[#FFC72C] focus-within:border-[#26225C] focus-within:ring-4 focus-within:ring-[#FFC72C]/20 transition-all duration-300">
+                                <div class="absolute left-5 text-gray-400 pointer-events-none">
+                                    <svg id="search-icon" class="w-6 h-6 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                    <svg id="loading-spinner" class="w-6 h-6 hidden animate-spin" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                                <input 
+                                    type="text" 
+                                    name="search" 
+                                    id="search-input"
+                                    value="{{ $searchQuery ?? '' }}"
+                                    placeholder="Search by title, authors, keywords, or department..." 
+                                    class="w-full px-6 py-5 pl-14 pr-32 sm:pr-36 text-base sm:text-lg bg-transparent border-0 focus:outline-none focus:ring-0 placeholder-gray-400"
+                                    autocomplete="off"
+                                >
+                                <div class="absolute right-3 flex items-center gap-2">
+                                    <button 
+                                        type="button" 
+                                        id="clear-search"
+                                        class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 group {{ empty($searchQuery) ? 'hidden' : '' }}"
+                                        title="Clear search"
+                                    >
+                                        <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                    <button 
+                                        type="submit" 
+                                        id="search-button"
+                                        class="px-6 py-2.5 bg-gradient-to-r from-[#26225C] to-[#3a3770] text-white rounded-xl hover:from-[#3a3770] hover:to-[#26225C] transition-all font-semibold shadow-md hover:shadow-lg hover:scale-105 active:scale-95 whitespace-nowrap flex items-center gap-2"
+                                    >
+                                        <span id="search-button-text">Search</span>
+                                        <svg id="search-button-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            @if(!empty($searchQuery))
+                            <div class="mt-4 flex items-center justify-center gap-4 flex-wrap">
+                                <div class="flex items-center gap-2 bg-gradient-to-r from-[#FFC72C]/10 to-[#FFC72C]/5 border border-[#FFC72C]/30 rounded-xl px-4 py-2">
+                                    <svg class="w-5 h-5 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <p class="text-sm text-gray-700">
+                                        @php
+                                            $totalResults = $approvedStudentResearch->count() + $approvedFacultyResearch->count() + $approvedThesis->count() + $approvedDissertations->count();
+                                        @endphp
+                                        <span class="font-bold text-[#26225C]">{{ $totalResults }}</span> 
+                                        {{ $totalResults === 1 ? 'result' : 'results' }} for 
+                                        <span class="font-semibold text-[#26225C]">"{{ $searchQuery }}"</span>
+                                    </p>
+                                </div>
+                                <button 
+                                    type="button" 
+                                    onclick="window.location.href='{{ route('welcome') }}'"
+                                    class="text-sm text-gray-600 hover:text-[#26225C] font-medium transition-colors flex items-center gap-1"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                    Reset
+                                </button>
+                            </div>
+                            @else
+                            <!-- Search Tips -->
+                            <div class="mt-6 space-y-3">
+                                <div class="text-center">
+                                    <p class="text-xs text-gray-500 mb-3 font-medium">Quick search tips:</p>
+                                    <div class="flex flex-wrap items-center justify-center gap-2">
+                                        <span class="px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700 rounded-full text-xs font-medium border border-gray-200">
+                                            Research titles
+                                        </span>
+                                        <span class="px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700 rounded-full text-xs font-medium border border-gray-200">
+                                            Author names
+                                        </span>
+                                        <span class="px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700 rounded-full text-xs font-medium border border-gray-200">
+                                            Keywords
+                                        </span>
+                                        <span class="px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700 rounded-full text-xs font-medium border border-gray-200">
+                                            Departments
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-xs text-gray-400">
+                                        Press <kbd class="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-[10px] font-mono text-gray-600">/</kbd> to focus search
+                                    </p>
+                                </div>
+                            </div>
+                            @endif
                         </div>
-                        <div class="text-3xl font-bold text-[#26225C] mb-2">{{ $approvedFacultyResearch->count() }}</div>
-                        <div class="text-sm text-gray-600 font-medium">Faculty Research</div>
-                    </div>
-                    
-                    <div class="stats-card rounded-2xl p-6 text-center">
-                        <div class="h-16 w-16 bg-gradient-to-br from-green-600 to-green-800 rounded-xl flex items-center justify-center mx-auto mb-4">
-                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                            </svg>
-                        </div>
-                        <div class="text-3xl font-bold text-[#26225C] mb-2">{{ $approvedThesis->count() + $approvedDissertations->count() }}</div>
-                        <div class="text-sm text-gray-600 font-medium">Graduate Studies</div>
-                    </div>
-                    
-                    <div class="stats-card rounded-2xl p-6 text-center">
-                        <div class="h-16 w-16 bg-gradient-to-br from-orange-600 to-orange-800 rounded-xl flex items-center justify-center mx-auto mb-4">
-                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                            </svg>
-                        </div>
-                        <div class="text-3xl font-bold text-[#26225C] mb-2">{{ $approvedStudentResearch->count() }}</div>
-                        <div class="text-sm text-gray-600 font-medium">Student Research</div>
-                    </div>
+                    </form>
                 </div>
             </div>
 
             <!-- Research Sections -->
+            @php
+                $totalResearch = $approvedStudentResearch->count() + $approvedFacultyResearch->count() + $approvedThesis->count() + $approvedDissertations->count();
+            @endphp
             @if($totalResearch > 0)
                 <!-- Recent Research -->
                 <div class="mb-16 animate-slide-up">
@@ -536,15 +655,21 @@
                     </div>
                     </div>
                 @else
-                <!-- Empty State -->
+                <!-- Empty State / No Results -->
                 <div class="text-center py-16 animate-slide-up">
                     <div class="h-24 w-24 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center mx-auto mb-6">
                         <svg class="h-12 w-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-2xl font-bold text-[#26225C] mb-4">No Research Available Yet</h3>
-                    <p class="text-gray-600 mb-8">Check back later for new research publications</p>
+                    @if(!empty($searchQuery))
+                        <h3 class="text-2xl font-bold text-[#26225C] mb-4">No Results Found</h3>
+                        <p class="text-gray-600 mb-4">We couldn't find any research matching "<span class="font-semibold">{{ $searchQuery }}</span>"</p>
+                        <p class="text-gray-500 mb-8 text-sm">Try adjusting your search terms or <a href="{{ route('welcome') }}" class="text-[#26225C] hover:text-[#FFC72C] font-semibold underline">browse all research</a></p>
+                    @else
+                        <h3 class="text-2xl font-bold text-[#26225C] mb-4">No Research Available Yet</h3>
+                        <p class="text-gray-600 mb-8">Check back later for new research publications</p>
+                    @endif
                 </div>
             @endif
         </div>
@@ -641,6 +766,165 @@
                 }
             });
         });
+
+        // Enhanced Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search-input');
+            const searchForm = document.getElementById('search-form');
+            const clearButton = document.getElementById('clear-search');
+            const searchIcon = document.getElementById('search-icon');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            const searchButton = document.getElementById('search-button');
+            const searchButtonText = document.getElementById('search-button-text');
+            const searchButtonIcon = document.getElementById('search-button-icon');
+            let searchTimeout;
+            let isSearching = false;
+
+            // Show loading state
+            function showLoading() {
+                if (searchIcon) searchIcon.classList.add('hidden');
+                if (loadingSpinner) loadingSpinner.classList.remove('hidden');
+                if (searchButton) {
+                    searchButton.disabled = true;
+                    searchButton.classList.add('opacity-75', 'cursor-not-allowed');
+                }
+                if (searchButtonText) searchButtonText.textContent = 'Searching...';
+                isSearching = true;
+            }
+
+            // Hide loading state
+            function hideLoading() {
+                if (searchIcon) searchIcon.classList.remove('hidden');
+                if (loadingSpinner) loadingSpinner.classList.add('hidden');
+                if (searchButton) {
+                    searchButton.disabled = false;
+                    searchButton.classList.remove('opacity-75', 'cursor-not-allowed');
+                }
+                if (searchButtonText) searchButtonText.textContent = 'Search';
+                isSearching = false;
+            }
+
+            // Clear search button handler
+            if (clearButton) {
+                clearButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    searchInput.value = '';
+                    searchInput.focus();
+                    // Smooth scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    // Redirect to clear search
+                    setTimeout(() => {
+                        window.location.href = '{{ route("welcome") }}';
+                    }, 100);
+                });
+            }
+
+            // Enhanced input interactions
+            if (searchInput) {
+                // Focus animation
+                searchInput.addEventListener('focus', function() {
+                    this.parentElement.classList.add('ring-4', 'ring-[#FFC72C]/20', 'border-[#26225C]');
+                });
+
+                searchInput.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('ring-4', 'ring-[#FFC72C]/20');
+                    if (this.value.trim().length === 0) {
+                        this.parentElement.classList.remove('border-[#FFC72C]');
+                    }
+                });
+
+                // Enter key to submit
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' && !isSearching) {
+                        e.preventDefault();
+                        showLoading();
+                        searchForm.submit();
+                    }
+                });
+
+                // Real-time visual feedback
+                searchInput.addEventListener('input', function() {
+                    const query = this.value.trim();
+                    
+                    // Show/hide clear button dynamically
+                    if (clearButton) {
+                        if (query.length > 0) {
+                            clearButton.classList.remove('hidden');
+                        } else {
+                            clearButton.classList.add('hidden');
+                        }
+                    }
+
+                    // Visual feedback on typing
+                    if (query.length > 0) {
+                        this.parentElement.classList.add('border-[#FFC72C]');
+                    } else {
+                        this.parentElement.classList.remove('border-[#FFC72C]');
+                    }
+                });
+
+                // Auto-focus on page load if no search query
+                @if(empty($searchQuery))
+                setTimeout(() => {
+                    searchInput.focus();
+                }, 300);
+                @endif
+            }
+
+            // Keyboard shortcut: Press "/" to focus search (when not typing in input)
+            document.addEventListener('keydown', function(e) {
+                // Only trigger if not already in an input/textarea and not modifier keys
+                if (e.key === '/' && 
+                    document.activeElement.tagName !== 'INPUT' && 
+                    document.activeElement.tagName !== 'TEXTAREA' &&
+                    !e.ctrlKey && !e.metaKey && !e.altKey) {
+                    e.preventDefault();
+                    if (searchInput) {
+                        searchInput.focus();
+                        searchInput.select();
+                    }
+                }
+                
+                // Escape to clear search
+                if (e.key === 'Escape' && document.activeElement === searchInput) {
+                    if (searchInput.value.trim().length > 0) {
+                        searchInput.value = '';
+                        if (clearButton) clearButton.classList.add('hidden');
+                        searchInput.focus();
+                    } else {
+                        searchInput.blur();
+                    }
+                }
+            });
+
+            // Form submission handler
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    if (!isSearching) {
+                        showLoading();
+                        // Form will submit normally
+                    } else {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            // Handle browser back/forward buttons
+            window.addEventListener('popstate', function() {
+                hideLoading();
+            });
+
+            // Smooth scroll to results when search is active
+            @if(!empty($searchQuery))
+            setTimeout(() => {
+                const searchBar = document.querySelector('#search-form');
+                if (searchBar) {
+                    searchBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+            @endif
+        });
     </script>
 </body>
+</html>
 </html>
