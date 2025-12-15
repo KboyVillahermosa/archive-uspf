@@ -14,7 +14,21 @@
     );
     
     // Allow both admin and faculty to manage users (faculty can manage department users only)
-    $canManageUsers = $isAdmin || ($isFaculty && $user && $user->hasPermissionTo('manage department users')) || ($user && $user->hasPermissionTo('view-any users'));
+    // #region agent log
+    file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode(['sessionId' => 'debug-session', 'runId' => 'run1', 'hypothesisId' => 'B', 'location' => 'sidebar.blade.php:17', 'message' => 'Checking canManageUsers permission', 'data' => ['isAdmin' => $isAdmin, 'isFaculty' => $isFaculty, 'user_id' => $user ? $user->id : null], 'timestamp' => time() * 1000]) . "\n", FILE_APPEND);
+    // #endregion
+    try {
+        $canManageUsers = $isAdmin || ($isFaculty && $user && $user->hasPermissionTo('manage department users')) || ($user && $user->hasPermissionTo('view-any users'));
+        // #region agent log
+        file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode(['sessionId' => 'debug-session', 'runId' => 'run1', 'hypothesisId' => 'B', 'location' => 'sidebar.blade.php:21', 'message' => 'canManageUsers check completed', 'data' => ['canManageUsers' => $canManageUsers], 'timestamp' => time() * 1000]) . "\n", FILE_APPEND);
+        // #endregion
+    } catch (\Exception $e) {
+        // #region agent log
+        file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode(['sessionId' => 'debug-session', 'runId' => 'run1', 'hypothesisId' => 'B', 'location' => 'sidebar.blade.php:25', 'message' => 'Permission check exception in sidebar', 'data' => ['exception' => get_class($e), 'message' => $e->getMessage()], 'timestamp' => time() * 1000]) . "\n", FILE_APPEND);
+        // #endregion
+        // Fallback: allow if admin or has view-any users permission
+        $canManageUsers = $isAdmin || ($user && $user->hasPermissionTo('view-any users'));
+    }
 @endphp
 
 @if($isAdmin || $isFaculty)

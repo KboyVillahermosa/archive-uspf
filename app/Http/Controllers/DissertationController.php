@@ -358,8 +358,18 @@ class DissertationController extends Controller
         
         $dissertation = Dissertation::findOrFail($id);
         
-        // Only allow download of approved research
-        if ($dissertation->status !== 'approved') {
+        // Allow owner and admin to download any status
+        // Others can only download approved research
+        $user = auth()->user();
+        $isOwner = $dissertation->user_id === $user->id;
+        $isAdmin = false;
+        try {
+            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        } catch (\Exception $e) {
+            $isAdmin = $user->role === 'admin';
+        }
+        
+        if (!$isOwner && !$isAdmin && $dissertation->status !== 'approved') {
             abort(404, 'Research not found or not available');
         }
         
@@ -372,6 +382,9 @@ class DissertationController extends Controller
         if (!file_exists($filePath)) {
             abort(404, 'File not found on server');
         }
+        
+        // Track download (single source of truth - ResearchAnalytic)
+        \App\Models\ResearchAnalytic::trackDownload('dissertation', $id, request(), null, null);
         
         return response()->download($filePath, ($dissertation->title ?: 'Dissertation_' . $dissertation->id) . '.pdf');
     }
@@ -380,8 +393,20 @@ class DissertationController extends Controller
     {
         $dissertation = Dissertation::findOrFail($id);
         
-        // Only allow viewing of approved research
-        if ($dissertation->status !== 'approved') {
+        // Allow owner and admin to view any status
+        // Others can only view approved research
+        $user = auth()->user();
+        $isOwner = $user && $dissertation->user_id === $user->id;
+        $isAdmin = false;
+        if ($user) {
+            try {
+                $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+            } catch (\Exception $e) {
+                $isAdmin = $user->role === 'admin';
+            }
+        }
+        
+        if (!$isOwner && !$isAdmin && $dissertation->status !== 'approved') {
             abort(404, 'Research not found or not available');
         }
         
@@ -394,6 +419,9 @@ class DissertationController extends Controller
         if (!file_exists($filePath)) {
             abort(404, 'File not found on server');
         }
+        
+        // Track view (single source of truth - ResearchAnalytic)
+        \App\Models\ResearchAnalytic::trackView('dissertation', $id, request());
         
         // Check if user is authenticated
         $isAuthenticated = auth()->check();
@@ -478,6 +506,9 @@ class DissertationController extends Controller
         if (!$dissertation->abstract_file) {
             abort(404, 'Abstract file not found');
         }
+        
+        // Track download (single source of truth - ResearchAnalytic)
+        \App\Models\ResearchAnalytic::trackDownload('dissertation', $id, request(), null, null);
         
         // Files are stored on the public disk (storage/app/public)
         $filePath = storage_path('app/public/' . $dissertation->abstract_file);

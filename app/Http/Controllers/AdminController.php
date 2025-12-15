@@ -219,6 +219,169 @@ class AdminController extends Controller
             $chartData = array_values($days);
         }
 
+        // Fetch student activity data (only for admins)
+        $studentActivity = [
+            'summary' => [],
+            'recent_views' => [],
+            'recent_downloads' => [],
+        ];
+        if ($isAdmin) {
+            // Get recent views by students (users with role 'student' or users with student relationship)
+            $recentViews = ResearchAnalytic::where('action', 'view')
+                ->whereNotNull('user_id')
+                ->with('user')
+                ->orderBy('created_at', 'desc')
+                ->limit(50)
+                ->get();
+
+            // Get recent downloads by students
+            $recentDownloads = ResearchAnalytic::where('action', 'download')
+                ->whereNotNull('user_id')
+                ->with('user')
+                ->orderBy('created_at', 'desc')
+                ->limit(50)
+                ->get();
+
+            // Hydrate views with research details and user info
+            $studentViews = [];
+            foreach ($recentViews as $view) {
+                $user = $view->user;
+                if (!$user) continue;
+
+                // Only show students (users with role 'student' or users with department/course)
+                $isStudent = $user->hasRole('student') || $user->role === 'student' || ($user->department && $user->course);
+                if (!$isStudent) continue;
+
+                $research = null;
+                $researchTitle = 'Unknown Research';
+
+                if ($view->research_type === 'student') {
+                    $research = StudentResearch::find($view->research_id);
+                } elseif ($view->research_type === 'faculty') {
+                    $research = FacultyResearch::find($view->research_id);
+                } elseif ($view->research_type === 'thesis') {
+                    $research = Thesis::find($view->research_id);
+                } elseif ($view->research_type === 'dissertation') {
+                    $research = Dissertation::find($view->research_id);
+                }
+
+                if ($research) {
+                    $researchTitle = $research->title;
+                }
+
+                $studentViews[] = [
+                    'user_id' => $user->id,
+                    'user_name' => $user->name ?? ($user->first_name . ' ' . $user->last_name),
+                    'user_email' => $user->email,
+                    'department' => $user->department,
+                    'program' => $user->course,
+                    'research_type' => $view->research_type,
+                    'research_id' => $view->research_id,
+                    'research_title' => $researchTitle,
+                    'viewed_at' => $view->created_at,
+                ];
+            }
+
+            // Hydrate downloads with research details and user info
+            $studentDownloads = [];
+            foreach ($recentDownloads as $download) {
+                $user = $download->user;
+                if (!$user) continue;
+
+                // Only show students
+                $isStudent = $user->hasRole('student') || $user->role === 'student' || ($user->department && $user->course);
+                if (!$isStudent) continue;
+
+                $research = null;
+                $researchTitle = 'Unknown Research';
+
+                if ($download->research_type === 'student') {
+                    $research = StudentResearch::find($download->research_id);
+                } elseif ($download->research_type === 'faculty') {
+                    $research = FacultyResearch::find($download->research_id);
+                } elseif ($download->research_type === 'thesis') {
+                    $research = Thesis::find($download->research_id);
+                } elseif ($download->research_type === 'dissertation') {
+                    $research = Dissertation::find($download->research_id);
+                }
+
+                if ($research) {
+                    $researchTitle = $research->title;
+                }
+
+                $studentDownloads[] = [
+                    'user_id' => $user->id,
+                    'user_name' => $user->name ?? ($user->first_name . ' ' . $user->last_name),
+                    'user_email' => $user->email,
+                    'department' => $user->department,
+                    'program' => $user->course,
+                    'research_type' => $download->research_type,
+                    'research_id' => $download->research_id,
+                    'research_title' => $researchTitle,
+                    'download_purpose' => $download->download_purpose,
+                    'download_notes' => $download->download_notes,
+                    'downloaded_at' => $download->created_at,
+                ];
+            }
+
+            // Group by user to show summary
+            $studentActivitySummary = [];
+            foreach ($studentViews as $view) {
+                $userId = $view['user_id'];
+                if (!isset($studentActivitySummary[$userId])) {
+                    $studentActivitySummary[$userId] = [
+                        'user_id' => $userId,
+                        'user_name' => $view['user_name'],
+                        'user_email' => $view['user_email'],
+                        'department' => $view['department'],
+                        'program' => $view['program'],
+                        'views_count' => 0,
+                        'downloads_count' => 0,
+                        'recent_views' => [],
+                        'recent_downloads' => [],
+                    ];
+                }
+                $studentActivitySummary[$userId]['views_count']++;
+                if (count($studentActivitySummary[$userId]['recent_views']) < 5) {
+                    $studentActivitySummary[$userId]['recent_views'][] = $view;
+                }
+            }
+
+            foreach ($studentDownloads as $download) {
+                $userId = $download['user_id'];
+                if (!isset($studentActivitySummary[$userId])) {
+                    $studentActivitySummary[$userId] = [
+                        'user_id' => $userId,
+                        'user_name' => $download['user_name'],
+                        'user_email' => $download['user_email'],
+                        'department' => $download['department'],
+                        'program' => $download['program'],
+                        'views_count' => 0,
+                        'downloads_count' => 0,
+                        'recent_views' => [],
+                        'recent_downloads' => [],
+                    ];
+                }
+                $studentActivitySummary[$userId]['downloads_count']++;
+                if (count($studentActivitySummary[$userId]['recent_downloads']) < 5) {
+                    $studentActivitySummary[$userId]['recent_downloads'][] = $download;
+                }
+            }
+
+            // Sort by total activity (views + downloads)
+            usort($studentActivitySummary, function($a, $b) {
+                $totalA = $a['views_count'] + $a['downloads_count'];
+                $totalB = $b['views_count'] + $b['downloads_count'];
+                return $totalB - $totalA;
+            });
+
+            $studentActivity = [
+                'summary' => array_slice($studentActivitySummary, 0, 20), // Top 20 most active students
+                'recent_views' => array_slice($studentViews, 0, 20),
+                'recent_downloads' => array_slice($studentDownloads, 0, 20),
+            ];
+        }
+
         return view('admin.dashboard', compact(
             'pendingStudentResearch',
             'pendingFacultyResearch',
@@ -233,7 +396,9 @@ class AdminController extends Controller
             'chartProgramCounts',
             'chartTopViewed',
             'chartTopDownloaded',
-            'chartTopPopular'
+            'chartTopPopular',
+            'studentActivity',
+            'isAdmin'
         ));
     }
 
@@ -770,13 +935,30 @@ class AdminController extends Controller
      */
     public function users(Request $request)
     {
+        // #region agent log
+        file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode(['sessionId' => 'debug-session', 'runId' => 'run1', 'hypothesisId' => 'A', 'location' => 'AdminController.php:938', 'message' => 'users() method entry', 'data' => ['user_id' => auth()->id(), 'is_authenticated' => auth()->check()], 'timestamp' => time() * 1000]) . "\n", FILE_APPEND);
+        // #endregion
         $user = auth()->user();
         $isAdmin = $user->hasRole('admin') || ($user->role === 'admin');
         $isFaculty = $user->hasRole('faculty') || ($user->role === 'faculty');
         
+        // #region agent log
+        file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode(['sessionId' => 'debug-session', 'runId' => 'run1', 'hypothesisId' => 'A', 'location' => 'AdminController.php:942', 'message' => 'Before permission check', 'data' => ['isAdmin' => $isAdmin, 'isFaculty' => $isFaculty, 'user_role' => $user->role], 'timestamp' => time() * 1000]) . "\n", FILE_APPEND);
+        // #endregion
+        
         // Check authorization - allow admin or faculty with department permissions
-        if (!$isAdmin && !($isFaculty && $user->hasPermissionTo('manage department users'))) {
-            $this->authorize('viewAny', User::class);
+        try {
+            // #region agent log
+            file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode(['sessionId' => 'debug-session', 'runId' => 'run1', 'hypothesisId' => 'A', 'location' => 'AdminController.php:947', 'message' => 'Checking permission: manage department users', 'data' => ['will_check' => !$isAdmin && $isFaculty], 'timestamp' => time() * 1000]) . "\n", FILE_APPEND);
+            // #endregion
+            if (!$isAdmin && !($isFaculty && $user->hasPermissionTo('manage department users'))) {
+                $this->authorize('viewAny', User::class);
+            }
+        } catch (\Exception $e) {
+            // #region agent log
+            file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode(['sessionId' => 'debug-session', 'runId' => 'run1', 'hypothesisId' => 'A', 'location' => 'AdminController.php:952', 'message' => 'Permission check exception', 'data' => ['exception' => get_class($e), 'message' => $e->getMessage()], 'timestamp' => time() * 1000]) . "\n", FILE_APPEND);
+            // #endregion
+            throw $e;
         }
         
         // Filter users based on role
@@ -888,8 +1070,171 @@ class AdminController extends Controller
     public function show(User $user)
     {
         $this->authorize('view', $user);
-        $user->load('roles');
-        return view('admin.users.show', compact('user'));
+        $user->load('roles', 'student');
+        
+        // Get user's research submissions
+        $studentResearch = StudentResearch::where('user_id', $user->id)->get();
+        $facultyResearch = FacultyResearch::where('user_id', $user->id)->get();
+        $theses = Thesis::where('user_id', $user->id)->get();
+        $dissertations = Dissertation::where('user_id', $user->id)->get();
+        
+        // Calculate totals
+        $totalSubmissions = $studentResearch->count() + $facultyResearch->count() + $theses->count() + $dissertations->count();
+        $approvedSubmissions = $studentResearch->where('status', 'approved')->count() 
+                            + $facultyResearch->where('status', 'approved')->count()
+                            + $theses->where('status', 'approved')->count()
+                            + $dissertations->where('status', 'approved')->count();
+        $pendingSubmissions = $studentResearch->where('status', 'pending')->count() 
+                           + $facultyResearch->where('status', 'pending')->count()
+                           + $theses->where('status', 'pending')->count()
+                           + $dissertations->where('status', 'pending')->count();
+        $rejectedSubmissions = $studentResearch->where('status', 'rejected')->count() 
+                            + $facultyResearch->where('status', 'rejected')->count()
+                            + $theses->where('status', 'rejected')->count()
+                            + $dissertations->where('status', 'rejected')->count();
+        
+        // Calculate total views and downloads for user's research
+        $totalViews = 0;
+        $totalDownloads = 0;
+        
+        foreach ($studentResearch as $research) {
+            $totalViews += ResearchAnalytic::getViewCount('student', $research->id);
+            $totalDownloads += ResearchAnalytic::getDownloadCount('student', $research->id);
+        }
+        foreach ($facultyResearch as $research) {
+            $totalViews += ResearchAnalytic::getViewCount('faculty', $research->id);
+            $totalDownloads += ResearchAnalytic::getDownloadCount('faculty', $research->id);
+        }
+        foreach ($theses as $thesis) {
+            $totalViews += ResearchAnalytic::getViewCount('thesis', $thesis->id);
+            $totalDownloads += ResearchAnalytic::getDownloadCount('thesis', $thesis->id);
+        }
+        foreach ($dissertations as $dissertation) {
+            $totalViews += ResearchAnalytic::getViewCount('dissertation', $dissertation->id);
+            $totalDownloads += ResearchAnalytic::getDownloadCount('dissertation', $dissertation->id);
+        }
+        
+        // Get user's activity (what research they viewed and downloaded)
+        $userViews = ResearchAnalytic::where('user_id', $user->id)
+            ->where('action', 'view')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        $userDownloads = ResearchAnalytic::where('user_id', $user->id)
+            ->where('action', 'download')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        // Get unique counts
+        $uniqueViewsCount = $userViews->unique(function($item) {
+            return $item->research_type . '-' . $item->research_id;
+        })->count();
+        
+        $uniqueDownloadsCount = $userDownloads->unique(function($item) {
+            return $item->research_type . '-' . $item->research_id;
+        })->count();
+        
+        // Limit to 20 most recent for display (increased from 10)
+        $userViews = $userViews->take(20);
+        $userDownloads = $userDownloads->take(20);
+        
+        // Get research details for views
+        $viewedResearch = collect();
+        foreach ($userViews as $view) {
+            $research = null;
+            switch ($view->research_type) {
+                case 'student':
+                    $research = StudentResearch::find($view->research_id);
+                    break;
+                case 'faculty':
+                    $research = FacultyResearch::find($view->research_id);
+                    break;
+                case 'thesis':
+                    $research = Thesis::find($view->research_id);
+                    break;
+                case 'dissertation':
+                    $research = Dissertation::find($view->research_id);
+                    break;
+            }
+            if ($research) {
+                $viewedResearch->push([
+                    'type' => ucfirst($view->research_type) . ' Research',
+                    'title' => $research->title ?? 'N/A',
+                    'viewed_at' => $view->created_at,
+                    'research_id' => $view->research_id,
+                    'research_type' => $view->research_type
+                ]);
+            }
+        }
+        
+        // Get research details for downloads
+        $downloadedResearch = collect();
+        foreach ($userDownloads as $download) {
+            $research = null;
+            switch ($download->research_type) {
+                case 'student':
+                    $research = StudentResearch::find($download->research_id);
+                    break;
+                case 'faculty':
+                    $research = FacultyResearch::find($download->research_id);
+                    break;
+                case 'thesis':
+                    $research = Thesis::find($download->research_id);
+                    break;
+                case 'dissertation':
+                    $research = Dissertation::find($download->research_id);
+                    break;
+            }
+            if ($research) {
+                $downloadedResearch->push([
+                    'type' => ucfirst($download->research_type) . ' Research',
+                    'title' => $research->title ?? 'N/A',
+                    'downloaded_at' => $download->created_at,
+                    'purpose' => $download->download_purpose,
+                    'notes' => $download->download_notes,
+                    'research_id' => $download->research_id,
+                    'research_type' => $download->research_type
+                ]);
+            }
+        }
+        
+        // Get recent submissions (last 5)
+        $recentSubmissions = collect()
+            ->merge($studentResearch->take(5)->map(function($r) {
+                return ['type' => 'Student Research', 'title' => $r->title, 'status' => $r->status, 'created_at' => $r->created_at];
+            }))
+            ->merge($facultyResearch->take(5)->map(function($r) {
+                return ['type' => 'Faculty Research', 'title' => $r->title, 'status' => $r->status, 'created_at' => $r->created_at];
+            }))
+            ->merge($theses->take(5)->map(function($r) {
+                return ['type' => 'Thesis', 'title' => $r->title, 'status' => $r->status, 'created_at' => $r->created_at];
+            }))
+            ->merge($dissertations->take(5)->map(function($r) {
+                return ['type' => 'Dissertation', 'title' => $r->title, 'status' => $r->status, 'created_at' => $r->created_at];
+            }))
+            ->sortByDesc('created_at')
+            ->take(5);
+        
+        return view('admin.users.show', compact(
+            'user', 
+            'totalSubmissions', 
+            'approvedSubmissions', 
+            'pendingSubmissions', 
+            'rejectedSubmissions',
+            'totalViews',
+            'totalDownloads',
+            'recentSubmissions',
+            'studentResearch',
+            'facultyResearch',
+            'theses',
+            'dissertations',
+            'userViews',
+            'userDownloads',
+            'viewedResearch',
+            'downloadedResearch',
+            'uniqueViewsCount',
+            'uniqueDownloadsCount'
+        ));
     }
 
     /**

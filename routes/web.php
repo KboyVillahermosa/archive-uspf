@@ -43,6 +43,12 @@ Route::get('/download-abstract/faculty/{id}', [FacultyResearchController::class,
 Route::get('/download-abstract/thesis/{id}', [ThesisController::class, 'downloadAbstractGet'])->name('thesis.download-abstract.get');
 Route::get('/download-abstract/dissertation/{id}', [DissertationController::class, 'downloadAbstractGet'])->name('dissertation.download-abstract.get');
 
+// PDF viewer routes (accessible to everyone, authentication checked in controller)
+Route::get('/view-pdf/student/{id}', [StudentResearchController::class, 'viewPdf'])->name('student.view.pdf');
+Route::get('/view-pdf/faculty/{id}', [FacultyResearchController::class, 'viewPdf'])->name('faculty.view.pdf');
+Route::get('/view-pdf/thesis/{id}', [ThesisController::class, 'viewPdf'])->name('thesis.view.pdf');
+Route::get('/view-pdf/dissertation/{id}', [DissertationController::class, 'viewPdf'])->name('dissertation.view.pdf');
+
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -83,12 +89,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/download-file/faculty/{id}', [FacultyResearchController::class, 'downloadFile'])->name('faculty.download.file');
     Route::get('/download-file/thesis/{id}', [ThesisController::class, 'downloadFile'])->name('thesis.download.file');
     Route::get('/download-file/dissertation/{id}', [DissertationController::class, 'downloadFile'])->name('dissertation.download.file');
-    
-    // PDF viewer routes
-    Route::get('/view-pdf/student/{id}', [StudentResearchController::class, 'viewPdf'])->name('student.view.pdf');
-    Route::get('/view-pdf/faculty/{id}', [FacultyResearchController::class, 'viewPdf'])->name('faculty.view.pdf');
-    Route::get('/view-pdf/thesis/{id}', [ThesisController::class, 'viewPdf'])->name('thesis.view.pdf');
-    Route::get('/view-pdf/dissertation/{id}', [DissertationController::class, 'viewPdf'])->name('dissertation.view.pdf');
     
     // Abstract download routes (require authentication)
     Route::post('/download-abstract/student/{id}', [StudentResearchController::class, 'downloadAbstract'])->name('student.download-abstract');

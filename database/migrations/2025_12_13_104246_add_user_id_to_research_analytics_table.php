@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('research_analytics', function (Blueprint $table) {
-            //
+            if (!Schema::hasColumn('research_analytics', 'user_id')) {
+                $table->unsignedBigInteger('user_id')->nullable()->after('id');
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+                $table->index('user_id');
+            }
         });
     }
 
@@ -22,7 +26,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('research_analytics', function (Blueprint $table) {
-            //
+            if (Schema::hasColumn('research_analytics', 'user_id')) {
+                $table->dropForeign(['user_id']);
+                $table->dropIndex(['user_id']);
+                $table->dropColumn('user_id');
+            }
         });
     }
 };

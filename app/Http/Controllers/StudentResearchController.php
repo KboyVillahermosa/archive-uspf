@@ -373,8 +373,13 @@ class StudentResearchController extends Controller
         
         $research = StudentResearch::findOrFail($id);
         
-        // Only allow download of approved research
-        if ($research->status !== 'approved') {
+        // Allow owner and admin to download any status
+        // Others can only download approved research
+        $user = auth()->user();
+        $isOwner = $research->user_id === $user->id;
+        $isAdmin = $user->hasRole('admin');
+        
+        if (!$isOwner && !$isAdmin && $research->status !== 'approved') {
             abort(404, 'Research not found or not available');
         }
         
@@ -388,6 +393,9 @@ class StudentResearchController extends Controller
         if (!file_exists($filePath)) {
             abort(404, 'File not found on server');
         }
+        
+        // Track download (single source of truth - ResearchAnalytic)
+        ResearchAnalytic::trackDownload('student', $id, request(), null, null);
         
         return response()->download($filePath, $research->title . '.pdf');
     }
@@ -396,8 +404,13 @@ class StudentResearchController extends Controller
     {
         $research = StudentResearch::findOrFail($id);
         
-        // Only allow viewing of approved research
-        if ($research->status !== 'approved') {
+        // Allow owner and admin to view any status
+        // Others can only view approved research
+        $user = auth()->user();
+        $isOwner = $user && $research->user_id === $user->id;
+        $isAdmin = $user && $user->hasRole('admin');
+        
+        if (!$isOwner && !$isAdmin && $research->status !== 'approved') {
             abort(404, 'Research not found or not available');
         }
         
@@ -411,6 +424,9 @@ class StudentResearchController extends Controller
         if (!file_exists($filePath)) {
             abort(404, 'File not found on server');
         }
+        
+        // Track view (single source of truth - ResearchAnalytic)
+        ResearchAnalytic::trackView('student', $id, request());
         
         // Check if user is authenticated
         $isAuthenticated = auth()->check();
@@ -495,6 +511,9 @@ class StudentResearchController extends Controller
         if (!$research->abstract_file) {
             abort(404, 'Abstract file not found');
         }
+        
+        // Track download (single source of truth - ResearchAnalytic)
+        ResearchAnalytic::trackDownload('student', $id, request(), null, null);
         
         // Files are stored on the public disk (storage/app/public)
         $filePath = storage_path('app/public/' . $research->abstract_file);

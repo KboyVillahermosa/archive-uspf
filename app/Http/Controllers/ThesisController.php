@@ -360,8 +360,18 @@ class ThesisController extends Controller
         
         $thesis = Thesis::findOrFail($id);
         
-        // Only allow download of approved research
-        if ($thesis->status !== 'approved') {
+        // Allow owner and admin to download any status
+        // Others can only download approved research
+        $user = auth()->user();
+        $isOwner = $thesis->user_id === $user->id;
+        $isAdmin = false;
+        try {
+            $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+        } catch (\Exception $e) {
+            $isAdmin = $user->role === 'admin';
+        }
+        
+        if (!$isOwner && !$isAdmin && $thesis->status !== 'approved') {
             abort(404, 'Research not found or not available');
         }
         
@@ -374,6 +384,9 @@ class ThesisController extends Controller
         if (!file_exists($filePath)) {
             abort(404, 'File not found on server');
         }
+        
+        // Track download (single source of truth - ResearchAnalytic)
+        \App\Models\ResearchAnalytic::trackDownload('thesis', $id, request(), null, null);
         
         return response()->download($filePath, ($thesis->title ?: 'Thesis_' . $thesis->id) . '.pdf');
     }
@@ -382,8 +395,20 @@ class ThesisController extends Controller
     {
         $thesis = Thesis::findOrFail($id);
         
-        // Only allow viewing of approved research
-        if ($thesis->status !== 'approved') {
+        // Allow owner and admin to view any status
+        // Others can only view approved research
+        $user = auth()->user();
+        $isOwner = $user && $thesis->user_id === $user->id;
+        $isAdmin = false;
+        if ($user) {
+            try {
+                $isAdmin = $user->hasRole('admin') || $user->role === 'admin';
+            } catch (\Exception $e) {
+                $isAdmin = $user->role === 'admin';
+            }
+        }
+        
+        if (!$isOwner && !$isAdmin && $thesis->status !== 'approved') {
             abort(404, 'Research not found or not available');
         }
         
@@ -396,6 +421,9 @@ class ThesisController extends Controller
         if (!file_exists($filePath)) {
             abort(404, 'File not found on server');
         }
+        
+        // Track view (single source of truth - ResearchAnalytic)
+        \App\Models\ResearchAnalytic::trackView('thesis', $id, request());
         
         // Check if user is authenticated
         $isAuthenticated = auth()->check();
@@ -480,6 +508,9 @@ class ThesisController extends Controller
         if (!$thesis->abstract_file) {
             abort(404, 'Abstract file not found');
         }
+        
+        // Track download (single source of truth - ResearchAnalytic)
+        \App\Models\ResearchAnalytic::trackDownload('thesis', $id, request(), null, null);
         
         // Files are stored on the public disk (storage/app/public)
         $filePath = storage_path('app/public/' . $thesis->abstract_file);

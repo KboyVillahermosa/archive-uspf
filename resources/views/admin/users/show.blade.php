@@ -112,23 +112,211 @@
                     <div class="bg-blue-100 text-blue-800 font-semibold border-b border-blue-200 py-4 px-6 text-sm">
                         Additional Information
                     </div>
-                    <div class="p-6">
-                        <p class="text-sm text-gray-600">Last updated: {{ $user->updated_at->format('F d, Y h:i a') }}</p>
-                        @if($user->student)
-                            <div class="mt-4">
-                                <h4 class="text-sm font-semibold text-gray-800 mb-2">Student Information</h4>
-                                <dl class="space-y-2 text-sm">
-                                    <div class="flex justify-between">
-                                        <dt class="text-gray-600">ID Number:</dt>
-                                        <dd class="text-gray-900">{{ $user->student->id_number ?? 'N/A' }}</dd>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <dt class="text-gray-600">Course:</dt>
-                                        <dd class="text-gray-900">{{ $user->student->course_and_year ?? 'N/A' }}</dd>
-                                    </div>
-                                </dl>
+                    <div class="p-6 space-y-6">
+                        <!-- Basic Info -->
+                        <div>
+                            <p class="text-sm text-gray-600 mb-4">Last updated: {{ $user->updated_at->format('F d, Y h:i a') }}</p>
+                            @if($user->student)
+                                <div class="mt-4">
+                                    <h4 class="text-sm font-semibold text-gray-800 mb-2">Student Information</h4>
+                                    <dl class="space-y-2 text-sm">
+                                        <div class="flex justify-between">
+                                            <dt class="text-gray-600">ID Number:</dt>
+                                            <dd class="text-gray-900">{{ $user->student->id_number ?? 'N/A' }}</dd>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <dt class="text-gray-600">Course:</dt>
+                                            <dd class="text-gray-900">{{ $user->student->course_and_year ?? 'N/A' }}</dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Research Statistics -->
+                        <div class="border-t border-gray-200 pt-4">
+                            <h4 class="text-sm font-semibold text-gray-800 mb-3">Research Statistics</h4>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="bg-blue-50 p-3 rounded-lg">
+                                    <div class="text-xs text-gray-600 mb-1">Total Submissions</div>
+                                    <div class="text-2xl font-bold text-blue-600">{{ $totalSubmissions ?? 0 }}</div>
+                                </div>
+                                <div class="bg-green-50 p-3 rounded-lg">
+                                    <div class="text-xs text-gray-600 mb-1">Approved</div>
+                                    <div class="text-2xl font-bold text-green-600">{{ $approvedSubmissions ?? 0 }}</div>
+                                </div>
+                                <div class="bg-yellow-50 p-3 rounded-lg">
+                                    <div class="text-xs text-gray-600 mb-1">Pending</div>
+                                    <div class="text-2xl font-bold text-yellow-600">{{ $pendingSubmissions ?? 0 }}</div>
+                                </div>
+                                <div class="bg-red-50 p-3 rounded-lg">
+                                    <div class="text-xs text-gray-600 mb-1">Rejected</div>
+                                    <div class="text-2xl font-bold text-red-600">{{ $rejectedSubmissions ?? 0 }}</div>
+                                </div>
                             </div>
+                        </div>
+
+                        <!-- Research Performance -->
+                        <div class="border-t border-gray-200 pt-4">
+                            <h4 class="text-sm font-semibold text-gray-800 mb-3">Research Performance</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-purple-50 p-3 rounded-lg">
+                                    <div class="text-xs text-gray-600 mb-1">Total Views</div>
+                                    <div class="text-2xl font-bold text-purple-600">{{ $totalViews ?? 0 }}</div>
+                                    <div class="text-xs text-gray-500 mt-1">Across all research</div>
+                                </div>
+                                <div class="bg-indigo-50 p-3 rounded-lg">
+                                    <div class="text-xs text-gray-600 mb-1">Total Downloads</div>
+                                    <div class="text-2xl font-bold text-indigo-600">{{ $totalDownloads ?? 0 }}</div>
+                                    <div class="text-xs text-gray-500 mt-1">Across all research</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Research Breakdown -->
+                        <div class="border-t border-gray-200 pt-4">
+                            <h4 class="text-sm font-semibold text-gray-800 mb-3">Research Breakdown</h4>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                                <div>
+                                    <div class="text-gray-600">Student Research</div>
+                                    <div class="font-semibold text-gray-900">{{ ($studentResearch ?? collect())->count() }}</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-600">Faculty Research</div>
+                                    <div class="font-semibold text-gray-900">{{ ($facultyResearch ?? collect())->count() }}</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-600">Theses</div>
+                                    <div class="font-semibold text-gray-900">{{ ($theses ?? collect())->count() }}</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-600">Dissertations</div>
+                                    <div class="font-semibold text-gray-900">{{ ($dissertations ?? collect())->count() }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Submissions -->
+                        @if(isset($recentSubmissions) && $recentSubmissions->count() > 0)
+                        <div class="border-t border-gray-200 pt-4">
+                            <h4 class="text-sm font-semibold text-gray-800 mb-3">Recent Submissions</h4>
+                            <div class="space-y-2">
+                                @foreach($recentSubmissions as $submission)
+                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
+                                    <div class="flex-1">
+                                        <div class="font-medium text-gray-900">{{ $submission['title'] }}</div>
+                                        <div class="text-xs text-gray-500">{{ $submission['type'] }} • {{ $submission['created_at']->format('M d, Y') }}</div>
+                                    </div>
+                                    <div>
+                                        @if($submission['status'] === 'approved')
+                                            <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">Approved</span>
+                                        @elseif($submission['status'] === 'pending')
+                                            <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">Pending</span>
+                                        @elseif($submission['status'] === 'rejected')
+                                            <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">Rejected</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
                         @endif
+
+                        <!-- User Activity: Viewed Research -->
+                        <div class="border-t border-gray-200 pt-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-gray-800">Viewed Research</h4>
+                                @if(isset($uniqueViewsCount))
+                                <span class="text-xs text-gray-500">({{ $uniqueViewsCount }} unique research items)</span>
+                                @endif
+                            </div>
+                            @if(isset($viewedResearch) && $viewedResearch->count() > 0)
+                            <div class="space-y-2 max-h-64 overflow-y-auto">
+                                @foreach($viewedResearch as $view)
+                                <div class="flex items-center justify-between p-2 bg-blue-50 rounded text-sm hover:bg-blue-100 transition-colors">
+                                    <div class="flex-1">
+                                        <div class="font-medium text-gray-900">{{ $view['title'] }}</div>
+                                        <div class="text-xs text-gray-500">{{ $view['type'] }} • Viewed {{ $view['viewed_at']->diffForHumans() }}</div>
+                                    </div>
+                                    <div>
+                                        @php
+                                            $routeName = match($view['research_type']) {
+                                                'student' => 'student.show.public',
+                                                'faculty' => 'faculty.show.public',
+                                                'thesis' => 'thesis.show.public',
+                                                'dissertation' => 'dissertation.show.public',
+                                                default => 'student.show.public'
+                                            };
+                                        @endphp
+                                        <a href="{{ route($routeName, $view['research_id']) }}" 
+                                           target="_blank"
+                                           class="text-blue-600 hover:text-blue-800 text-xs">
+                                            View →
+                                        </a>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                            @else
+                            <p class="text-sm text-gray-500">No research viewed yet</p>
+                            @endif
+                        </div>
+
+                        <!-- User Activity: Downloaded Research -->
+                        <div class="border-t border-gray-200 pt-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-semibold text-gray-800">Downloaded Research</h4>
+                                @if(isset($uniqueDownloadsCount))
+                                <span class="text-xs text-gray-500">({{ $uniqueDownloadsCount }} unique research items)</span>
+                                @endif
+                            </div>
+                            @if(isset($downloadedResearch) && $downloadedResearch->count() > 0)
+                            <div class="space-y-2 max-h-64 overflow-y-auto">
+                                @foreach($downloadedResearch as $download)
+                                <div class="p-2 bg-green-50 rounded text-sm hover:bg-green-100 transition-colors">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <div class="flex-1">
+                                            <div class="font-medium text-gray-900">{{ $download['title'] }}</div>
+                                            <div class="text-xs text-gray-500">{{ $download['type'] }} • Downloaded {{ $download['downloaded_at']->diffForHumans() }}</div>
+                                        </div>
+                                        <div>
+                                            @php
+                                                $routeName = match($download['research_type']) {
+                                                    'student' => 'student.show.public',
+                                                    'faculty' => 'faculty.show.public',
+                                                    'thesis' => 'thesis.show.public',
+                                                    'dissertation' => 'dissertation.show.public',
+                                                    default => 'student.show.public'
+                                                };
+                                            @endphp
+                                            <a href="{{ route($routeName, $download['research_id']) }}" 
+                                               target="_blank"
+                                               class="text-green-600 hover:text-green-800 text-xs">
+                                                View →
+                                            </a>
+                                        </div>
+                                    </div>
+                                    @if($download['purpose'] || $download['notes'])
+                                    <div class="mt-2 pt-2 border-t border-green-200">
+                                        @if($download['purpose'])
+                                        <div class="text-xs text-gray-600">
+                                            <span class="font-medium">Purpose:</span> {{ $download['purpose'] }}
+                                        </div>
+                                        @endif
+                                        @if($download['notes'])
+                                        <div class="text-xs text-gray-600 mt-1">
+                                            <span class="font-medium">Notes:</span> {{ $download['notes'] }}
+                                        </div>
+                                        @endif
+                                    </div>
+                                    @endif
+                                </div>
+                                @endforeach
+                            </div>
+                            @else
+                            <p class="text-sm text-gray-500">No research downloaded yet</p>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
@@ -196,4 +384,3 @@
         });
     });
 </script>
-

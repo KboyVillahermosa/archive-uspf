@@ -135,6 +135,186 @@
                         </a>
                 </div>
             </div>
+
+            @if(isset($isAdmin) && $isAdmin && isset($studentActivity) && !empty($studentActivity['summary']))
+            <!-- Student Activity Section -->
+            <div class="mt-8">
+                <div class="mb-6 pb-4 border-b-2 border-[#FFC72C]">
+                    <h2 class="text-3xl font-bold text-[#26225C] mb-1">Student Research Activity</h2>
+                    <p class="text-sm text-gray-600">View what research students are viewing and downloading</p>
+                </div>
+
+                <!-- Student Activity Summary -->
+                <div class="bg-white rounded-xl shadow-lg border border-gray-200 mb-6">
+                    <div class="bg-gradient-to-r from-[#26225C] to-[#3a3770] text-white px-6 py-4 rounded-t-xl">
+                        <h3 class="text-lg font-semibold">Most Active Students</h3>
+                        <p class="text-sm text-white/80">Students with the most research views and downloads</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program</th>
+                                        <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
+                                        <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Downloads</th>
+                                        <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Total Activity</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach($studentActivity['summary'] as $student)
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="flex flex-col">
+                                                <div class="text-sm font-medium text-gray-900">{{ $student['user_name'] }}</div>
+                                                <div class="text-xs text-gray-500">{{ $student['user_email'] }}</div>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <span class="text-sm text-gray-900">{{ $student['department'] ?? '—' }}</span>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <span class="text-sm text-gray-900">{{ $student['program'] ?? '—' }}</span>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-center">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                {{ $student['views_count'] }}
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-center">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                {{ $student['downloads_count'] }}
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-center">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                {{ $student['views_count'] + $student['downloads_count'] }}
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                            <a href="{{ route('admin.users.show', $student['user_id']) }}" class="text-[#26225C] hover:text-[#FFC72C] font-medium">
+                                                View Details →
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Views and Downloads -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Recent Views -->
+                    <div class="bg-white rounded-xl shadow-lg border border-gray-200">
+                        <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-4 rounded-t-xl">
+                            <h3 class="text-lg font-semibold">Recent Views</h3>
+                            <p class="text-sm text-white/80">Latest research viewed by students</p>
+                        </div>
+                        <div class="p-6">
+                            @if(!empty($studentActivity['recent_views']))
+                            <div class="space-y-4 max-h-96 overflow-y-auto">
+                                @foreach(array_slice($studentActivity['recent_views'], 0, 10) as $view)
+                                <div class="border-l-4 border-blue-500 pl-4 py-2 hover:bg-blue-50 transition-colors rounded-r">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex-1">
+                                            <div class="text-sm font-medium text-gray-900 mb-1">
+                                                {{ Str::limit($view['research_title'], 50) }}
+                                            </div>
+                                            <div class="text-xs text-gray-600 mb-1">
+                                                <span class="font-medium">{{ $view['user_name'] }}</span>
+                                                @if(!empty($view['department']) || !empty($view['program']))
+                                                <span class="mx-1">•</span>
+                                                @if(!empty($view['department']))
+                                                <span>{{ $view['department'] }}</span>
+                                                @endif
+                                                @if(!empty($view['department']) && !empty($view['program']))
+                                                <span class="mx-1">•</span>
+                                                @endif
+                                                @if(!empty($view['program']))
+                                                <span>{{ $view['program'] }}</span>
+                                                @endif
+                                                @endif
+                                            </div>
+                                            <div class="text-xs text-gray-500">
+                                                {{ ucfirst($view['research_type']) }} • {{ $view['viewed_at']->diffForHumans() }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                            @else
+                            <div class="text-center py-8 text-gray-500">
+                                <p>No recent views by students</p>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Recent Downloads -->
+                    <div class="bg-white rounded-xl shadow-lg border border-gray-200">
+                        <div class="bg-gradient-to-r from-green-600 to-green-800 text-white px-6 py-4 rounded-t-xl">
+                            <h3 class="text-lg font-semibold">Recent Downloads</h3>
+                            <p class="text-sm text-white/80">Latest research downloaded by students</p>
+                        </div>
+                        <div class="p-6">
+                            @if(!empty($studentActivity['recent_downloads']))
+                            <div class="space-y-4 max-h-96 overflow-y-auto">
+                                @foreach(array_slice($studentActivity['recent_downloads'], 0, 10) as $download)
+                                <div class="border-l-4 border-green-500 pl-4 py-2 hover:bg-green-50 transition-colors rounded-r">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex-1">
+                                            <div class="text-sm font-medium text-gray-900 mb-1">
+                                                {{ Str::limit($download['research_title'], 50) }}
+                                            </div>
+                                            <div class="text-xs text-gray-600 mb-1">
+                                                <span class="font-medium">{{ $download['user_name'] }}</span>
+                                                @if(!empty($download['department']) || !empty($download['program']))
+                                                <span class="mx-1">•</span>
+                                                @if(!empty($download['department']))
+                                                <span>{{ $download['department'] }}</span>
+                                                @endif
+                                                @if(!empty($download['department']) && !empty($download['program']))
+                                                <span class="mx-1">•</span>
+                                                @endif
+                                                @if(!empty($download['program']))
+                                                <span>{{ $download['program'] }}</span>
+                                                @endif
+                                                @endif
+                                            </div>
+                                            @if($download['download_purpose'])
+                                            <div class="text-xs text-gray-700 mt-1">
+                                                <span class="font-medium">Purpose:</span> {{ $download['download_purpose'] }}
+                                            </div>
+                                            @endif
+                                            @if($download['download_notes'])
+                                            <div class="text-xs text-gray-600 mt-1">
+                                                <span class="font-medium">Notes:</span> {{ Str::limit($download['download_notes'], 50) }}
+                                            </div>
+                                            @endif
+                                            <div class="text-xs text-gray-500 mt-1">
+                                                {{ ucfirst($download['research_type']) }} • {{ $download['downloaded_at']->diffForHumans() }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                            @else
+                            <div class="text-center py-8 text-gray-500">
+                                <p>No recent downloads by students</p>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </x-app-layout>

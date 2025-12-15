@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\User;
 
 class ResearchAnalytic extends Model
 {
@@ -16,42 +18,107 @@ class ResearchAnalytic extends Model
         'ip_address',
         'user_agent',
         'download_purpose',
-        'download_notes'
+        'download_notes',
+        'user_id'
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public static function trackView($researchType, $researchId, $request)
     {
-        // Only track one view per IP per research item per day
-        $today = now()->format('Y-m-d');
-        $existing = self::where('research_type', $researchType)
+        // Get client IP (handles proxies/load balancers)
+        $ipAddress = $request->ip() ?? '0.0.0.0';
+        $userAgent = $request->userAgent() ?? '';
+        $userId = auth()->check() ? auth()->id() : null;
+        
+        // Light deduplication: only prevent rapid refreshes (30 seconds)
+        // This allows legitimate views while preventing refresh spam
+        // If user is authenticated, use user_id for better deduplication
+        // Otherwise, use IP + User-Agent combination for better accuracy behind proxies
+        $thirtySecondsAgo = now()->subSeconds(30);
+        $query = self::where('research_type', $researchType)
             ->where('research_id', $researchId)
             ->where('action', 'view')
-            ->where('ip_address', $request->ip())
-            ->whereDate('created_at', $today)
-            ->first();
+            ->where('created_at', '>=', $thirtySecondsAgo);
+        
+        if ($userId) {
+            // For authenticated users, check by user_id
+            $query->where('user_id', $userId);
+        } else {
+            // For anonymous users, check by IP + User-Agent
+            $query->where('ip_address', $ipAddress)
+                  ->where('user_agent', $userAgent);
+        }
+        
+        $existing = $query->first();
 
         if (!$existing) {
-            self::create([
-                'research_type' => $researchType,
-                'research_id' => $researchId,
-                'action' => 'view',
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent()
-            ]);
+            try {
+                $created = self::create([
+                    'research_type' => $researchType,
+                    'research_id' => $researchId,
+                    'action' => 'view',
+                    'ip_address' => $ipAddress,
+                    'user_agent' => $userAgent,
+                    'user_id' => $userId
+                ]);
+                
+                // Log for debugging (can be removed later)
+                if ($userId) {
+                    \Log::info('View tracked with user_id', [
+                        'user_id' => $userId,
+                        'research_type' => $researchType,
+                        'research_id' => $researchId,
+                        'analytic_id' => $created->id
+                    ]);
+                }
+            } catch (\Exception $e) {
+                // Log error but don't break the page
+                \Log::error('Failed to track view: ' . $e->getMessage(), [
+                    'research_type' => $researchType,
+                    'research_id' => $researchId,
+                    'ip' => $ipAddress,
+                    'user_id' => $userId
+                ]);
+            }
         }
     }
 
     public static function trackDownload($researchType, $researchId, $request, $purpose = null, $notes = null)
     {
-        self::create([
-            'research_type' => $researchType,
-            'research_id' => $researchId,
-            'action' => 'download',
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-            'download_purpose' => $purpose,
-            'download_notes' => $notes
-        ]);
+        $userId = auth()->check() ? auth()->id() : null;
+        
+        try {
+            $created = self::create([
+                'research_type' => $researchType,
+                'research_id' => $researchId,
+                'action' => 'download',
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'download_purpose' => $purpose,
+                'download_notes' => $notes,
+                'user_id' => $userId
+            ]);
+            
+            // Log for debugging (can be removed later)
+            if ($userId) {
+                \Log::info('Download tracked with user_id', [
+                    'user_id' => $userId,
+                    'research_type' => $researchType,
+                    'research_id' => $researchId,
+                    'analytic_id' => $created->id
+                ]);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to track download: ' . $e->getMessage(), [
+                'research_type' => $researchType,
+                'research_id' => $researchId,
+                'user_id' => $userId
+            ]);
+        }
     }
 
     public static function getViewCount($researchType, $researchId)
