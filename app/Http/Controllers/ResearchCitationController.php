@@ -175,10 +175,35 @@ class ResearchCitationController extends Controller
             ->get()
             ->map(function ($citation) {
                 return [
+                    'id' => $citation->id,
                     'citing_title' => $citation->citing_research_title,
                     'citing_type' => $citation->citing_research_type,
                     'citing_research_id' => $citation->citing_research_id,
-                    'citing_user' => $citation->citingUser->name,
+                    'citing_user' => $citation->citingUser->name ?? 'Author',
+                    'citation_context' => $citation->citation_context,
+                    'created_at' => $citation->created_at->format('M d, Y')
+                ];
+            });
+
+        return response()->json($citations);
+    }
+
+    /**
+     * Get all research referenced/cited BY a specific research
+     */
+    public function getReferencesCited($type, $id)
+    {
+        $citations = ResearchCitation::where('citing_research_id', $id)
+            ->where('citing_research_type', $type)
+            ->latest()
+            ->get()
+            ->map(function ($citation) {
+                $citedResearch = $citation->getCitedResearch();
+                return [
+                    'id' => $citation->id,
+                    'cited_title' => $citedResearch ? $citedResearch->title : $citation->citing_research_title . ' (Ref)',
+                    'cited_type' => $citation->cited_research_type,
+                    'cited_research_id' => $citation->cited_research_id,
                     'citation_context' => $citation->citation_context,
                     'created_at' => $citation->created_at->format('M d, Y')
                 ];

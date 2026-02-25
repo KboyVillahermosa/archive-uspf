@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('department');
             $table->year('year_completed');
             $table->text('keywords');
+            $table->string('banner_image')->nullable();
             $table->string('document_file');
             $table->text('abstract');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');

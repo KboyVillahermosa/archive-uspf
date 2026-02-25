@@ -28,13 +28,13 @@ class DatabaseSeeder extends Seeder
         }
         
         // Seed research data (uncomment to seed research)
-        // $this->call([
-        //     ResearchSeeder::class,
-        // ]);
+        $this->call([
+            ResearchSeeder::class,
+        ]);
 
         // Create student user (only if doesn't exist)
         $user = User::firstOrCreate(
-            ['email' => 'test_ccs@uspf.edu.ph'],
+            ['email' => 'fvillahermosa_ccs@uspf.edu.ph'],
             [
             'name' => 'Francisco Combong Villahermosa',
             'password' => Hash::make('password'),

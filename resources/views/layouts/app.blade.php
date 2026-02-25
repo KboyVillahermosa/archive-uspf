@@ -12,18 +12,87 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name', 'USPF Research Archive') }}</title>
 
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
    
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"/>
+
+        <style>
+            :root {
+                --primary-navy: #26225C;
+                --primary-gold: #FFC72C;
+                --secondary-navy: #3a3770;
+            }
+            body { 
+                font-family: 'Inter', sans-serif; 
+                background-color: #F8FAFC;
+                color: #1E293B;
+            }
+            
+            /* Research Cards */
+            .research-card {
+                background: white;
+                border-radius: 0;
+                padding: 1.75rem;
+                border: 1px solid rgba(226, 232, 240, 1);
+                transition: all 0.2s ease-in-out;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                position: relative;
+                overflow: hidden;
+            }
+            .research-card:hover {
+                border-color: var(--primary-navy);
+                background-color: #fcfcfc;
+            }
+            
+            /* Badges & Tags */
+            .badge {
+                display: inline-flex;
+                align-items: center;
+                padding: 0.25rem 0.625rem;
+                border-radius: 0;
+                font-size: 0.625rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                border: 1px solid currentColor;
+            }
+            .section-tag {
+                display: inline-block;
+                color: #94a3b8;
+                font-weight: 700;
+                font-size: 0.65rem;
+                text-transform: uppercase;
+                letter-spacing: 0.2em;
+                margin-bottom: 0.5rem;
+            }
+
+            /* Animations */
+            @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-up {
+                animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+
+            /* Scrollbar */
+            ::-webkit-scrollbar { width: 8px; }
+            ::-webkit-scrollbar-track { background: #f8fafc; }
+            ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+            ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        </style>
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased overflow-x-hidden">
+    <body class="antialiased overflow-x-hidden">
         @if($useSidebar)
             <!-- Layout with Sidebar for Admin/Faculty -->
             <div x-data="sidebar()" 

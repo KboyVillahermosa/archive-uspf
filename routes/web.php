@@ -111,6 +111,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/citations', [ResearchCitationController::class, 'store'])->name('citations.store');
     Route::get('/my-citations', [ResearchCitationController::class, 'getUserCitations'])->name('citations.my');
     Route::get('/research-citations/{type}/{id}', [ResearchCitationController::class, 'getResearchCitations'])->name('citations.research');
+    Route::get('/references-cited/{type}/{id}', [ResearchCitationController::class, 'getReferencesCited'])->name('citations.references');
 });
 
 // Admin dashboard - admin and faculty with permissions
