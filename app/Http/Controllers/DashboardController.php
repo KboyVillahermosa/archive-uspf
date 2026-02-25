@@ -81,8 +81,8 @@ class DashboardController extends Controller
         }
         
         // Fetch approved research for display
-        // When searching, fetch more results to ensure we have enough matches
-        $limit = !empty($searchQuery) ? 50 : 6;
+        // Increased limit for LinkedIn-style feed to show more items
+        $limit = !empty($searchQuery) ? 100 : 100;
         
         $approvedStudentResearch = $studentQuery->latest('approved_at')->take($limit)->get();
         $approvedFacultyResearch = $facultyQuery->latest('approved_at')->take($limit)->get();
@@ -96,8 +96,42 @@ class DashboardController extends Controller
             ->merge($approvedThesis->map(function ($r) { $r->type = 'thesis'; return $r; }))
             ->merge($approvedDissertations->map(function ($r) { $r->type = 'dissertation'; return $r; }))
             ->sortByDesc('approved_at')
-            ->take(!empty($searchQuery) ? 50 : 6)
+            ->take(100)
             ->values();
+
+        // Attach view counts to mostRecent items
+        if ($mostRecent->isNotEmpty()) {
+            $itemIdsByType = [];
+            foreach ($mostRecent as $item) {
+                $itemIdsByType[$item->type][] = $item->id;
+            }
+
+            $query = DB::table('research_analytics')
+                ->select(
+                    'research_type',
+                    'research_id',
+                    DB::raw("SUM(CASE WHEN action='view' THEN 1 ELSE 0 END) as views"),
+                    DB::raw("SUM(CASE WHEN action='download' THEN 1 ELSE 0 END) as downloads")
+                );
+
+            $query->where(function($q) use ($itemIdsByType) {
+                foreach ($itemIdsByType as $type => $ids) {
+                    $q->orWhere(function($sub) use ($type, $ids) {
+                        $sub->where('research_type', $type)->whereIn('research_id', $ids);
+                    });
+                }
+            });
+
+            $analyticsData = $query->groupBy('research_type', 'research_id')->get();
+
+            $mostRecent->each(function ($item) use ($analyticsData) {
+                $stats = $analyticsData->where('research_type', $item->type)
+                                    ->where('research_id', $item->id)
+                                    ->first();
+                $item->views = $stats ? (int)$stats->views : 0;
+                $item->downloads = $stats ? (int)$stats->downloads : 0;
+            });
+        }
 
         // Aggregate analytics for most viewed and most popular
         $analytics = DB::table('research_analytics')

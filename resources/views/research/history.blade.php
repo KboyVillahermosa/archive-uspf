@@ -1,606 +1,283 @@
 <x-app-layout>
-    <style>
-        /* Skeleton Loader Styles */
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: skeleton-loading 1.5s ease-in-out infinite;
-            border-radius: 4px;
-        }
-        
-        @keyframes skeleton-loading {
-            0% {
-                background-position: 200% 0;
-            }
-            100% {
-                background-position: -200% 0;
-            }
-        }
-        
-        .skeleton-text {
-            height: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .skeleton-title {
-            height: 1.5rem;
-            width: 60%;
-            margin-bottom: 0.75rem;
-        }
-        
-        .skeleton-card {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-        }
-        
-        .skeleton-container {
-            display: block;
-        }
-        
-        .content-container {
-            display: none;
-        }
-        
-        .content-container.loaded {
-            display: block;
-        }
-        
-        .skeleton-container.loaded {
-            display: none;
-        }
-    </style>
-    <div class="min-h-screen bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            
-            <!-- Header -->
-            <div class="mb-8">
-                <h1 class="text-4xl font-light text-[#26225C] mb-2">Research History</h1>
-                <p class="text-gray-600">Manage and track your research submissions</p>
-            </div>
-
-            <!-- Status Summary -->
-            <section class="mb-10">
-                <!-- Skeleton Loader for Status Summary -->
-                <div class="skeleton-container status-summary-skeleton">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        @for($i = 0; $i < 4; $i++)
-                        <div class="skeleton-card">
-                            <div class="flex items-center">
-                                <div class="skeleton w-12 h-12 rounded-xl mr-4"></div>
-                                <div class="flex-1">
-                                    <div class="skeleton skeleton-text w-20 mb-2"></div>
-                                    <div class="skeleton skeleton-text w-16"></div>
+    <div class="min-h-screen bg-[#f3f2ef]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col md:flex-row gap-6">
+                
+                <!-- Left Sidebar: Profile & Filters -->
+                <div class="w-full md:w-64 flex-shrink-0 space-y-4">
+                    <!-- Profile Summary Card -->
+                    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                        <div class="h-14 bg-[#26225C] relative">
+                            <div class="absolute -bottom-6 left-1/2 -translate-x-1/2">
+                                <div class="w-12 h-12 bg-white rounded-full p-0.5 shadow-sm">
+                                    <div class="w-full h-full bg-gray-100 rounded-full flex items-center justify-center border border-gray-200 overflow-hidden">
+                                        <span class="text-sm font-black text-[#26225C]">{{ substr(Auth::user()->name, 0, 1) }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        @endfor
-                    </div>
-                </div>
-                
-                <!-- Actual Status Summary -->
-                <div class="content-container status-summary-content">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-white rounded-xl p-6 border border-gray-200">
-                    <div class="flex items-center">
-                            <div class="w-12 h-12 bg-yellow-50 rounded-xl flex items-center justify-center mr-4">
-                                <svg class="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
+                        <div class="pt-8 pb-4 px-4 text-center border-b border-gray-100">
+                            <h3 class="text-sm font-black text-gray-900 truncate">{{ Auth::user()->name }}</h3>
+                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">{{ Auth::user()->role }}</p>
+                            @if(Auth::user()->course || Auth::user()->department)
+                                <p class="text-[9px] font-medium text-gray-400 mt-2 italic leading-tight">
+                                    {{ Auth::user()->course ?? Auth::user()->department }}
+                                </p>
+                            @endif
                         </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Pending</p>
-                                <p class="text-2xl font-light text-[#26225C] mt-1">{{ $pendingCount }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                    <div class="bg-white rounded-xl p-6 border border-gray-200">
-                    <div class="flex items-center">
-                            <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mr-4">
-                                <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Approved</p>
-                                <p class="text-2xl font-light text-[#26225C] mt-1">{{ $approvedCount }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                    <div class="bg-white rounded-xl p-6 border border-gray-200">
-                    <div class="flex items-center">
-                            <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mr-4">
-                                <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Rejected</p>
-                                <p class="text-2xl font-light text-[#26225C] mt-1">{{ $rejectedCount }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                    <div class="bg-white rounded-xl p-6 border border-gray-200">
-                    <div class="flex items-center">
-                            <div class="w-12 h-12 bg-[#26225C] bg-opacity-10 rounded-xl flex items-center justify-center mr-4">
-                                <svg class="h-6 w-6 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Total</p>
-                                <p class="text-2xl font-light text-[#26225C] mt-1">{{ $totalCount }}</p>
+                        <div class="py-3">
+                            <div class="px-4 py-1 flex justify-between items-center group cursor-pointer hover:bg-gray-50">
+                                <span class="text-[11px] font-bold text-gray-500 group-hover:text-gray-900">Total Submissions</span>
+                                <span class="text-[11px] font-black text-blue-600">{{ $totalCount }}</span>
                             </div>
                         </div>
                     </div>
-                </div>
-                </div>
-            </section>
 
-            <!-- Research List -->
-            <section>
-                <!-- Skeleton Loader for Table -->
-                <div class="skeleton-container table-skeleton">
-                    <div class="mb-6">
-                        <div class="skeleton skeleton-title w-48 mb-2"></div>
-                        <div class="skeleton skeleton-text w-32"></div>
-                    </div>
-                    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gradient-to-r from-[#26225C] to-[#3a3770]">
-                                    <tr>
-                                        <th class="px-6 py-4"><div class="skeleton h-4 w-24"></div></th>
-                                        <th class="px-6 py-4"><div class="skeleton h-4 w-16"></div></th>
-                                        <th class="px-6 py-4"><div class="skeleton h-4 w-20"></div></th>
-                                        <th class="px-6 py-4"><div class="skeleton h-4 w-16"></div></th>
-                                        <th class="px-6 py-4"><div class="skeleton h-4 w-20"></div></th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-100">
-                                    @for($i = 0; $i < 5; $i++)
-                                    <tr>
-                                        <td class="px-6 py-5">
-                                            <div class="skeleton skeleton-text w-64 mb-2"></div>
-                                            <div class="skeleton skeleton-text w-32"></div>
-                                        </td>
-                                        <td class="px-6 py-5">
-                                            <div class="skeleton h-6 w-20 rounded-full"></div>
-                                        </td>
-                                        <td class="px-6 py-5">
-                                            <div class="skeleton skeleton-text w-24"></div>
-                                        </td>
-                                        <td class="px-6 py-5">
-                                            <div class="skeleton h-6 w-16 rounded-full"></div>
-                                        </td>
-                                        <td class="px-6 py-5">
-                                            <div class="skeleton skeleton-text w-20"></div>
-                                        </td>
-                                    </tr>
-                                    @endfor
-                                </tbody>
-                            </table>
+                    <!-- Filter Card -->
+                    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm sticky top-20">
+                        <div class="p-3 border-b border-gray-100">
+                            <h4 class="text-[10px] font-black text-gray-900 uppercase tracking-widest">Manage History</h4>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Actual Research List -->
-                <div class="content-container table-content">
-                <div class="mb-6">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-                        <div>
-                    <h2 class="text-2xl font-light text-[#26225C] mb-1">Research Submissions</h2>
-                            <p class="text-sm text-gray-500">{{ $allResearch->total() }} research items</p>
-                        </div>
-                        
-                        <!-- Search Bar -->
-                        <form method="GET" action="{{ route('research.history') }}" id="searchForm" class="relative w-full md:w-96">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                </svg>
-                            </div>
-                            <input 
-                                type="text" 
-                                name="search"
-                                id="researchSearchInput" 
-                                value="{{ $searchQuery ?? '' }}"
-                                placeholder="Search by title, author, department..." 
-                                class="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFC72C] focus:border-[#FFC72C] text-sm"
-                            >
-                            <button 
-                                type="button"
-                                id="clearSearchBtn" 
-                                class="absolute inset-y-0 right-0 pr-3 items-center {{ !empty($searchQuery) ? 'flex' : 'hidden' }}"
-                                onclick="clearSearch()"
-                            >
-                                <svg class="h-5 w-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
+                        <div class="py-2">
+                            <button onclick="filterByStatus('all')" id="status-all" class="status-filter-btn w-full text-left px-4 py-2 text-[11px] font-bold text-blue-600 bg-blue-50/50 border-l-4 border-blue-600 transition-all">
+                                All Submissions
                             </button>
-                        </form>
+                            <button onclick="filterByStatus('pending')" id="status-pending" class="status-filter-btn w-full text-left px-4 py-2 text-[11px] font-bold text-gray-500 hover:text-gray-900 hover:bg-gray-50 border-l-4 border-transparent transition-all">
+                                Pending Review
+                            </button>
+                            <button onclick="filterByStatus('approved')" id="status-approved" class="status-filter-btn w-full text-left px-4 py-2 text-[11px] font-bold text-gray-500 hover:text-gray-900 hover:bg-gray-50 border-l-4 border-transparent transition-all">
+                                Approved Works
+                            </button>
+                            <button onclick="filterByStatus('rejected')" id="status-rejected" class="status-filter-btn w-full text-left px-4 py-2 text-[11px] font-bold text-gray-500 hover:text-gray-900 hover:bg-gray-50 border-l-4 border-transparent transition-all">
+                                Rejected
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                @if($allResearch->count() > 0)
-                    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 text-xs">
-                                <thead class="bg-gradient-to-r from-[#26225C] to-[#3a3770] border-b border-[#FFC72C]">
-                                <tr>
-                                        <th class="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">ID</th>
-                                        <th class="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">Type</th>
-                                        <th class="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">Title</th>
-                                        <th class="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">Department</th>
-                                        <th class="px-3 py-2 text-left text-xs font-semibold text-white uppercase tracking-wider">Date</th>
-                                        <th class="px-3 py-2 text-center text-xs font-semibold text-white uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-100">
-                                @foreach($allResearch as $research)
-                                        @php
-                                            $user = auth()->user();
-                                            $canApprove = false;
-                                            $canDelete = false;
-                                            
-                                            if ($research->type === 'student') {
-                                                $canApprove = $user->hasRole('admin') || $user->hasPermissionTo('approve student-research');
-                                                $canDelete = $user->hasRole('admin') || $user->hasPermissionTo('delete student-research') || (isset($research->user_id) && $research->user_id === $user->id);
-                                            } elseif ($research->type === 'faculty') {
-                                                $canApprove = $user->hasRole('admin') || $user->hasPermissionTo('approve faculty-research');
-                                                $canDelete = $user->hasRole('admin') || $user->hasPermissionTo('delete faculty-research') || (isset($research->user_id) && $research->user_id === $user->id);
-                                            } elseif ($research->type === 'thesis') {
-                                                $canApprove = $user->hasRole('admin') || $user->hasPermissionTo('approve thesis');
-                                                $canDelete = $user->hasRole('admin') || (isset($research->user_id) && $research->user_id === $user->id);
-                                            } elseif ($research->type === 'dissertation') {
-                                                $canApprove = $user->hasRole('admin') || $user->hasPermissionTo('approve dissertations');
-                                                $canDelete = $user->hasRole('admin') || (isset($research->user_id) && $research->user_id === $user->id);
-                                            }
-                                        @endphp
-                                        <tr class="research-item hover:bg-[#FFC72C] hover:bg-opacity-5 transition-colors group"
-                                            data-search-text="{{ strtolower($research->title . ' ' . ($research->authors ?? $research->author ?? '') . ' ' . $research->department . ' ' . ($research->program ?? '') . ' ' . ($research->tags ?? $research->keywords ?? '') . ' ' . ($research->co_researchers ?? '')) }}">
-                                        <td class="px-3 py-2 text-gray-500 cursor-pointer whitespace-nowrap" onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')">
-                                            #{{ $research->id }}
-                                        </td>
-                                        <td class="px-3 py-2 whitespace-nowrap cursor-pointer" onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')">
-                                            @if($research->type === 'student')
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#26225C] bg-opacity-10 text-[#26225C]" title="Student">
-                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                                    </svg>
-                                                    S
-                                                </span>
-                                            @elseif($research->type === 'faculty')
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700" title="Faculty">
-                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                                                    </svg>
-                                                    F
-                                                </span>
-                                            @elseif($research->type === 'thesis')
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700" title="Thesis">
-                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                                    </svg>
-                                                    T
-                                                </span>
-                                            @elseif($research->type === 'dissertation')
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700" title="Dissertation">
-                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                                    </svg>
-                                                    D
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="px-3 py-2 cursor-pointer" onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')">
-                                            <div class="text-xs font-medium text-[#26225C] max-w-md truncate group-hover:text-[#FFC72C] transition-colors" title="{{ $research->title }}">
-                                                {{ $research->title }}
-                                            </div>
-                                        </td>
-                                        <td class="px-3 py-2 whitespace-nowrap text-xs text-gray-600 cursor-pointer" onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')" title="{{ $research->department }}">
-                                            <span class="max-w-[150px] truncate block">{{ $research->department }}</span>
-                                        </td>
-                                        <td class="px-3 py-2 whitespace-nowrap text-xs text-gray-500 cursor-pointer" onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')">
-                                            {{ $research->created_at ? $research->created_at->format('M d, Y') : 'N/A' }}
-                                        </td>
-                                        <td class="px-3 py-2 whitespace-nowrap text-center" onclick="event.stopPropagation()">
-                                            <div class="flex items-center justify-center space-x-1">
-                                                @if($research->status === 'pending' && $canApprove)
-                                                    <a href="{{ route('admin.approve.' . $research->type . '.form', $research->id) }}" class="mp-form inline-flex items-center justify-center w-7 h-7 bg-green-600 hover:bg-green-700 text-white rounded transition-colors" data-target="actionModal" title="Approve">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                                        </svg>
-                                                    </a>
-                                                @endif
-                                                @if($canDelete)
-                                                    <form action="{{ route('admin.research.delete', ['type' => $research->type, 'id' => $research->id]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this research? This action cannot be undone.')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="inline-flex items-center justify-center w-7 h-7 bg-red-600 hover:bg-red-700 text-white rounded transition-colors" title="Delete">
-                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                            </svg>
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                                @if(!$canApprove && !$canDelete)
-                                                    <span class="text-xs text-gray-400">-</span>
-                                                @endif
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                <!-- Middle Column: History Feed -->
+                <div class="flex-1 space-y-4">
+                    <!-- Search & Title Header -->
+                    <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                            <div>
+                                <h1 class="text-lg font-black text-gray-900">Submission History</h1>
+                                <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">{{ number_format($allResearch->total()) }} Records Published</p>
+                            </div>
+                            <form method="GET" action="{{ route('research.history') }}" class="w-full sm:w-64 relative group">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                </div>
+                                <input type="text" name="search" value="{{ $searchQuery ?? '' }}" id="historySearch"
+                                       placeholder="Search history..." 
+                                       class="block w-full pl-9 pr-3 py-1.5 border-gray-200 bg-[#edf3f8] rounded-md text-sm placeholder-gray-500 focus:bg-white focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition-all">
+                            </form>
+                        </div>
                     </div>
 
-                    <!-- Pagination -->
-                        @if($allResearch->hasPages())
-                        <div class="px-3 py-2 border-t border-[#FFC72C] border-opacity-30 bg-gradient-to-r from-[#26225C] to-[#3a3770] bg-opacity-5">
-                        <div class="flex justify-center">
+                    <!-- History Items -->
+                    @if($allResearch->count() > 0)
+                        <div id="historyItemsContainer" class="space-y-4">
+                            @foreach($allResearch as $research)
+                                <div class="history-item-card bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden group hover:border-blue-300 transition-all cursor-pointer"
+                                     data-status="{{ $research->status }}"
+                                     onclick="navigateToResearch('{{ $research->type }}', {{ $research->id }}, '{{ $research->status }}')"
+                                     data-search-text="{{ strtolower($research->title . ' ' . ($research->authors ?? $research->author ?? '') . ' ' . $research->department) }}">
+                                    
+                                    <div class="p-4 flex gap-4">
+                                        <!-- Type Icon -->
+                                        <div class="shrink-0">
+                                            @php
+                                                $iconBg = match($research->type) {
+                                                    'student' => 'bg-blue-50',
+                                                    'faculty' => 'bg-purple-50',
+                                                    'thesis' => 'bg-emerald-50',
+                                                    'dissertation' => 'bg-rose-50',
+                                                    default => 'bg-gray-50',
+                                                };
+                                                $iconColor = match($research->type) {
+                                                    'student' => 'text-blue-600',
+                                                    'faculty' => 'text-purple-600',
+                                                    'thesis' => 'text-emerald-600',
+                                                    'dissertation' => 'text-rose-600',
+                                                    default => 'text-gray-600',
+                                                };
+                                            @endphp
+                                            <div class="w-12 h-12 {{ $iconBg }} rounded flex items-center justify-center p-2.5">
+                                                <svg class="w-full h-full {{ $iconColor }}" fill="currentColor" viewBox="0 0 24 24">
+                                                    @if($research->type === 'student')
+                                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"></path>
+                                                    @else
+                                                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zM6 20V4h7v5h5v11H6z"></path>
+                                                    @endif
+                                                </svg>
+                                            </div>
+                                        </div>
+
+                                        <!-- Content -->
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex justify-between items-start">
+                                                <h3 class="text-sm font-black text-gray-900 group-hover:text-blue-600 group-hover:underline transition-all line-clamp-2">
+                                                    {{ $research->title }}
+                                                </h3>
+                                                @php
+                                                    $statusPill = match($research->status) {
+                                                        'pending' => 'bg-amber-100 text-amber-800',
+                                                        'approved' => 'bg-emerald-100 text-emerald-800',
+                                                        'rejected' => 'bg-rose-100 text-rose-800',
+                                                        default => 'bg-gray-100 text-gray-800',
+                                                    };
+                                                @endphp
+                                                <span class="ml-2 px-2 py-0.5 rounded-full {{ $statusPill }} text-[9px] font-black uppercase tracking-tighter shrink-0">
+                                                    {{ $research->status }}
+                                                </span>
+                                            </div>
+                                            <p class="text-[11px] text-gray-500 font-bold uppercase tracking-tight mt-1 truncate">
+                                                {{ $research->department }} • {{ $research->type }} archive
+                                            </p>
+                                            <p class="text-[10px] text-gray-400 mt-0.5">
+                                                Submitted on {{ $research->created_at->format('M d, Y') }}
+                                            </p>
+
+                                            @if($research->status === 'rejected' && $research->rejection_reason)
+                                                <div class="mt-3 p-2 bg-rose-50 border border-rose-100 rounded text-[10px] text-rose-700 italic">
+                                                    <strong>Revision Required:</strong> {{ $research->rejection_reason }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Action Bar -->
+                                    <div class="px-4 py-2 bg-gray-50 border-t border-gray-100 flex justify-between items-center group-hover:bg-blue-50/30 transition-colors" onclick="event.stopPropagation()">
+                                        <div class="flex gap-4">
+                                            @if($research->status === 'approved')
+                                                <a href="{{ route($research->type . '.show', $research->id) }}" class="flex items-center text-[11px] font-black text-gray-500 hover:text-blue-600 transition-colors uppercase tracking-widest">
+                                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                                    View Publication
+                                                </a>
+                                            @elseif($research->status === 'pending')
+                                                <a href="{{ route($research->type . '.edit', $research->id) }}" class="flex items-center text-[11px] font-black text-gray-500 hover:text-amber-600 transition-colors uppercase tracking-widest">
+                                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                                    Modify Draft
+                                                </a>
+                                            @endif
+                                        </div>
+                                        <form action="{{ route('admin.research.delete', ['type' => $research->type, 'id' => $research->id]) }}" method="POST" onsubmit="return confirm('Archive this draft permanently?')">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="text-[10px] font-black text-gray-400 hover:text-red-600 uppercase tracking-widest transition-colors">Withdraw</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="mt-6">
                             {{ $allResearch->links() }}
+                        </div>
+                    @else
+                        <div class="bg-white rounded-xl border border-gray-200 p-12 text-center shadow-sm">
+                            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
+                                <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                            </div>
+                            <h3 class="text-sm font-black text-gray-900">No submission records</h3>
+                            <p class="text-xs text-gray-500 mt-1">Start contributing to the institutional knowledge base.</p>
+                            <a href="{{ route('dashboard') }}" class="mt-6 inline-block px-6 py-2 bg-blue-600 text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-colors shadow-sm">
+                                Create Submission
+                            </a>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Right Sidebar: Stats & Insights -->
+                <div class="hidden lg:block w-72 space-y-4">
+                    <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                        <h4 class="text-[11px] font-black text-gray-900 uppercase tracking-widest mb-4">Repository Overview</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                                <p class="text-[9px] font-black text-blue-600 uppercase tracking-tighter">Approved</p>
+                                <p class="text-xl font-black text-[#26225C] mt-1">{{ $approvedCount }}</p>
+                            </div>
+                            <div class="bg-amber-50 p-3 rounded-lg border border-amber-100">
+                                <p class="text-[9px] font-black text-amber-600 uppercase tracking-tighter">Pending</p>
+                                <p class="text-xl font-black text-[#26225C] mt-1">{{ $pendingCount }}</p>
                             </div>
                         </div>
-                        @endif
                     </div>
-                @else
-                    <div class="bg-white rounded-xl border border-gray-200 text-center py-16 px-8">
-                        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <svg class="h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-medium text-[#26225C] mb-2">No research submitted yet</h3>
-                        <p class="text-gray-600 mb-8 max-w-md mx-auto">Get started by submitting your first research project to begin building your academic portfolio.</p>
-                        <div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
-                            <a href="{{ route('student.upload') }}" class="inline-flex items-center px-6 py-3 bg-[#26225C] hover:bg-[#3a3770] text-white font-medium rounded-xl transition-colors">
-                                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                </svg>
-                                Submit Student Research
-                            </a>
-                            <a href="{{ route('faculty.upload') }}" class="inline-flex items-center px-6 py-3 bg-[#26225C] hover:bg-[#3a3770] text-white font-medium rounded-xl transition-colors">
-                                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                                </svg>
-                                Submit Faculty Research
-                            </a>
-                        </div>
+
+                    <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                        <h4 class="text-[11px] font-black text-gray-900 uppercase tracking-widest mb-2">Notice</h4>
+                        <p class="text-[11px] text-gray-500 leading-relaxed italic border-l-2 border-blue-500 pl-3">
+                            Approved works are automatically indexed and become available to the global USPF student and faculty community.
+                        </p>
                     </div>
-                @endif
-                </div>
-            </section>
 
-        </div>
-    </div>
+                    <!-- Simplified Footer Links -->
+                    <div class="px-4 py-2 text-center">
+                        <div class="flex flex-wrap justify-center gap-x-3 gap-y-1">
+                            <a href="#" class="text-[10px] text-gray-500 hover:text-blue-600 font-medium">About</a>
+                            <a href="#" class="text-[10px] text-gray-500 hover:text-blue-600 font-medium">Help Center</a>
+                            <a href="#" class="text-[10px] text-gray-500 hover:text-blue-600 font-medium">Privacy & Terms</a>
+                        </div>
+                        <p class="text-[10px] text-gray-400 mt-4 font-black uppercase tracking-widest whitespace-nowrap">
+                            USPF ARCHIVE © {{ date('Y') }}
+                        </p>
+                    </div>
+                </div>
 
-    <!-- Action Modal -->
-    <div id="actionModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 transition-opacity duration-300 ease-in-out" style="display: none;">
-        <div class="flex justify-center pt-8 px-4">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full transform transition-all duration-300 ease-out modal-content-wrapper">
-                <div class="modal-content">
-                    <!-- Content will be loaded here via AJAX -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Rejection Reason Modal -->
-    <div id="rejectionModal" class="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-20 mx-auto p-5 border-0 w-full max-w-md shadow-xl rounded-xl bg-white">
-            <div class="mt-3 text-center">
-                <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="h-8 w-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-semibold text-[#26225C] mb-2">Rejection Reason</h3>
-                <div class="mt-4 px-6 py-4">
-                    <p id="rejectionReasonText" class="text-sm text-gray-600 leading-relaxed"></p>
-                </div>
-                <div class="items-center px-6 py-4">
-                    <button onclick="closeRejectionModal()" class="w-full px-6 py-3 bg-[#26225C] hover:bg-[#3a3770] text-white font-medium rounded-xl transition-colors">
-                        Close
-                    </button>
-                </div>
             </div>
         </div>
     </div>
 
     <script>
         function navigateToResearch(type, id, status) {
-            // Navigate to edit page if pending, show if approved, else show warning
             const routes = {
-                'student': {
-                    show: '{{ route("student.show", ":id") }}',
-                    edit: '{{ route("student.edit", ":id") }}'
-                },
-                'faculty': {
-                    show: '{{ route("faculty.show", ":id") }}',
-                    edit: '{{ route("faculty.edit", ":id") }}'
-                },
-                'thesis': {
-                    show: '{{ route("thesis.show", ":id") }}',
-                    edit: '{{ route("thesis.edit", ":id") }}'
-                },
-                'dissertation': {
-                    show: '{{ route("dissertation.show", ":id") }}',
-                    edit: '{{ route("dissertation.edit", ":id") }}'
-                }
+                'student': { show: '{{ route("student.show", ":id") }}', edit: '{{ route("student.edit", ":id") }}' },
+                'faculty': { show: '{{ route("faculty.show", ":id") }}', edit: '{{ route("faculty.edit", ":id") }}' },
+                'thesis': { show: '{{ route("thesis.show", ":id") }}', edit: '{{ route("thesis.edit", ":id") }}' },
+                'dissertation': { show: '{{ route("dissertation.show", ":id") }}', edit: '{{ route("dissertation.edit", ":id") }}' }
             };
 
             if (status === 'approved') {
-                if (routes[type]) {
-                    const url = routes[type].show.replace(':id', id);
-                    window.location.href = url;
-                }
+                window.location.href = routes[type].show.replace(':id', id);
             } else if (status === 'pending') {
-                if (routes[type]) {
-                    const url = routes[type].edit.replace(':id', id);
-                    window.location.href = url;
-                }
-            } else {
-                // Show a message for non-approved research using the consistent notification system
-                let message = '';
-                if (status === 'rejected') {
-                    message = 'This research has been rejected and cannot be viewed.';
-                }
-                showWarningNotification(message);
+                window.location.href = routes[type].edit.replace(':id', id);
             }
         }
 
-        function showRejectionReason(reason) {
-            document.getElementById('rejectionReasonText').textContent = reason;
-            document.getElementById('rejectionModal').classList.remove('hidden');
-        }
+        function filterByStatus(status) {
+            const items = document.querySelectorAll('.history-item-card');
+            const btns = document.querySelectorAll('.status-filter-btn');
+            
+            // Update UI
+            btns.forEach(btn => {
+                btn.classList.remove('text-blue-600', 'bg-blue-50/50', 'border-blue-600');
+                btn.classList.add('text-gray-500', 'border-transparent');
+                if (btn.id === `status-${status}`) {
+                    btn.classList.add('text-blue-600', 'bg-blue-50/50', 'border-blue-600');
+                    btn.classList.remove('text-gray-500', 'border-transparent');
+                }
+            });
 
-        function closeRejectionModal() {
-            document.getElementById('rejectionModal').classList.add('hidden');
-        }
-        
-        // Search/Filter Functionality
-        let searchTimeout;
-        
-        function filterResearch() {
-            const searchInput = document.getElementById('researchSearchInput');
-            const clearBtn = document.getElementById('clearSearchBtn');
-            const searchForm = document.getElementById('searchForm');
-            const searchTerm = searchInput.value.trim();
-            const searchLower = searchTerm.toLowerCase();
-            
-            // Show/hide clear button
-            if (searchTerm.length > 0) {
-                clearBtn.classList.remove('hidden');
-                clearBtn.classList.add('flex');
-            } else {
-                clearBtn.classList.add('hidden');
-                clearBtn.classList.remove('flex');
-            }
-            
-            // Clear previous timeout
-            clearTimeout(searchTimeout);
-            
-            // Client-side filtering for instant feedback
-            const researchItems = document.querySelectorAll('.research-item');
-            let visibleCount = 0;
-            
-            researchItems.forEach(item => {
-                const searchText = item.getAttribute('data-search-text') || '';
-                
-                if (searchTerm === '' || searchText.includes(searchLower)) {
+            // Filter items
+            items.forEach(item => {
+                if (status === 'all' || item.getAttribute('data-status') === status) {
                     item.style.display = '';
-                    visibleCount++;
                 } else {
                     item.style.display = 'none';
                 }
             });
-            
-            // Submit form to server after user stops typing (for accurate server-side search)
-            searchTimeout = setTimeout(function() {
-                if (searchTerm.length >= 2 || searchTerm.length === 0) {
-                    searchForm.submit();
-                }
-            }, 800); // Wait 800ms after user stops typing
         }
 
-        function clearSearch() {
-            const searchInput = document.getElementById('researchSearchInput');
-            const clearBtn = document.getElementById('clearSearchBtn');
-            const searchForm = document.getElementById('searchForm');
+        // Real-time search
+        document.getElementById('historySearch').addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            const items = document.querySelectorAll('.history-item-card');
             
-            searchInput.value = '';
-            clearBtn.classList.add('hidden');
-            clearBtn.classList.remove('flex');
-            
-            // Show all items immediately
-            const researchItems = document.querySelectorAll('.research-item');
-            researchItems.forEach(item => {
-                item.style.display = '';
+            items.forEach(item => {
+                const text = item.getAttribute('data-search-text');
+                item.style.display = text.includes(term) ? '' : 'none';
             });
-            
-            // Submit form to clear server-side search
-            searchForm.submit();
-        }
-        
-        // Skeleton Loader Management
-        document.addEventListener('DOMContentLoaded', function() {
-            function hideSkeletons() {
-                document.querySelectorAll('.skeleton-container').forEach(skeleton => {
-                    skeleton.classList.add('loaded');
-                });
-                document.querySelectorAll('.content-container').forEach(content => {
-                    content.classList.add('loaded');
-                });
-            }
-            
-            // Hide skeletons when page is fully loaded
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', function() {
-                    setTimeout(hideSkeletons, 500);
-                });
-            } else {
-                setTimeout(hideSkeletons, 500);
-            }
-            
-            window.addEventListener('load', function() {
-                hideSkeletons();
-            });
-            
-            // Initialize search functionality
-            const searchInput = document.getElementById('researchSearchInput');
-            const searchForm = document.getElementById('searchForm');
-            
-            if (searchInput) {
-                // Search on input (with debounce)
-                searchInput.addEventListener('input', filterResearch);
-                
-                // Submit form on Enter key
-                searchInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        clearTimeout(searchTimeout);
-                        searchForm.submit();
-                    }
-                });
-            }
-            
-            // Modal initialization for action modal
-            const modal = document.getElementById('actionModal');
-            const wrapper = modal?.querySelector('.modal-content-wrapper');
-            
-            if (modal && wrapper) {
-                const observer = new MutationObserver(function(mutations) {
-                    mutations.forEach(function(mutation) {
-                        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                            if (!modal.classList.contains('hidden')) {
-                                modal.style.display = 'block';
-                                setTimeout(() => {
-                                    modal.style.opacity = '1';
-                                    wrapper.style.opacity = '1';
-                                    wrapper.style.transform = 'translateY(0)';
-                                }, 10);
-                            } else {
-                                modal.style.opacity = '0';
-                                wrapper.style.opacity = '0';
-                                wrapper.style.transform = 'translateY(-20px)';
-                                setTimeout(() => {
-                                    modal.style.display = 'none';
-                                }, 300);
-                            }
-                        }
-                    });
-                });
-                observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
-                
-                wrapper.style.opacity = '0';
-                wrapper.style.transform = 'translateY(-20px)';
-                wrapper.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
-            }
         });
     </script>
 </x-app-layout>

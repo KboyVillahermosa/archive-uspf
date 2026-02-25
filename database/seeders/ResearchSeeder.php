@@ -225,9 +225,10 @@ class ResearchSeeder extends Seeder
             $programCount = min(rand(2, 3), $departmentPrograms->count());
             $selectedProgram = $departmentPrograms->random();
             
-            // Create dummy PDF file
+            // Create dummy PDF files
             $pdfPath = $this->createDummyPdf('research/student', "student_research_{$index}.pdf");
-            $bannerPath = $this->createDummyBanner('banners/student', "student_banner_{$index}.jpg");
+            $abstractPath = $this->createDummyPdf('research/abstracts', "student_abstract_{$index}.pdf");
+            $bannerPath = $this->createDummyBanner('banners/student', "student_banner_{$index}.jpg", 'tech');
 
             StudentResearch::create([
                 'title' => $item['title'],
@@ -236,6 +237,7 @@ class ResearchSeeder extends Seeder
                 'program' => $selectedProgram->name,
                 'banner_image' => $bannerPath,
                 'research_file' => $pdfPath,
+                'abstract_file' => $abstractPath,
                 'abstract' => $this->generateAbstract($item['title']),
                 'tags' => $item['tags'],
                 'status' => $status,
@@ -271,9 +273,10 @@ class ResearchSeeder extends Seeder
             $user = $availableUsers->random();
             $department = $departments->random();
             
-            // Create dummy PDF file
+            // Create dummy PDF files
             $pdfPath = $this->createDummyPdf('research/faculty', "faculty_research_{$index}.pdf");
-            $bannerPath = $this->createDummyBanner('banners/faculty', "faculty_banner_{$index}.jpg");
+            $abstractPath = $this->createDummyPdf('research/abstracts', "faculty_abstract_{$index}.pdf");
+            $bannerPath = $this->createDummyBanner('banners/faculty', "faculty_banner_{$index}.jpg", 'edu');
 
             FacultyResearch::create([
                 'title' => $item['title'],
@@ -281,6 +284,7 @@ class ResearchSeeder extends Seeder
                 'department' => $department->name,
                 'banner_image' => $bannerPath,
                 'research_file' => $pdfPath,
+                'abstract_file' => $abstractPath,
                 'abstract' => $this->generateAbstract($item['title']),
                 'tags' => $item['tags'],
                 'status' => $status,
@@ -328,17 +332,21 @@ class ResearchSeeder extends Seeder
             $selectedProgram = $departmentPrograms->random();
             $yearCompleted = rand(2020, 2024);
             
-            // Create dummy PDF file
+            // Create dummy PDF files
             $pdfPath = $this->createDummyPdf('thesis', "thesis_{$index}.pdf");
+            $abstractPath = $this->createDummyPdf('research/abstracts', "thesis_abstract_{$index}.pdf");
+            $bannerPath = $this->createDummyBanner('banners/thesis', "thesis_banner_{$index}.jpg", 'edu');
 
             Thesis::create([
                 'title' => $item['title'],
                 'author' => $user->name,
                 'department' => $department->name,
                 'program' => $selectedProgram->name,
+                'banner_image' => $bannerPath,
                 'year_completed' => $yearCompleted,
                 'keywords' => $item['keywords'],
                 'document_file' => $pdfPath,
+                'abstract_file' => $abstractPath,
                 'abstract' => $this->generateAbstract($item['title']),
                 'status' => $status,
                 'admin_notes' => $status === 'rejected' ? 'Abstract needs improvement.' : null,
@@ -387,17 +395,21 @@ class ResearchSeeder extends Seeder
             
             $yearCompleted = rand(2019, 2024);
             
-            // Create dummy PDF file
+            // Create dummy PDF files
             $pdfPath = $this->createDummyPdf('dissertations', "dissertation_{$index}.pdf");
+            $abstractPath = $this->createDummyPdf('research/abstracts', "dissertation_abstract_{$index}.pdf");
+            $bannerPath = $this->createDummyBanner('banners/dissertation', "dissertation_banner_{$index}.jpg", 'edu');
 
             Dissertation::create([
                 'title' => $item['title'],
                 'author' => $user->name,
                 'department' => $department->name,
                 'program' => $selectedProgram,
+                'banner_image' => $bannerPath,
                 'year_completed' => $yearCompleted,
                 'keywords' => $item['keywords'],
                 'document_file' => $pdfPath,
+                'abstract_file' => $abstractPath,
                 'abstract' => $this->generateAbstract($item['title']),
                 'status' => $status,
                 'admin_notes' => $status === 'rejected' ? 'Literature review section needs expansion.' : null,
@@ -471,7 +483,7 @@ class ResearchSeeder extends Seeder
     /**
      * Create dummy banner image
      */
-    private function createDummyBanner($directory, $filename)
+    private function createDummyBanner($directory, $filename, $type = 'tech')
     {
         $path = $directory . '/' . $filename;
         
@@ -480,6 +492,13 @@ class ResearchSeeder extends Seeder
             Storage::disk('public')->makeDirectory($directory);
         }
         
+        // Check if our high-quality samples exist and use them
+        $samplePath = $type === 'tech' ? 'banners/samples/tech_banner.png' : 'banners/samples/education_banner.png';
+        if (Storage::disk('public')->exists($samplePath)) {
+            Storage::disk('public')->copy($samplePath, $path);
+            return $path;
+        }
+
         // Check if file already exists
         if (Storage::disk('public')->exists($path)) {
             return $path;

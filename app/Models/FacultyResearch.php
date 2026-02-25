@@ -15,11 +15,13 @@ class FacultyResearch extends Model
     protected $fillable = [
         'title', 'co_researchers', 'department', 'banner_image',
         'research_file', 'abstract_file', 'abstract', 'tags', 'status', 'admin_notes',
-        'user_id', 'approved_by', 'approved_at', 'views_count', 'downloads_count'
+        'user_id', 'approved_by', 'approved_at', 'views_count', 'downloads_count',
+        'adviser_id', 'adviser_approved_at', 'adviser_approved_by'
     ];
 
     protected $casts = [
         'approved_at' => 'datetime',
+        'adviser_approved_at' => 'datetime',
     ];
 
     public function user(): BelongsTo
@@ -30,6 +32,16 @@ class FacultyResearch extends Model
     public function approvedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function adviser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'adviser_id');
+    }
+
+    public function adviserApprovedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'adviser_approved_by');
     }
 
     public function incrementViews()

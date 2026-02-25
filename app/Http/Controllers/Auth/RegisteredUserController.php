@@ -110,9 +110,9 @@ class RegisteredUserController extends Controller
             // #region agent log
             file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode(['id'=>'log_'.time().'_reg2','timestamp'=>time()*1000,'location'=>'RegisteredUserController.php:95','message'=>'Dispatching Registered event','data'=>['user_id'=>$user->id,'email'=>$user->email,'event'=>'Registered'],'sessionId'=>'debug-session','runId'=>'run1','hypothesisId'=>'D'])."\n", FILE_APPEND);
             // #endregion
-            
-            event(new Registered($user));
-            
+
+        event(new Registered($user));
+
             // #region agent log
             file_put_contents('c:\\Users\\KBoY\\archive_uspf\\.cursor\\debug.log', json_encode(['id'=>'log_'.time().'_reg3','timestamp'=>time()*1000,'location'=>'RegisteredUserController.php:100','message'=>'Registered event dispatched successfully','data'=>['user_id'=>$user->id,'email'=>$user->email,'queue_connection'=>config('queue.default'),'is_queued'=>config('queue.default')!=='sync'],'sessionId'=>'debug-session','runId'=>'run1','hypothesisId'=>'D'])."\n", FILE_APPEND);
             // #endregion

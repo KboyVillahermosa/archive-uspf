@@ -111,6 +111,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/citations', [ResearchCitationController::class, 'store'])->name('citations.store');
     Route::get('/my-citations', [ResearchCitationController::class, 'getUserCitations'])->name('citations.my');
     Route::get('/research-citations/{type}/{id}', [ResearchCitationController::class, 'getResearchCitations'])->name('citations.research');
+    Route::get('/references-cited/{type}/{id}', [ResearchCitationController::class, 'getReferencesCited'])->name('citations.references');
 });
 
 // Admin dashboard - admin and faculty with permissions
@@ -149,6 +150,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/reject/dissertation/{id}', [AdminController::class, 'rejectDissertationForm'])->name('reject.dissertation.form');
     Route::post('/reject/dissertation/{id}', [AdminController::class, 'rejectDissertation'])->name('reject.dissertation');
     
+    // Adviser approvals (faculty only)
+    Route::get('/adviser-approvals', [AdminController::class, 'adviserApprovals'])->name('adviser-approvals');
+    Route::post('/adviser-approve/{type}/{id}', [AdminController::class, 'approveAdviser'])->name('adviser.approve');
+    Route::post('/adviser-reject/{type}/{id}', [AdminController::class, 'rejectAdviser'])->name('adviser.reject');
+    
     // Delete research route
     Route::delete('/research/{type}/{id}', [AdminController::class, 'deleteResearch'])->name('research.delete');
 });
@@ -182,6 +188,7 @@ Route::prefix('api')->group(function () {
     Route::get('/departments', [\App\Http\Controllers\Api\DepartmentController::class, 'index']);
     Route::get('/departments/{departmentId}/programs', [\App\Http\Controllers\Api\DepartmentController::class, 'programs']);
     Route::get('/programs', [\App\Http\Controllers\Api\DepartmentController::class, 'allPrograms']);
+    Route::get('/faculty', [\App\Http\Controllers\Api\FacultyController::class, 'index']);
 });
 
 require __DIR__.'/auth.php';

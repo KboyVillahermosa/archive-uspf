@@ -71,6 +71,35 @@
 
             @include('admin.partials.charts')
 
+            @if(isset($isAdmin) && $isAdmin && isset($waitingForAdviserApproval) && $waitingForAdviserApproval > 0)
+            <!-- Adviser Approval Reminder -->
+            <div class="mt-8 mb-8">
+                <div class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl shadow-lg border border-orange-400 p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mr-4">
+                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-white mb-1">Research Waiting for Adviser Approval</h3>
+                                <p class="text-sm text-white/90">
+                                    <span class="font-bold text-xl">{{ $waitingForAdviserApproval }}</span> 
+                                    {{ $waitingForAdviserApproval === 1 ? 'research item' : 'research items' }} 
+                                    {{ $waitingForAdviserApproval === 1 ? 'is' : 'are' }} waiting for adviser approval. 
+                                    Admins can still approve these, but adviser approval is recommended.
+                                </p>
+                            </div>
+                        </div>
+                        <a href="{{ route('admin.pending-research') }}" class="px-4 py-2 bg-white text-orange-600 rounded-lg font-semibold hover:bg-orange-50 transition-colors">
+                            View All
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <!-- Quick Actions -->
             <div class="mt-8">
                 <div class="mb-6 pb-4 border-b-2 border-[#FFC72C]">

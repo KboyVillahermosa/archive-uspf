@@ -1,581 +1,228 @@
 <x-app-layout>
-    <style>
-        /* Skeleton Loader Styles */
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: skeleton-loading 1.5s ease-in-out infinite;
-            border-radius: 4px;
-        }
-        
-        @keyframes skeleton-loading {
-            0% {
-                background-position: 200% 0;
-            }
-            100% {
-                background-position: -200% 0;
-            }
-        }
-        
-        .skeleton-text {
-            height: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .skeleton-title {
-            height: 1.5rem;
-            width: 60%;
-            margin-bottom: 0.75rem;
-        }
-        
-        .skeleton-card {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-        }
-        
-        .skeleton-container {
-            display: block;
-        }
-        
-        .content-container {
-            display: none;
-        }
-        
-        .content-container.loaded {
-            display: block;
-        }
-        
-        .skeleton-container.loaded {
-            display: none;
-        }
-    </style>
-    <div class="min-h-screen bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="min-h-screen bg-[#f3f2ef]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             
-            <!-- Skeleton Loader for Banner -->
-            @if($research->banner_image)
-            <div class="skeleton-container banner-skeleton mb-8">
-                <div class="skeleton rounded-xl h-64"></div>
-            </div>
-            @endif
-            
-            <!-- Skeleton Loader for Main Content -->
-            <div class="skeleton-container main-content-skeleton">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-2 space-y-8">
-                        <!-- Basic Info Skeleton -->
-                        @if(!$research->banner_image)
-                        <div class="skeleton-card mb-8">
-                            <div class="flex flex-wrap items-center gap-6">
-                                <div class="skeleton skeleton-text w-32 h-6"></div>
-                                <div class="skeleton skeleton-text w-32 h-6"></div>
-                            </div>
+            <!-- Main Content Grid -->
+            <div class="flex flex-col lg:flex-row gap-6">
+                
+                <!-- Left/Main Column -->
+                <div class="flex-1 space-y-4">
+                    
+                    <!-- Research Identity Card (LinkedIn Header Style) -->
+                    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                        <!-- Banner/Cover -->
+                        <div class="h-max bg-[#26225C] relative">
+                             @if($research->banner_image)
+                                <img src="{{ asset('storage/' . $research->banner_image) }}" alt="Research Banner" class="w-full h-48 object-cover opacity-80">
+                            @else
+                                <div class="h-32 bg-gradient-to-r from-[#26225C] to-[#3a3770] opacity-90"></div>
+                            @endif
                         </div>
-                        @endif
-                        <!-- Research Details Skeleton -->
-                        <div class="skeleton-card mb-8">
-                            <div class="skeleton skeleton-title mb-4"></div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                <div class="skeleton h-24 rounded-lg"></div>
-                                <div class="skeleton h-24 rounded-lg"></div>
-                            </div>
-                            <div class="skeleton h-32 rounded-lg mb-4"></div>
-                            <div class="flex gap-3">
-                                <div class="skeleton h-8 w-20 rounded-full"></div>
-                                <div class="skeleton h-8 w-24 rounded-full"></div>
-                                <div class="skeleton h-8 w-16 rounded-full"></div>
-                            </div>
-                        </div>
-                        <!-- Citation Skeleton -->
-                        <div class="skeleton-card mb-8">
-                            <div class="skeleton skeleton-title mb-4"></div>
-                            <div class="skeleton h-20 rounded-lg"></div>
-                        </div>
-                    </div>
-                    <!-- Sidebar Skeleton -->
-                    <div class="space-y-8">
-                        <div class="skeleton-card">
-                            <div class="skeleton skeleton-title mb-4"></div>
-                            <div class="skeleton h-12 rounded-xl mb-3"></div>
-                            <div class="skeleton h-12 rounded-xl"></div>
-                        </div>
-                        <div class="skeleton-card">
-                            <div class="skeleton skeleton-title mb-4"></div>
-                            <div class="space-y-3">
-                                <div class="skeleton h-8"></div>
-                                <div class="skeleton h-8"></div>
-                                <div class="skeleton h-8"></div>
-                            </div>
-                        </div>
-                        <div class="skeleton-card">
-                            <div class="skeleton skeleton-title mb-4"></div>
-                            <div class="flex items-center">
-                                <div class="skeleton w-16 h-16 rounded-xl mr-4"></div>
-                                <div class="flex-1">
-                                    <div class="skeleton h-5 w-32 mb-2"></div>
-                                    <div class="skeleton h-4 w-40 mb-1"></div>
-                                    <div class="skeleton h-4 w-24"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-           
-
-            <!-- Research Banner -->
-            @if($research->banner_image)
-            <div class="content-container banner-content mb-8">
-                <div class="rounded-xl overflow-hidden border border-gray-200">
-                    <div class="relative h-64">
-                        <img src="{{ asset('storage/' . $research->banner_image) }}" alt="Research Banner" class="w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
-                            <div class="absolute bottom-6 left-6 right-6">
-                                <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-[#26225C] bg-opacity-90 text-white mb-3">
-                                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                    </svg>
+                        
+                        <!-- Header Content -->
+                        <div class="px-8 pb-8 pt-6 relative">
+                            <!-- Badge -->
+                            <div class="flex items-center gap-2 mb-4">
+                                <span class="px-2.5 py-0.5 bg-blue-50 text-blue-600 border border-blue-100 rounded text-[10px] font-black uppercase tracking-wider">
                                     Student Research
                                 </span>
-                                <h2 class="text-2xl md:text-3xl font-semibold text-white mb-2">{{ $research->title }}</h2>
-                                <p class="text-white/90 text-sm">By: {{ $research->authors }}</p>
+                                <span class="px-2.5 py-0.5 bg-gray-50 text-gray-400 border border-gray-100 rounded text-[10px] font-bold uppercase">
+                                    Archive #{{ str_pad($research->id, 5, '0', STR_PAD_LEFT) }}
+                                </span>
+                            </div>
+
+                            <h1 class="text-2xl md:text-3xl font-black text-gray-900 leading-tight mb-4">
+                                {{ $research->title }}
+                            </h1>
+
+                            <!-- Author/Researcher Attribution -->
+                            <div class="flex items-center gap-4 mt-6">
+                                <div class="w-12 h-12 bg-gray-100 rounded font-black text-[#26225C] flex items-center justify-center border border-gray-100 text-lg">
+                                    {{ substr($research->authors, 0, 1) }}
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="text-base font-black text-gray-900 truncate">{{ $research->authors }}</h4>
+                                    <p class="text-[11px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">
+                                        {{ $research->department }} • Lead Investigator
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stats Quick Bar -->
+                        <div class="px-8 py-3 border-t border-gray-100 bg-gray-50/50 flex items-center gap-6">
+                            <div class="flex items-center gap-1.5 cursor-help" title="Total public views">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                <span class="text-[11px] font-black text-gray-500 uppercase">{{ number_format($viewCount) }} Views</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 cursor-help" title="Total institutional downloads">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                <span class="text-[11px] font-black text-gray-500 uppercase">{{ number_format($downloadCount) }} Downloads</span>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            @endif
 
-            <div class="content-container main-content-content">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Main Content -->
-                <div class="lg:col-span-2 space-y-8">
-                    <!-- Basic Info (when no banner) -->
-                    @if(!$research->banner_image)
-                    <section class="mb-8">
-                        <div class="flex flex-wrap items-center gap-6">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-[#26225C] bg-opacity-10 rounded-lg flex items-center justify-center mr-3">
-                                    <svg class="h-5 w-5 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <span class="text-sm font-medium text-gray-500">Authors</span>
-                                    <p class="font-semibold text-[#26225C]">{{ $research->authors }}</p>
-                                </div>
+                    <!-- Main Body Card -->
+                    <div class="bg-white rounded-xl border border-gray-200 p-8 shadow-sm space-y-10">
+                        <!-- Abstract -->
+                        <section>
+                            <h3 class="text-[11px] font-black text-[#26225C] uppercase tracking-[0.2em] mb-4 border-b border-gray-100 pb-2">Abstract</h3>
+                            <div class="text-[13px] text-gray-700 leading-relaxed font-medium">
+                                {{ $research->abstract }}
                             </div>
-                            
-                            @if($research->approved_at)
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-[#26225C] bg-opacity-10 rounded-lg flex items-center justify-center mr-3">
-                                    <svg class="h-5 w-5 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <span class="text-sm font-medium text-gray-500">Published</span>
-                                    <p class="font-semibold text-[#26225C]">{{ $research->approved_at->format('F j, Y') }}</p>
-                                </div>
-                            </div>
-                            @endif
-                        </div>
-                    </section>
-                    @endif
+                        </section>
 
-                    <!-- Research Details -->
-                    <section class="mb-8">
-                        <div class="mb-6">
-                            <h3 class="text-2xl font-light text-[#26225C] mb-1">Research Details</h3>
-                            <p class="text-sm text-gray-500">Comprehensive research information</p>
-                        </div>
-                        <div>
-                            @if($research->banner_image && $research->approved_at)
-                            <div class="flex flex-wrap items-center gap-4 mb-6 text-sm text-gray-600">
-                                <div class="flex items-center">
-                                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
-                                    <span>Published: {{ $research->approved_at->format('F j, Y') }}</span>
-                                </div>
+                        <!-- Keywords -->
+                        @if($research->tags)
+                        <section>
+                            <h3 class="text-[11px] font-black text-[#26225C] uppercase tracking-[0.2em] mb-4 border-b border-gray-100 pb-2">Institutional Keywords</h3>
+                            <div class="flex flex-wrap gap-2">
+                                @foreach(explode(',', $research->tags) as $tag)
+                                    <span class="px-2.5 py-1 bg-gray-50 text-gray-500 border border-gray-100 rounded text-[10px] font-black uppercase tracking-wider hover:bg-gray-100 transition-colors cursor-default">
+                                        {{ trim($tag) }}
+                                    </span>
+                                @endforeach
                             </div>
-                            @endif
+                        </section>
+                        @endif
 
-                            <!-- Department & Program -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                                <div class="p-6 border-l-4 border-[#FFC72C] bg-gray-50 rounded-lg">
-                                    <div class="flex items-center mb-3">
-                                        <div class="w-10 h-10 bg-[#26225C] bg-opacity-10 rounded-lg flex items-center justify-center mr-3">
-                                            <svg class="h-5 w-5 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                            </svg>
-                                        </div>
-                                        <h3 class="font-semibold text-[#26225C]">Department</h3>
-                                    </div>
-                                    <p class="text-gray-700 font-medium">{{ $research->department }}</p>
-                                </div>
-                                <div class="p-6 border-l-4 border-[#FFC72C] bg-gray-50 rounded-lg">
-                                    <div class="flex items-center mb-3">
-                                        <div class="w-10 h-10 bg-[#26225C] bg-opacity-10 rounded-lg flex items-center justify-center mr-3">
-                                            <svg class="h-5 w-5 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
-                                            </svg>
-                                        </div>
-                                        <h3 class="font-semibold text-[#26225C]">Program</h3>
-                                    </div>
-                                    <p class="text-gray-700 font-medium">{{ $research->program }}</p>
-                                </div>
-                            </div>
-
-                            <!-- Abstract -->
-                            <div class="mb-8">
-                                <h3 class="text-xl font-semibold text-[#26225C] mb-4">Abstract</h3>
-                                <div class="prose max-w-none text-gray-700 leading-relaxed bg-gray-50 p-6 rounded-lg border-l-4 border-[#FFC72C]">
-                                    {{ $research->abstract }}
-                                </div>
-                            </div>
-
-                            <!-- Keywords -->
-                            @if($research->tags)
-                            <div class="mb-8">
-                                <h3 class="text-lg font-semibold text-[#26225C] mb-4">Keywords</h3>
-                                <div class="flex flex-wrap gap-3">
-                                    @foreach(explode(',', $research->tags) as $tag)
-                                        <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-[#26225C] bg-opacity-10 text-[#26225C] border border-[#FFC72C] border-opacity-30">
-                                            {{ trim($tag) }}
-                                        </span>
+                        <!-- Citations -->
+                        <section>
+                            <h3 class="text-[11px] font-black text-[#26225C] uppercase tracking-[0.2em] mb-4 border-b border-gray-100 pb-2">How to Cite</h3>
+                            <div class="bg-gray-50/50 rounded-lg border border-gray-100 overflow-hidden">
+                                <!-- Tabs -->
+                                <div class="flex overflow-x-auto border-b border-gray-200 no-scrollbar">
+                                    @php $formats = ['apa' => 'APA', 'mla' => 'MLA', 'chicago' => 'Chicago', 'harvard' => 'Harvard', 'ieee' => 'IEEE', 'vancouver' => 'Vancouver']; @endphp
+                                    @foreach($formats as $id => $label)
+                                        <button onclick="showCitationFormat('{{ $id }}')" id="citation-tab-{{ $id }}" class="citation-tab px-5 py-3 text-[10px] font-black uppercase tracking-widest border-b-2 transition-all whitespace-nowrap {{ $loop->first ? 'border-[#26225C] text-[#26225C] bg-white' : 'border-transparent text-gray-400 hover:text-gray-600' }}">
+                                            {{ $label }}
+                                        </button>
                                     @endforeach
                                 </div>
-                            </div>
-                            @endif
-                        </div>
-                    </section>
-
-                    <!-- Citation -->
-                    <section class="mb-8">
-                        <div class="mb-6">
-                            <h3 class="text-2xl font-light text-[#26225C] mb-1">How to Cite</h3>
-                            <p class="text-sm text-gray-500">Multiple academic citation formats</p>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg border-l-4 border-[#FFC72C] overflow-hidden">
-                            <!-- Citation Format Tabs -->
-                            <div class="border-b border-gray-200 bg-white">
-                                <nav class="flex overflow-x-auto -mb-px" style="scrollbar-width: thin;">
-                                    <button onclick="showCitationFormat('apa')" id="citation-tab-apa" class="citation-tab border-transparent text-gray-500 hover:text-[#26225C] hover:border-[#FFC72C] whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm active-citation-tab">
-                                        APA
-                                    </button>
-                                    <button onclick="showCitationFormat('mla')" id="citation-tab-mla" class="citation-tab border-transparent text-gray-500 hover:text-[#26225C] hover:border-[#FFC72C] whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">
-                                        MLA
-                                    </button>
-                                    <button onclick="showCitationFormat('chicago')" id="citation-tab-chicago" class="citation-tab border-transparent text-gray-500 hover:text-[#26225C] hover:border-[#FFC72C] whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">
-                                        Chicago
-                                    </button>
-                                    <button onclick="showCitationFormat('harvard')" id="citation-tab-harvard" class="citation-tab border-transparent text-gray-500 hover:text-[#26225C] hover:border-[#FFC72C] whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">
-                                        Harvard
-                                    </button>
-                                    <button onclick="showCitationFormat('ieee')" id="citation-tab-ieee" class="citation-tab border-transparent text-gray-500 hover:text-[#26225C] hover:border-[#FFC72C] whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">
-                                        IEEE
-                                    </button>
-                                    <button onclick="showCitationFormat('vancouver')" id="citation-tab-vancouver" class="citation-tab border-transparent text-gray-500 hover:text-[#26225C] hover:border-[#FFC72C] whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm">
-                                        Vancouver
-                                    </button>
-                                </nav>
-                            </div>
-
-                            <!-- Citation Content -->
-                            <div class="p-6">
-                                <!-- APA Format -->
-                                <div id="citation-content-apa" class="citation-content">
-                            <p class="text-sm text-gray-700 font-mono mb-4 leading-relaxed">
-                                {{ $research->authors }} ({{ $research->approved_at ? $research->approved_at->format('Y') : date('Y') }}). <em>{{ $research->title }}</em>. 
-                                {{ $research->department }}, University of Southern Philippines Foundation. 
-                                Retrieved from {{ url()->current() }}
-                            </p>
-                                </div>
-
-                                <!-- MLA Format -->
-                                <div id="citation-content-mla" class="citation-content hidden">
-                                    <p class="text-sm text-gray-700 font-mono mb-4 leading-relaxed">
-                                        {{ $research->authors }}. "{{ $research->title }}." <em>University of Southern Philippines Foundation</em>, 
-                                        {{ $research->department }}, {{ $research->approved_at ? $research->approved_at->format('d M. Y') : date('d M. Y') }}, 
-                                        {{ url()->current() }}.
-                                    </p>
-                                </div>
-
-                                <!-- Chicago Format -->
-                                <div id="citation-content-chicago" class="citation-content hidden">
-                                    <p class="text-sm text-gray-700 font-mono mb-4 leading-relaxed">
-                                        {{ $research->authors }}. "{{ $research->title }}." {{ $research->department }}, 
-                                        University of Southern Philippines Foundation. {{ $research->approved_at ? $research->approved_at->format('Y') : date('Y') }}. 
-                                        {{ url()->current() }}.
-                                    </p>
-                                </div>
-
-                                <!-- Harvard Format -->
-                                <div id="citation-content-harvard" class="citation-content hidden">
-                                    <p class="text-sm text-gray-700 font-mono mb-4 leading-relaxed">
-                                        {{ $research->authors }} {{ $research->approved_at ? $research->approved_at->format('Y') : date('Y') }}, 
-                                        <em>{{ $research->title }}</em>, University of Southern Philippines Foundation, 
-                                        {{ $research->department }}, viewed {{ date('d M Y') }}, &lt;{{ url()->current() }}&gt;.
-                                    </p>
-                                </div>
-
-                                <!-- IEEE Format -->
-                                <div id="citation-content-ieee" class="citation-content hidden">
-                                    <p class="text-sm text-gray-700 font-mono mb-4 leading-relaxed">
-                                        {{ $research->authors }}, "{{ $research->title }}," University of Southern Philippines Foundation, 
-                                        {{ $research->department }}, {{ $research->approved_at ? $research->approved_at->format('Y') : date('Y') }}. 
-                                        [Online]. Available: {{ url()->current() }}
-                                    </p>
-                                </div>
-
-                                <!-- Vancouver Format -->
-                                <div id="citation-content-vancouver" class="citation-content hidden">
-                                    <p class="text-sm text-gray-700 font-mono mb-4 leading-relaxed">
-                                        {{ $research->authors }}. {{ $research->title }}. University of Southern Philippines Foundation; 
-                                        {{ $research->approved_at ? $research->approved_at->format('Y') : date('Y') }}. 
-                                        Available from: {{ url()->current() }}
-                                    </p>
-                                </div>
-
-                                <button onclick="copyCitationToClipboard()" class="inline-flex items-center px-4 py-2 text-sm text-[#26225C] hover:text-[#FFC72C] hover:bg-[#26225C] hover:bg-opacity-5 rounded-lg transition-colors font-medium">
-                                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                                </svg>
-                                Copy Citation
-                            </button>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Research Citations & References -->
-                    <section class="mb-8">
-                        <div class="mb-6">
-                            <h3 class="text-2xl font-light text-[#26225C] mb-1">Research Network</h3>
-                            <p class="text-sm text-gray-500">Citations and references</p>
-                        </div>
-                        <div>
-                            <!-- Tab Navigation -->
-                            <div class="border-b border-gray-200 mb-6">
-                                <nav class="-mb-px flex space-x-8">
-                                    <button onclick="showTab('cited-by')" id="cited-by-tab" class="border-transparent text-gray-500 hover:text-[#26225C] hover:border-[#FFC72C] whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm active-tab">
-                                        Cited by this Research
-                                    </button>
-                                    <button onclick="showTab('cites-this')" id="cites-this-tab" class="border-transparent text-gray-500 hover:text-[#26225C] hover:border-[#FFC72C] whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">
-                                        Research that cites this
-                                    </button>
-                                </nav>
-                            </div>
-
-                            <!-- Cited by this Research Tab -->
-                            <div id="cited-by-content" class="tab-content">
-                                <div class="mb-6">
-                                    <h4 class="font-semibold text-[#26225C] mb-2">References cited in this research</h4>
-                                    <p class="text-sm text-gray-600 mb-4">Research papers and sources that were referenced by this work.</p>
-                                </div>
-                                <div id="cited-research-list">
-                                    <div class="text-center py-8">
-                                        <div class="inline-flex items-center">
-                                            <svg class="animate-spin h-6 w-6 mr-3 text-[#26225C]" fill="none" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
-                                            <span class="text-sm text-gray-600 font-medium">Loading citations...</span>
-                                        </div>
+                                <!-- Content -->
+                                <div class="p-6">
+                                    <div id="citation-container" class="text-[12px] font-mono text-gray-600 leading-relaxed mb-4">
+                                        @include('research.partials.citations', ['research' => $research, 'type' => 'student'])
                                     </div>
+                                    <button onclick="copyCitationToClipboard()" class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded text-[10px] font-black text-[#26225C] uppercase tracking-widest hover:bg-gray-50 transition-all">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                        Copy Reference
+                                    </button>
                                 </div>
                             </div>
+                        </section>
 
-                            <!-- Research that cites this Tab -->
-                            <div id="cites-this-content" class="tab-content hidden">
-                                <div class="mb-6">
-                                    <h4 class="font-semibold text-[#26225C] mb-2">Research that references this work</h4>
-                                    <p class="text-sm text-gray-600 mb-4">Other research papers that have cited this work in their studies.</p>
-                                </div>
-                                <div id="citing-research-list">
-                                    <div class="text-center py-8">
-                                        <div class="inline-flex items-center">
-                                            <svg class="animate-spin h-6 w-6 mr-3 text-[#26225C]" fill="none" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
-                                            <span class="text-sm text-gray-600 font-medium">Loading citations...</span>
-                                        </div>
-                                    </div>
+                        <!-- Research Network -->
+                        <section>
+                            <h3 class="text-[11px] font-black text-[#26225C] uppercase tracking-[0.2em] mb-4 border-b border-gray-100 pb-2">Research Network</h3>
+                            <div class="flex gap-4 mb-6">
+                                <button onclick="showTab('cited-by')" id="cited-by-tab" class="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all bg-[#26225C] text-white">
+                                    References Cited
+                                </button>
+                                <button onclick="showTab('cites-this')" id="cites-this-tab" class="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all bg-gray-100 text-gray-500 hover:bg-gray-200">
+                                    Research Citing This
+                                </button>
+                            </div>
+                            
+                            <div id="cited-by-content" class="tab-content transition-opacity duration-300">
+                                <div id="cited-research-list" class="space-y-3">
+                                    <!-- Dynamic content -->
                                 </div>
                             </div>
-                        </div>
-                    </section>
+                            <div id="cites-this-content" class="tab-content hidden transition-opacity duration-300">
+                                <div id="citing-research-list" class="space-y-3">
+                                    <!-- Dynamic content -->
+                                </div>
+                            </div>
+                        </section>
+                    </div>
                 </div>
 
-                <!-- Sidebar -->
-                <div class="space-y-8">
-                    <!-- Quick Actions -->
-                    <section>
-                        <div class="mb-4">
-                            <h3 class="text-lg font-medium text-[#26225C]">Quick Actions</h3>
-                        </div>
-                        <div class="space-y-4">
-                            @php
-                                $user = auth()->user();
-                                $isAdmin = false;
-                                try {
-                                    $isAdmin = $user && ($user->hasRole('admin') || $user->role === 'admin');
-                                } catch (\Exception $e) {
-                                    $isAdmin = $user && $user->role === 'admin';
-                                }
-                            @endphp
-                            @if($research->abstract_file)
-                                <a href="{{ route('student.view-abstract.pdf', $research->id) }}" 
-                                   class="flex items-center justify-center w-full px-6 py-3 bg-[#FFC72C] hover:bg-[#e6b326] text-[#26225C] font-medium rounded-xl transition-colors">
-                                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                    </svg>
-                                    View Abstract PDF
-                                </a>
-                                @if(auth()->check())
-                                <a href="{{ route('student.download-abstract.file', $research->id) }}" 
-                                   class="flex items-center justify-center w-full px-6 py-3 bg-[#26225C] hover:bg-[#3a3770] text-white font-medium rounded-xl transition-colors">
-                                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                    </svg>
-                                    Download Abstract
-                                </a>
-                                @endif
-                            @endif
-                            
-                            @if($research->research_file && $isAdmin)
-                                <a href="{{ route('student.view.pdf', $research->id) }}" 
-                                   target="_blank"
-                                   class="flex items-center justify-center w-full px-6 py-3 bg-[#FFC72C] hover:bg-[#e6b326] text-[#26225C] font-medium rounded-xl transition-colors">
-                                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                    </svg>
-                                    View Full PDF
-                                </a>
-                                <a href="{{ route('student.download.file', $research->id) }}" 
-                                   class="flex items-center justify-center w-full px-6 py-3 bg-[#26225C] hover:bg-[#3a3770] text-white font-medium rounded-xl transition-colors">
-                                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                    </svg>
-                                    Download Full Paper
-                                </a>
-                            @endif
-                            
-                            <button onclick="shareResearch()" class="flex items-center justify-center w-full px-6 py-3 bg-gray-100 hover:bg-gray-200 text-[#26225C] font-medium rounded-xl transition-colors">
-                                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
-                                </svg>
-                                Share Research
-                            </button>
-                        </div>
-                    </section>
+                <!-- Right Sidebar Column -->
+                <div class="lg:w-80 space-y-4">
+                    
+                    <!-- Primary Actions Card -->
+                    <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm space-y-3">
+                        <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Access & Permissions</h4>
+                        
+                        @php
+                            $user = auth()->user();
+                            $isAdmin = $user && $user->role === 'admin';
+                        @endphp
 
-                    <!-- Research Statistics -->
-                    <section>
-                        <div class="mb-4">
-                            <h3 class="text-lg font-medium text-[#26225C]">Statistics</h3>
-                        </div>
-                        <div class="space-y-4">
-                            <div class="flex justify-between items-center py-3 border-b border-gray-200">
-                                <span class="text-gray-600 font-medium flex items-center">
-                                    <svg class="h-4 w-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                    </svg>
-                                    Views
-                                </span>
-                                <span class="font-semibold text-[#26225C] text-xl">{{ $viewCount }}</span>
-                            </div>
-                            <div class="flex justify-between items-center py-3 border-b border-gray-200">
-                                <span class="text-gray-600 font-medium flex items-center">
-                                    <svg class="h-4 w-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                    </svg>
-                                    Downloads
-                                </span>
-                                <span class="font-semibold text-[#26225C] text-xl">{{ $downloadCount }}</span>
-                            </div>
-                            @if($research->approved_at)
-                            <div class="flex justify-between items-center py-3">
-                                <span class="text-gray-600 font-medium flex items-center">
-                                    <svg class="h-4 w-4 mr-2 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
-                                    Published
-                                </span>
-                                <span class="font-semibold text-[#26225C] text-xl">{{ $research->approved_at->diffForHumans() }}</span>
-                            </div>
-                            @endif
-                        </div>
-                    </section>
+                        @if($research->abstract_file)
+                            <a href="{{ route('student.view-abstract.pdf', $research->id) }}" 
+                               class="flex items-center justify-center gap-2 w-full py-2.5 bg-white border border-[#26225C] text-[#26225C] text-[11px] font-black uppercase tracking-widest hover:bg-[#26225C] hover:text-white transition-all rounded">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                View Abstract PDF
+                            </a>
+                        @endif
 
-                    <!-- Suggestions -->
-                    <section>
-                        <div class="mb-4">
-                            <h3 class="text-lg font-medium text-[#26225C]">Suggestions</h3>
-                        </div>
+                        @if($research->research_file && (auth()->check() || $isAdmin))
+                            <a href="{{ route('student.view.pdf', $research->id) }}" target="_blank"
+                               class="flex items-center justify-center gap-2 w-full py-2.5 bg-[#FFC72C] text-[#26225C] text-[11px] font-black uppercase tracking-widest hover:brightness-105 transition-all rounded">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-33l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                Full Research Paper
+                            </a>
+                        @endif
+
+                        <button onclick="shareResearch()" 
+                                class="flex items-center justify-center gap-2 w-full py-2.5 bg-gray-50 border border-gray-200 text-gray-600 text-[11px] font-black uppercase tracking-widest hover:bg-gray-100 transition-all rounded">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/></svg>
+                            Share Repository Link
+                        </button>
+                    </div>
+
+                    <!-- Repository Metadata Card -->
+                    <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm space-y-4">
+                        <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Publication Stats</h4>
                         <div class="space-y-3">
+                            <div class="flex justify-between items-center py-2 border-b border-gray-50">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Status</span>
+                                <span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[9px] font-black uppercase tracking-tighter rounded">Approved</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b border-gray-50">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Department</span>
+                                <span class="text-[11px] font-black text-[#26225C] uppercase tracking-tighter">{{ $research->department }}</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b border-gray-50">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Published</span>
+                                <span class="text-[11px] font-black text-gray-600 uppercase">{{ $research->approved_at ? $research->approved_at->format('M d, Y') : 'N/A' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Related Works -->
+                    <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                        <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">You May Also Like</h4>
+                        <div class="space-y-4">
                             @forelse($relatedResearch ?? [] as $related)
-                                <div class="flex items-start gap-3 p-3 border border-gray-200 rounded-lg hover:border-[#FFC72C] hover:shadow-md transition-all bg-white">
-                                    <div class="flex-shrink-0 w-10 h-10 bg-[#26225C] bg-opacity-10 rounded-full flex items-center justify-center">
-                                        <svg class="w-6 h-6 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                        </svg>
+                                <a href="{{ route($related['route'], $related['id']) }}" class="group block">
+                                    <h5 class="text-[12px] font-black text-[#26225C] leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
+                                        {{ $related['title'] }}
+                                    </h5>
+                                    <div class="flex items-center gap-3 mt-1.5 text-[9px] font-bold text-gray-400 uppercase tracking-wider">
+                                        <span>{{ $related['viewCount'] ?? 0 }} Views</span>
+                                        <span>{{ $related['type'] }} archive</span>
                                     </div>
-                                    <div class="flex-1 min-w-0">
-                                        <a href="{{ route($related['route'], $related['id']) }}" 
-                                           class="text-sm font-semibold text-blue-600 hover:text-blue-800 underline line-clamp-2 mb-1 block">
-                                            {{ $related['title'] }}
-                                        </a>
-                                        <div class="text-xs text-gray-600 mt-1">
-                                            <span>Views: {{ $related['viewCount'] ?? 0 }}</span>
-                                            <span class="ml-3">Downloads: {{ $related['downloadCount'] ?? 0 }}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                                </a>
                             @empty
-                                <p class="text-sm text-gray-500 text-center py-4">No related research found</p>
+                                <div class="text-center py-4">
+                                    <p class="text-[11px] font-bold text-gray-400 uppercase">No related items</p>
+                                </div>
                             @endforelse
                         </div>
-                    </section>
+                    </div>
 
-                    <!-- Submitted By -->
-                    <section>
-                        <div class="mb-4">
-                            <h3 class="text-lg font-medium text-[#26225C]">Submitted By</h3>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="h-16 w-16 bg-[#26225C] bg-opacity-10 rounded-xl flex items-center justify-center">
-                                <span class="text-[#26225C] font-semibold text-xl">
-                                    {{ substr($research->user->name, 0, 2) }}
-                                </span>
-                            </div>
-                            <div class="ml-4">
-                                <p class="font-semibold text-[#26225C] text-lg">{{ $research->user->name }}</p>
-                                <p class="text-sm text-gray-600">{{ $research->user->email }}</p>
-                                <p class="text-sm text-gray-500">Research Contributor</p>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Back to Dashboard -->
-                    <section>
-                        <a href="{{ route('dashboard') }}" 
-                           class="flex items-center justify-center w-full px-6 py-3 bg-gray-100 hover:bg-gray-200 text-[#26225C] font-medium rounded-xl transition-colors">
-                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                            </svg>
-                            Back to Dashboard
+                    <!-- Quick Navigation -->
+                    <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                        <a href="{{ route('dashboard') }}" class="flex items-center justify-center gap-2 w-full py-2 text-gray-500 hover:text-blue-600 transition-colors text-[11px] font-black uppercase tracking-widest">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                            Back to Feed
                         </a>
-                    </section>
+                    </div>
                 </div>
-            </div>
+
             </div>
         </div>
     </div>
@@ -600,8 +247,8 @@
             
             // Remove active class from all tabs
             document.querySelectorAll('.citation-tab').forEach(tab => {
-                tab.classList.remove('border-[#FFC72C]', 'text-[#26225C]', 'active-citation-tab');
-                tab.classList.add('border-transparent', 'text-gray-500');
+                tab.classList.remove('border-[#26225C]', 'text-[#26225C]', 'bg-white', 'active-citation-tab');
+                tab.classList.add('border-transparent', 'text-gray-400');
             });
             
             // Show selected citation content
@@ -609,8 +256,8 @@
             
             // Add active class to selected tab
             const activeTab = document.getElementById('citation-tab-' + format);
-            activeTab.classList.add('border-[#FFC72C]', 'text-[#26225C]', 'active-citation-tab');
-            activeTab.classList.remove('border-transparent', 'text-gray-500');
+            activeTab.classList.add('border-[#26225C]', 'text-[#26225C]', 'bg-white', 'active-citation-tab');
+            activeTab.classList.remove('border-transparent', 'text-gray-400');
         }
 
         function copyCitationToClipboard() {
@@ -663,8 +310,8 @@
             
             // Remove active class from all tabs
             document.querySelectorAll('[id$="-tab"]').forEach(tab => {
-                tab.classList.remove('border-[#FFC72C]', 'text-[#26225C]', 'active-tab');
-                tab.classList.add('border-transparent', 'text-gray-500');
+                tab.classList.remove('bg-[#26225C]', 'text-white', 'active-tab');
+                tab.classList.add('bg-gray-100', 'text-gray-500');
             });
             
             // Show selected tab content
@@ -672,8 +319,8 @@
             
             // Add active class to selected tab
             const activeTab = document.getElementById(tabName + '-tab');
-            activeTab.classList.add('border-[#FFC72C]', 'text-[#26225C]', 'active-tab');
-            activeTab.classList.remove('border-transparent', 'text-gray-500');
+            activeTab.classList.add('bg-[#26225C]', 'text-white', 'active-tab');
+            activeTab.classList.remove('bg-gray-100', 'text-gray-500');
             
             // Load citations if not already loaded
             if (!citationsLoaded[tabName]) {
@@ -684,7 +331,7 @@
 
         function loadCitations(type) {
             const url = type === 'cited-by' 
-                ? '/my-citations?filter=citing_research_title:{{ urlencode($research->title) }}' 
+                ? '/references-cited/student/{{ $research->id }}' 
                 : '/research-citations/student/{{ $research->id }}';
             
             const container = type === 'cited-by' 
@@ -710,7 +357,7 @@
         }
 
         function displayCitations(citations, container, type) {
-            if (citations.length === 0) {
+            if (!citations || citations.length === 0) {
                 const message = type === 'cited-by' 
                     ? 'This research has not cited any other research in our database.'
                     : 'No other research has cited this work yet.';
@@ -727,25 +374,27 @@
             }
 
             const citationsList = citations.map(citation => {
-                const typeName = citation.citing_type || citation.cited_type || 'research';
-                const title = citation.citing_title || citation.cited_title || 'Unknown Title';
-                const user = citation.citing_user || citation.cited_authors || 'Unknown Author';
+                const title = type === 'cited-by' ? citation.cited_title : citation.citing_title;
+                const rType = type === 'cited-by' ? citation.cited_type : citation.citing_type;
+                const rId = type === 'cited-by' ? citation.cited_research_id : citation.citing_research_id;
+                const user = type === 'cited-by' ? 'Institutional Archive' : (citation.citing_user || 'Author');
                 const context = citation.citation_context || '';
                 const date = citation.created_at || '';
 
                 return `
-                    <div class="border border-gray-200 rounded-xl p-6 hover:border-[#FFC72C] hover:shadow-lg transition-all duration-300 cursor-pointer bg-white" onclick="viewResearch('${typeName}', ${citation.cited_research_id || citation.citing_research_id || 'null'})">
+                    <div class="border border-gray-200 rounded-xl p-6 hover:border-[#FFC72C] hover:shadow-lg transition-all duration-300 cursor-pointer bg-white" 
+                         onclick="window.location.href='/research/${rType}/${rId}'">
                         <div class="flex items-start justify-between mb-3">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#26225C] bg-opacity-10 text-[#26225C] border border-[#FFC72C] border-opacity-30">
-                                ${typeName.charAt(0).toUpperCase() + typeName.slice(1)} Research
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#26225C] bg-opacity-10 text-[#26225C] border border-[#FFC72C] border-opacity-30 uppercase tracking-tighter">
+                                ${rType} Archive
                             </span>
-                            <span class="text-xs text-gray-500 font-medium">${date}</span>
+                            <span class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">${date}</span>
                         </div>
-                        <h5 class="font-semibold text-[#26225C] mb-2 text-lg">${title}</h5>
-                        ${type === 'cites-this' ? `<p class="text-sm text-gray-600 mb-3 font-medium">By: ${user}</p>` : ''}
+                        <h5 class="font-black text-[#26225C] mb-2 text-sm leading-tight">${title}</h5>
+                        <p class="text-[10px] text-gray-500 mb-3 font-bold uppercase tracking-wider">${user}</p>
                         ${context ? `
-                            <div class="bg-gray-50 p-4 rounded-lg mt-3 border border-gray-200">
-                                <p class="text-xs text-gray-700 font-medium"><strong>Context:</strong> ${context}</p>
+                            <div class="bg-gray-50 p-4 rounded-lg mt-3 border border-gray-100 italic">
+                                <p class="text-[11px] text-gray-600 font-medium leading-relaxed">"${context}"</p>
                             </div>
                         ` : ''}
                     </div>
@@ -758,29 +407,6 @@
         // Initialize with first tab active
         document.addEventListener('DOMContentLoaded', function() {
             showTab('cited-by');
-            
-            // Skeleton Loader Management
-            function hideSkeletons() {
-                document.querySelectorAll('.skeleton-container').forEach(skeleton => {
-                    skeleton.classList.add('loaded');
-                });
-                document.querySelectorAll('.content-container').forEach(content => {
-                    content.classList.add('loaded');
-                });
-            }
-            
-            // Hide skeletons when page is fully loaded
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', function() {
-                    setTimeout(hideSkeletons, 500);
-                });
-            } else {
-                setTimeout(hideSkeletons, 500);
-            }
-            
-            window.addEventListener('load', function() {
-                hideSkeletons();
-            });
         });
 
         function viewResearch(type, id) {

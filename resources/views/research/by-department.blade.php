@@ -3,14 +3,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             
             <!-- Header -->
-            <div class="mb-8">
+            <div class="mb-12">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-4xl font-light text-[#26225C] mb-2">Research by Department</h1>
-                        <p class="text-gray-600">Browse research organized by academic departments</p>
+                        <span class="section-tag">Academic Organization</span>
+                        <h1 class="text-3xl font-bold text-[#26225C] uppercase tracking-tighter">Research by Department</h1>
                     </div>
-                    <a href="{{ route('dashboard') }}" class="inline-flex items-center px-5 py-2.5 bg-[#FFC72C] hover:bg-[#e0b026] text-[#26225C] font-medium rounded-xl transition-colors">
-                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('dashboard') }}" class="inline-flex items-center px-5 py-2.5 bg-white border border-gray-200 text-[#26225C] text-xs font-bold uppercase tracking-widest hover:bg-gray-50 transition-colors">
+                        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                         </svg>
                         Back to Dashboard
@@ -76,51 +76,46 @@
                     @foreach($departmentStats as $department => $stats)
                         <div>
                             <!-- Department Title -->
-                            <div class="mb-6">
-                                <div class="flex items-center space-x-3 mb-2">
-                                    <div class="w-10 h-10 bg-[#26225C] bg-opacity-10 rounded-lg flex items-center justify-center">
-                                        <svg class="h-6 w-6 text-[#26225C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="mb-10">
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <div class="w-12 h-12 bg-gray-50 border border-gray-100 flex items-center justify-center text-[#26225C]">
+                                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $stats['config']['icon'] }}"></path>
                                             </svg>
                                     </div>
-                                    <h2 class="text-2xl font-light text-[#26225C]">{{ $department }}</h2>
+                                    <h2 class="text-2xl font-bold text-[#26225C] uppercase tracking-tighter">{{ $department }}</h2>
                                 </div>
-                                <div class="flex items-center space-x-4 text-sm text-gray-600 ml-13">
-                                    <span class="font-medium">{{ $stats['total'] }}</span>
-                                    <span>research publications</span>
+                                <div class="flex flex-wrap items-center gap-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                    <span class="text-[#26225C] border-r border-gray-200 pr-4">{{ $stats['total'] }} TOTAL PUBLICATIONS</span>
                                     @if($stats['student'] > 0)
-                                        <span class="text-gray-400">•</span>
-                                        <span>{{ $stats['student'] }} Student</span>
+                                        <span class="bg-gray-100 px-2 py-0.5">{{ $stats['student'] }} Student</span>
                                     @endif
                                     @if($stats['faculty'] > 0)
-                                        <span class="text-gray-400">•</span>
-                                        <span>{{ $stats['faculty'] }} Faculty</span>
+                                        <span class="bg-gray-100 px-2 py-0.5">{{ $stats['faculty'] }} Faculty</span>
                                     @endif
                                     @if($stats['thesis'] > 0)
-                                        <span class="text-gray-400">•</span>
-                                        <span>{{ $stats['thesis'] }} Thesis</span>
+                                        <span class="bg-gray-100 px-2 py-0.5">{{ $stats['thesis'] }} Thesis</span>
                                     @endif
                                     @if($stats['dissertation'] > 0)
-                                        <span class="text-gray-400">•</span>
-                                        <span>{{ $stats['dissertation'] }} Dissertations</span>
+                                        <span class="bg-gray-100 px-2 py-0.5">{{ $stats['dissertation'] }} Dissertations</span>
                                     @endif
                                 </div>
                             </div>
                             
                             <!-- Research Table -->
-                            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                            <div class="bg-white border border-gray-200 overflow-hidden">
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200">
-                                        <thead class="bg-gradient-to-r from-[#26225C] to-[#3a3770]">
+                                        <thead class="bg-gray-50 border-b border-gray-200">
                                             <tr>
-                                                <th class="px-6 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Type</th>
-                                                <th class="px-6 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Title</th>
-                                                <th class="px-6 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Author</th>
-                                                <th class="px-6 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Date</th>
-                                                <th class="px-6 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider">Actions</th>
+                                                <th class="px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Type</th>
+                                                <th class="px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Research Title</th>
+                                                <th class="px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Lead Researcher</th>
+                                                <th class="px-6 py-4 text-left text-[10px] font-bold text-gray-500 uppercase tracking-widest">Pub. Date</th>
+                                                <th class="px-6 py-4 text-center text-[10px] font-bold text-gray-500 uppercase tracking-widest w-24">Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody class="bg-white divide-y divide-gray-100">
+                                        <tbody class="bg-white divide-y divide-gray-100 text-[13px]">
                                         @foreach($stats['research'] as $research)
                                             @php
                                                 $type = '';
@@ -164,29 +159,29 @@
                                             
                                                 <tr class="hover:bg-gray-50 transition-colors">
                                                     <td class="px-6 py-4 whitespace-nowrap">
-                                                        <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium {{ $typeColor }}">
-                                                        {{ $type }}
-                                                    </span>
+                                                        <span class="badge {{ $typeColor }}">
+                                                            {{ $type }}
+                                                        </span>
                                                     </td>
                                                     <td class="px-6 py-4">
-                                                        <div class="text-sm font-medium text-[#26225C] max-w-md">
-                                                            <a href="{{ $route }}" class="hover:text-[#FFC72C] transition-colors">
+                                                        <div class="font-bold text-[#26225C] max-w-md leading-tight">
+                                                            <a href="{{ $route }}" class="hover:underline">
                                                                 {{ $research->title }}
                                                             </a>
-                                                </div>
+                                                        </div>
                                                     </td>
                                                     <td class="px-6 py-4 whitespace-nowrap">
-                                                        <div class="text-sm text-gray-600">{{ Str::limit($author, 40) }}</div>
+                                                        <div class="text-gray-600 font-medium">{{ Str::limit($author, 30) }}</div>
                                                     </td>
                                                     <td class="px-6 py-4 whitespace-nowrap">
-                                                        <div class="text-sm text-gray-500">
-                                                            {{ $research->approved_at ? $research->approved_at->format('M d, Y') : 'N/A' }}
-                                                </div>
+                                                        <div class="text-gray-400 font-bold uppercase text-[10px]">
+                                                            {{ $research->approved_at ? $research->approved_at->format('M Y') : 'N/A' }}
+                                                        </div>
                                                     </td>
                                                     <td class="px-6 py-4 whitespace-nowrap text-center">
-                                                        <a href="{{ $route }}" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-[#26225C] bg-[#FFC72C] bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors">
-                                                            View
-                                            </a>
+                                                        <a href="{{ $route }}" class="inline-flex items-center px-4 py-1.5 border border-gray-200 text-[10px] font-bold text-[#26225C] uppercase tracking-widest hover:bg-[#26225C] hover:text-white hover:border-[#26225C] transition-all">
+                                                            Details
+                                                        </a>
                                                     </td>
                                                 </tr>
                                         @endforeach
